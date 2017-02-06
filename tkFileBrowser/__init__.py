@@ -53,15 +53,18 @@ if lang == "fr":
 else:
     TR = LANGUAGES["en"]
 
+
 def _(text):
     """ translation function """
     return TR.get(text, text)
+
 
 # locale settings for dates
 locale.setlocale(locale.LC_ALL, "")
 TODAY = time.strftime("%x")
 YEAR = time.strftime("%Y")
 DAY = int(time.strftime("%j"))
+
 
 def add_trace(variable, mode, callback):
     """ ensure compatibility with old and new trace method
@@ -73,6 +76,7 @@ def add_trace(variable, mode, callback):
         # fallback to old method
         variable.trace(mode[0], callback)
 
+
 def get_modification_date(file):
     tps = time.localtime(os.path.getmtime(file))
     date = time.strftime("%x", tps)
@@ -82,7 +86,10 @@ def get_modification_date(file):
         date = time.strftime("%A à %H:%M", tps)
     return date
 
+
 SIZES = [(_("B"), 1), ("kB", 1e3), ("MB", 1e6), ("GB", 1e9), ("TB", 1e12)]
+
+
 def get_size(file):
     size_o = os.path.getsize(file)
     if size_o > 0:
@@ -95,6 +102,7 @@ def get_size(file):
     else:
         size = "0" + _("B")
     return size
+
 
 class AutoScrollbar(Scrollbar):
     """ a scrollbar that hides itself if it's not needed.  only
@@ -113,6 +121,7 @@ class AutoScrollbar(Scrollbar):
     def place(self, **kw):
         raise TclError("cannot use place with this widget")
 
+
 class PathButton(Button):
     """ Toggle button class to make the path bar """
 
@@ -122,7 +131,8 @@ class PathButton(Button):
         self.value = value
         self.style = Style(self)
         self.style.configure("%s.TButton" % value, padding=2)
-        self.selected_bg = self.style.lookup("TButton", "background", ("pressed",))
+        self.selected_bg = self.style.lookup("TButton", "background",
+                                             ("pressed",))
         self.configure(style="%s.TButton" % value)
         add_trace(self.variable, "write", self.var_change)
         self.bind("<Button-1>", self.on_press)
@@ -188,10 +198,12 @@ class FileBrowser(Toplevel):
                      [('Treeheading.cell', {'sticky': 'nswe'}),
                       ('Treeheading.border',
                        {'children': [('Treeheading.padding',
-                            {'children': [('Treeheading.image', {'side': 'right', 'sticky': ''}),
-                               ('Treeheading.text', {'sticky': 'w'})],
-                              'sticky': 'nswe'})],
-                           'sticky': 'nswe'})])
+                                      {'children': [('Treeheading.image',
+                                                     {'side': 'right', 'sticky': ''}),
+                                                    ('Treeheading.text',
+                                                     {'sticky': 'w'})],
+                                       'sticky': 'nswe'})],
+                        'sticky': 'nswe'})])
 
         # images
         self.im_file = PhotoImage(file=IM_FILE, master=self)
@@ -204,9 +216,13 @@ class FileBrowser(Toplevel):
         self.complete = self.register(self.completion)
         self.listbox_var = StringVar(self)
         self.listbox_frame = Frame(self, style="listbox.TFrame", borderwidth=1)
-        self.listbox = Listbox(self.listbox_frame, listvariable=self.listbox_var,
-                               highlightthickness=0, borderwidth=0,
-                               selectbackground=style.lookup("Treeview", "background", ("selected",)))
+        self.listbox = Listbox(self.listbox_frame,
+                               listvariable=self.listbox_var,
+                               highlightthickness=0,
+                               borderwidth=0,
+                               selectbackground=style.lookup("Treeview",
+                                                             "background",
+                                                             ("selected",)))
         self.listbox.pack(expand=True, fill="x")
 
         # file name
@@ -214,10 +230,11 @@ class FileBrowser(Toplevel):
             self.defaultext = defaultext
 
             frame_name = Frame(self)
-            frame_name.grid(row=0, pady=(10,0), padx=10, sticky="ew")
+            frame_name.grid(row=0, pady=(10, 0), padx=10, sticky="ew")
             Label(frame_name, text=_("Name: ")).pack(side="left")
             self.entry = Entry(frame_name, validate="key",
-                               validatecommand=(self.complete, "%d", "%S", "%i", "%s"))
+                               validatecommand=(self.complete, "%d", "%S",
+                                                "%i", "%s"))
             self.entry.pack(side="left", fill="x", expand=True)
 
             if initialfile:
@@ -239,8 +256,10 @@ class FileBrowser(Toplevel):
             Label(self.path_bar, text=_("Folder: ")).grid(row=0, column=0)
         else:
             self.entry = Entry(frame_bar, validate="key",
-                               validatecommand=(self.complete, "%d", "%S", "%i", "%s"))
-            self.entry.grid(row=1, column=0, sticky="ew", padx=(0,4), pady=(10,0))
+                               validatecommand=(self.complete, "%d", "%S",
+                                                "%i", "%s"))
+            self.entry.grid(row=1, column=0, sticky="ew", padx=(0, 4),
+                            pady=(10, 0))
             self.entry.grid_remove()
             self.entry.bind("<Escape>", self.toggle_path_entry)
 
@@ -264,7 +283,7 @@ class FileBrowser(Toplevel):
         scroll_left.grid(row=0, column=1, sticky="ns")
         self.left_tree.configure(yscrollcommand=scroll_left.set)
 
-        ## list devices and bookmarked locations
+        # list devices and bookmarked locations
         devices = psutil.disk_partitions()
 
         for d in devices:
@@ -273,12 +292,13 @@ class FileBrowser(Toplevel):
                 txt = "/"
             else:
                 txt = os.path.split(m)[-1]
-            self.left_tree.insert("", "end", iid=m, text=txt, image=self.im_drive)
+            self.left_tree.insert("", "end", iid=m, text=txt,
+                                  image=self.im_drive)
         home = os.path.expanduser("~")
         self.left_tree.insert("", "end", iid=home, image=self.im_home,
                               text=os.path.split(home)[-1])
         path_bm = os.path.join(home, ".config", "gtk-3.0", "bookmarks")
-        path_bm2 = os.path.join(home, ".gtk-bookmarks") # old location
+        path_bm2 = os.path.join(home, ".gtk-bookmarks")  # old location
         if os.path.exists(path_bm):
             with open(path_bm) as f:
                 bm = f.readlines()
@@ -305,9 +325,9 @@ class FileBrowser(Toplevel):
         paned.add(right_pane, weight=1)
 
         if mode != "save" and multiple_selection:
-            selectmode="extended"
+            selectmode = "extended"
         else:
-            selectmode="browse"
+            selectmode = "browse"
 
         self.right_tree = Treeview(right_pane, selectmode=selectmode,
                                    columns=("size", "date"))
@@ -330,11 +350,14 @@ class FileBrowser(Toplevel):
 
         if mode == "opendir":
             self.right_tree.tag_configure("file", foreground="gray")
-            self.right_tree.bind("<<TreeviewSelect>>", self.file_selection_opendir)
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self.file_selection_opendir)
         elif mode == "openfile":
-            self.right_tree.bind("<<TreeviewSelect>>", self.file_selection_openfile)
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self.file_selection_openfile)
         else:
-            self.right_tree.bind("<<TreeviewSelect>>", self.file_selection_save)
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self.file_selection_save)
         self.right_tree.bind("<KeyPress>", self.key_browse_show)
 
         scroll_right = AutoScrollbar(right_pane, command=self.right_tree.yview)
@@ -348,10 +371,10 @@ class FileBrowser(Toplevel):
             b_filetype = Menubutton(self, textvariable=self.filetype)
             self.menu = Menu(self, tearoff=False)
             for name, exts in filetypes:
-                self.filetypes[name] = [ext.split("*")[-1].strip() for ext in  exts.split("|")]
+                self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
                 self.menu.add_radiobutton(label=name, value=name,
-                                     command=lambda: self.display_folder(self.history[self.hist_index]),
-                                     variable=self.filetype)
+                                          command=lambda: self.display_folder(self.history[self.hist_index]),
+                                          variable=self.filetype)
             b_filetype.configure(menu=self.menu)
             b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
             self.filetype.set(filetypes[0][0])
@@ -381,13 +404,14 @@ class FileBrowser(Toplevel):
         self.key_browse_entry.bind("<Return>", self.key_browse_validate)
         # list of folders/files beginning by the letters inserted in self.key_browse_entry
         self.paths_beginning_by = []
-        self.paths_beginning_by_index = 0 # current index in the list
+        self.paths_beginning_by_index = 0  # current index in the list
 
         # initialization
         if not initialdir:
             initialdir = os.path.expanduser("~")
 
-        self.history = [] # keep track of folders to be able to move backward/foreward in history
+        # keep track of folders to be able to move backward/foreward in history
+        self.history = []
         self.hist_index = -1
 
         self.display_folder(initialdir)
@@ -396,7 +420,8 @@ class FileBrowser(Toplevel):
             self.right_tree.selection_add(initialpath)
 
         # bindings
-        self.listbox.bind("<FocusOut>", lambda e: self.listbox_frame.place_forget())
+        self.listbox.bind("<FocusOut>",
+                          lambda e: self.listbox_frame.place_forget())
 
         self.entry.bind("<Down>", self.down)
         self.entry.bind("<Return>", self.validate)
@@ -446,8 +471,10 @@ class FileBrowser(Toplevel):
             if self.paths_beginning_by:
                 self.paths_beginning_by_index = 0
                 self.browse_list(0)
-                self.key_browse_entry.bind("<Up>", lambda e: self.browse_list(-1))
-                self.key_browse_entry.bind("<Down>", lambda e: self.browse_list(1))
+                self.key_browse_entry.bind("<Up>",
+                                           lambda e: self.browse_list(-1))
+                self.key_browse_entry.bind("<Down>",
+                                           lambda e: self.browse_list(1))
 
     def browse_list(self, delta):
         """ use Up and Down keys to navigate between folders/files beginning by
@@ -504,7 +531,8 @@ class FileBrowser(Toplevel):
         self.entry.icursor("end")
 
     def completion(self, action, modif, pos, prev_txt):
-        """ completion of the text in the path entry with existing folder/file names"""
+        """ completion of the text in the path entry with existing
+            folder/file names """
         if self.entry.selection_present():
             sel = self.entry.selection_get()
             txt = prev_txt.replace(sel, '')
@@ -568,7 +596,8 @@ class FileBrowser(Toplevel):
                     self.listbox_var.set(" ".join(l2))
                     self.listbox_frame.lift()
                     self.listbox.configure(height=len(l2))
-                    self.listbox_frame.place(in_=self.entry, relx=0, rely=1, anchor="nw", relwidth=1)
+                    self.listbox_frame.place(in_=self.entry, relx=0, rely=1,
+                                             anchor="nw", relwidth=1)
         return True
 
     def toggle_path_entry(self, event):
@@ -598,10 +627,10 @@ class FileBrowser(Toplevel):
         self.display_folder(parent, update_bar=False)
 
     def go_to_children(self, event):
-        l = [b.get_value() for b in self.path_bar_buttons]
-        i = l.index(self.path_var.get())
-        if i < len(l) - 1:
-            self.display_folder(l[i+1], update_bar=False)
+        lb = [b.get_value() for b in self.path_bar_buttons]
+        i = lb.index(self.path_var.get())
+        if i < len(lb) - 1:
+            self.display_folder(lb[i+1], update_bar=False)
 
     # navigate in history with Alt+Left/ Right keys
     def hist_back(self, event):
@@ -628,12 +657,14 @@ class FileBrowser(Toplevel):
                 except Exception:
                     pass
                 self.display_folder(path)
+
         def cancel(event):
             e.destroy()
             self.right_tree.delete("tmp")
+
         self.right_tree.insert("", 0, "tmp", tags=("folder",))
         e = Entry(self)
-        x,y,w,h = self.right_tree.bbox("tmp", column="#0")
+        x, y, w, h = self.right_tree.bbox("tmp", column="#0")
         e.place(in_=self.right_tree, x=x+40, y=y,
                 width=w - x - 40)
         e.bind("<Return>", ok)
@@ -645,13 +676,13 @@ class FileBrowser(Toplevel):
         """ display the content of folder in self.right_tree
             - reset (boolean): forget all the part of the history right of self.hist_index
             - update_bar (boolean): update the buttons in path bar """
-        folder = os.path.abspath(folder) # remove trailing / if any
-        if reset: # reset history
+        folder = os.path.abspath(folder)  # remove trailing / if any
+        if reset:  # reset history
             if not self.hist_index == -1:
                 self.history = self.history[:self.hist_index+1]
                 self.hist_index = -1
             self.history.append(folder)
-        if update_bar: # update path bar
+        if update_bar:  # update path bar
             self.update_path_bar(folder)
         self.path_var.set(folder)
         if self.mode != "save" and self.entry.winfo_ismapped():
@@ -659,16 +690,16 @@ class FileBrowser(Toplevel):
             self.entry.insert(0, folder)
             self.entry.selection_clear()
             self.entry.icursor("end")
-        self.right_tree.delete(*self.right_tree.get_children("")) # clear self.right_tree
+        self.right_tree.delete(*self.right_tree.get_children(""))  # clear self.right_tree
         try:
             root, dirs, files = os.walk(folder).send(None)
             # display folders first
             dirs.sort(key=lambda n: n.lower())
-            for i,d in enumerate(dirs):
+            for i, d in enumerate(dirs):
                 if d[0] == ".":
-                    tags = ("folder", str(i%2), "hidden")
+                    tags = ("folder", str(i % 2), "hidden")
                 else:
-                    tags = ("folder", str(i%2))
+                    tags = ("folder", str(i % 2))
                 p = os.path.join(root, d)
                 self.right_tree.insert("", "end", p, text=d,
                                        values=("", get_modification_date(p)), tags=tags)
@@ -676,27 +707,27 @@ class FileBrowser(Toplevel):
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
             if extension == [""]:
-                for i,f in enumerate(files):
+                for i, f in enumerate(files):
                     if f[0] == ".":
-                        tags = ("file", str(i%2), "hidden")
+                        tags = ("file", str(i % 2), "hidden")
                     else:
-                        tags = ("file", str(i%2))
+                        tags = ("file", str(i % 2))
                     p = os.path.join(root, f)
-                    self.right_tree.insert("", "end", p, text=f,
-                                           values=(get_size(p), get_modification_date(p)),
-                                           tags=tags)
+                    self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                           values=(get_size(p),
+                                                   get_modification_date(p)))
             else:
-                for i,f in enumerate(files):
+                for i, f in enumerate(files):
                     ext = os.path.splitext(f)[-1]
                     if ext in extension:
                         if f[0] == ".":
-                            tags = ("file", str(i%2), "hidden")
+                            tags = ("file", str(i % 2), "hidden")
                         else:
-                            tags = ("file", str(i%2))
+                            tags = ("file", str(i % 2))
                         p = os.path.join(root, f)
-                        self.right_tree.insert("", "end", p, text=f,
-                                               values=(get_size(p), get_modification_date(p)),
-                                               tags=tags)
+                        self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                               values=(get_size(p),
+                                                       get_modification_date(p)))
             items = self.right_tree.get_children("")
             if items:
                 self.right_tree.focus_set()
@@ -779,12 +810,12 @@ class FileBrowser(Toplevel):
         self.path_bar_buttons.append(b)
         b.grid(row=0, column=1, sticky="ns", padx=1)
         p = "/"
-        for i,folder in enumerate(folders[1:]):
+        for i, folder in enumerate(folders[1:]):
             p = os.path.join(p, folder)
             b = PathButton(self.path_bar, self.path_var, p, text=folder,
                            width=len(folder) + 1,
                            command=lambda f=p: self.display_folder(f),
-                       style="path.TButton")
+                           style="path.TButton")
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns", padx=1)
 
@@ -810,11 +841,11 @@ class FileBrowser(Toplevel):
                             rep = askyesnocancel(_("Confirmation"),
                                                  _("The file {file} already exists, do you want to replace it?").format(file=name),
                                                  icon="warning")
-                        elif os.path.isdir(name): # it's a directory
+                        elif os.path.isdir(name):  # it's a directory
                             rep = False
                             self.display_folder(name)
                         path = name
-                    else: # the path is invalid
+                    else:  # the path is invalid
                         rep = False
                 else:
                     path = os.path.join(self.history[self.hist_index], name)
@@ -824,7 +855,7 @@ class FileBrowser(Toplevel):
                             rep = askyesnocancel(_("Confirmation"),
                                                  _("The file {file} already exists, do you want to replace it?").format(file=name),
                                                  icon="warning")
-                        else: # it's a directory
+                        else:  # it's a directory
                             rep = False
                             self.display_folder(path)
                     elif not os.path.exists(os.path.dirname(path)):
@@ -840,7 +871,7 @@ class FileBrowser(Toplevel):
                     self.entry.focus_set()
         else:
             name = self.entry.get()
-            if name: # get file/folder from entry
+            if name:  # get file/folder from entry
                 if not os.path.exists(name):
                     self.entry.delete(0, "end")
                 elif self.mode == "openfile":
@@ -861,7 +892,7 @@ class FileBrowser(Toplevel):
                     else:
                         self.result = (self.history[self.hist_index],)
                     self.quit()
-                else: # mode == openfile
+                else:  # mode == openfile
                     if len(sel) == 1:
                         sel = sel[0]
                         if "folder" in self.right_tree.item(sel, "tags"):
@@ -883,14 +914,15 @@ class FileBrowser(Toplevel):
                         else:
                             self.result = sel
                             self.quit()
-                else: # mode == "opendir"
+                else:  # mode == "opendir"
                     if len(sel) == 1:
                         self.result = sel[0]
                     else:
                         self.result = self.history[self.hist_index]
                     self.quit()
 
-def askopendirname(parent, title="Ouvrir", **kwargs):
+
+def askopendirname(parent=None, title="Ouvrir", **kwargs):
     """ Return '' or the absolute path of the chosen directory.
         Options:
         - initialdir: initial folder whose content is displayed
@@ -900,10 +932,11 @@ def askopendirname(parent, title="Ouvrir", **kwargs):
     """
     dialog = FileBrowser(parent, mode="opendir", multiple_selection=False,
                          title=title, **kwargs)
-    parent.wait_window(dialog)
+    dialog.wait_window(dialog)
     return dialog.get_result()
 
-def askopendirnames(parent, title="Ouvrir", **kwargs):
+
+def askopendirnames(parent=None, title="Ouvrir", **kwargs):
     """ Return () or the tuple of the absolute paths of the chosen directories
         Options:
         - initialdir: initial folder whose content is displayed
@@ -913,13 +946,14 @@ def askopendirnames(parent, title="Ouvrir", **kwargs):
     """
     dialog = FileBrowser(parent, mode="opendir", multiple_selection=True,
                          title=title, **kwargs)
-    parent.wait_window(dialog)
+    dialog.wait_window(dialog)
     res = dialog.get_result()
-    if not res: # type consistency: always return a tuple
+    if not res:  # type consistency: always return a tuple
         res = ()
     return res
 
-def askopenfilename(parent, title="Ouvrir", **kwargs):
+
+def askopenfilename(parent=None, title="Ouvrir", **kwargs):
     """ Return '' or the absolute path of the chosen file
         Options:
         - initialdir: initial folder whose content is displayed
@@ -929,10 +963,11 @@ def askopenfilename(parent, title="Ouvrir", **kwargs):
     """
     dialog = FileBrowser(parent, mode="openfile", multiple_selection=False,
                          title=title, **kwargs)
-    parent.wait_window(dialog)
+    dialog.wait_window(dialog)
     return dialog.get_result()
 
-def askopenfilenames(parent, title="Ouvrir", **kwargs):
+
+def askopenfilenames(parent=None, title="Ouvrir", **kwargs):
     """ Return () or the tuple of the absolute paths of the chosen files
         Options:
         - initialdir: initial folder whose content is displayed
@@ -942,13 +977,14 @@ def askopenfilenames(parent, title="Ouvrir", **kwargs):
     """
     dialog = FileBrowser(parent,  mode="openfile", multiple_selection=True,
                          title=title, **kwargs)
-    parent.wait_window(dialog)
+    dialog.wait_window(dialog)
     res = dialog.get_result()
-    if not res: # type consistency: always return a tuple
+    if not res:  # type consistency: always return a tuple
         res = ()
     return res
 
-def asksaveasfilename(parent, title="Enregistrer sous", **kwargs):
+
+def asksaveasfilename(parent=None, title="Enregistrer sous", **kwargs):
     """ Return '' or the chosen absolute path (the file might not exist)
         Options:
         - initialdir: initial folder whose content is displayed
@@ -958,5 +994,5 @@ def asksaveasfilename(parent, title="Enregistrer sous", **kwargs):
           show only files of given filetype ("*" for all files)
     """
     dialog = FileBrowser(parent, mode="save", title=title, **kwargs)
-    parent.wait_window(dialog)
+    dialog.wait_window(dialog)
     return dialog.get_result()

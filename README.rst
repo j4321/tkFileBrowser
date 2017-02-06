@@ -1,23 +1,23 @@
 tkFileBrowser
 =============
 
-tkFileBrowser is an alternative to tkinter.filedialog that allows the 
-user to select files or directories. The GUI is written with tkinter but 
+tkFileBrowser is an alternative to tkinter.filedialog that allows the
+user to select files or directories. The GUI is written with tkinter but
 the look is closer to GTK and the application uses GTK bookmarks (the
-one displayed in nautilus or thunar for instance). This filebrowser 
+one displayed in nautilus or thunar for instance). This filebrowser
 supports new directory creation and filtype filtering.
 
-This module contains a general `FileBrowser` class which implements the 
+This module contains a general `FileBrowser` class which implements the
 filebrowser and the following functions, similar to the one in filedialog:
 
     * `askopenfilename` that allow the selection of a single file
-    
+
     * `askopenfilenames` that allow the selection of multiple files
-    
+
     * `askopendirname` that allow the selection a single folder
-    
+
     * `askopendirnames` that allow the selection of multiple folders
-    
+
     * `asksaveasfilename` that returns a single filename and give a warning if the file already exists
 
 Requirements
@@ -41,49 +41,51 @@ Documentation
 
 * Optional keywords arguments common to each function
 
+    - parent: parent window
+
     - title: the title of the filebrowser window
-    
-    - initialdir: directory whose content is initially displayed 
-    
+
+    - initialdir: directory whose content is initially displayed
+
     - initialfile: initially selected item (just the name, not the full path)
-    
+
     - filetypes list: [("name", "\*.ext1|\*.ext2|.."), ...]
       only the files of given filetype will be displayed,
-      e.g. to allow the user to switch between displaying only PNG or JPG 
-      pictures or dispalying all files: 
+      e.g. to allow the user to switch between displaying only PNG or JPG
+      pictures or dispalying all files:
       filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
 
 * askopendirname
 
     Allow the user to choose a single directory. The absolute path of the
-    chosen directory is returned. If the user cancels, an empty string is 
+    chosen directory is returned. If the user cancels, an empty string is
     returned.
-    
+
 * askopendirnames
 
-    Allow the user to choose multiple directories. A tuple containing the absolute 
-    path of the chosen directories is returned. If the user cancels, 
+    Allow the user to choose multiple directories. A tuple containing the absolute
+    path of the chosen directories is returned. If the user cancels,
     an empty tuple is returned.
 
 * askopenfilename
 
     Allow the user to choose a single file. The absolute path of the
-    chosen file is returned. If the user cancels, an empty string is 
+    chosen file is returned. If the user cancels, an empty string is
     returned.
 
 
 * askopenfilenames
 
-    Allow the user to choose multiple files. A tuple containing the absolute 
-    path of the chosen files is returned. If the user cancels, 
+    Allow the user to choose multiple files. A tuple containing the absolute
+    path of the chosen files is returned. If the user cancels,
     an empty tuple is returned.
 
 * asksaveasfilename
 
-    Allow the user to choose a file path. The file may not exist but 
-    the path to its directory does. If the file already exists, the user 
-    is asked to confirm its replacement. 
-    
+    Allow the user to choose a file path. The file may not exist but
+    the path to its directory does. If the file already exists, the user
+    is asked to confirm its replacement.
+
     Additional option:
         - defaultext: extension added to filename if none is given (default is none)
 
@@ -96,18 +98,18 @@ Example
     import tkinter as tk
     import tkinter.ttk as ttk
     from tkFileBrowser import askopendirnames, asksaveasfilename
-    
+
     root = tk.Tk()
 
     def c_open():
-        rep = askopendirnames(root)
+        rep = askopendirnames(parent=root)
         print(rep)
 
     def c_save():
-        rep = asksaveasfilename(root, defaultext=".png",
+        rep = asksaveasfilename(parent=root, defaultext=".png",
                                 filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
         print(rep)
-        
+
     ttk.Button(root, text="Open folders", command=c_open).pack()
     ttk.Button(root, text="Save file", command=c_save).pack()
 

@@ -12,10 +12,10 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='tkFileBrowser',
-      version='1.0.0',
+      version='1.0.1',
       description='File browser for Tkinter, alternative to tkinter.filedialog in linux with GTK bookmarks support.',
       long_description=long_description,
-      url='https://pypi.python.org/pypi/tkFileBrowser',
+      url='https://github.com/j4321/tkFileBrowser',
       author='Juliette Monsel',
       author_email='j_4321@protonmail.com',
       license='GPLv3',
@@ -35,7 +35,7 @@ setup(name='tkFileBrowser',
       ],
       keywords=['tkinter', 'filedialog', 'filebrowser'],
       py_modules=["tkFileBrowser"],
-      packages = ["tkFileBrowser"],
-	  package_data = {"tkFileBrowser" : ["images/*"]},
-	  requires = ["os", "locale", "time", "psutil", "tkinter", "math", "urllib"]
+      packages=["tkFileBrowser"],
+      package_data={"tkFileBrowser": ["images/*"]},
+      requires=["os", "locale", "time", "psutil", "tkinter", "math", "urllib"]
 )
