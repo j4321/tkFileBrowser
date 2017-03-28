@@ -220,6 +220,25 @@ class FileBrowser(Toplevel):
         self.im_drive = PhotoImage(file=IM_DRIVE, master=self)
         self.im_home = PhotoImage(file=IM_HOME, master=self)
 
+         # filetypes
+        self.filetype = StringVar(self)
+        self.filetypes = {}
+        if filetypes:
+            b_filetype = Menubutton(self, textvariable=self.filetype)
+            self.menu = Menu(self, tearoff=False)
+            for name, exts in filetypes:
+                self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
+                self.menu.add_radiobutton(label=name, value=name,
+                                          command=lambda: self.display_folder(self.history[self.hist_index]),
+                                          variable=self.filetype)
+            b_filetype.configure(menu=self.menu)
+            b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
+            self.filetype.set(filetypes[0][0])
+        else:
+            self.filetypes[""] = [""]
+            self.menu = None
+
+
         # path completion
         self.complete = self.register(self.completion)
         self.listbox_var = StringVar(self)
@@ -372,24 +391,6 @@ class FileBrowser(Toplevel):
         scroll_right = AutoScrollbar(right_pane, command=self.right_tree.yview)
         scroll_right.grid(row=0, column=1, sticky="ns")
         self.right_tree.configure(yscrollcommand=scroll_right.set)
-
-        # filetypes
-        self.filetype = StringVar(self)
-        self.filetypes = {}
-        if filetypes:
-            b_filetype = Menubutton(self, textvariable=self.filetype)
-            self.menu = Menu(self, tearoff=False)
-            for name, exts in filetypes:
-                self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
-                self.menu.add_radiobutton(label=name, value=name,
-                                          command=lambda: self.display_folder(self.history[self.hist_index]),
-                                          variable=self.filetype)
-            b_filetype.configure(menu=self.menu)
-            b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
-            self.filetype.set(filetypes[0][0])
-        else:
-            self.filetypes[""] = [""]
-            self.menu = None
 
         # buttons
         frame_buttons = Frame(self)
