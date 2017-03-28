@@ -46,7 +46,7 @@ FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
       "Modified": "Modifié", "Save": "Enregistrer", "Open": "Ouvrir",
       "Cancel": "Annuler", "Confirmation": "Confirmation",
       "The file {file} already exists, do you want to replace it?": "Le fichier {file} existe déjà, voulez-vous le remplacer ?",
-      "Shortcuts": "Raccourcis"}
+      "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous"}
 LANGUAGES = {"fr": FR, "en": EN}
 if lang == "fr":
     TR = LANGUAGES["fr"]
@@ -170,6 +170,14 @@ class FileBrowser(Toplevel):
               show only files of given filetype ("*" for all files)
         """
         Toplevel.__init__(self, parent)
+
+        # keep track of folders to be able to move backward/foreward in history
+        if initialdir:
+            self.history = [initialdir]
+        else:
+            self.history = [os.path.expanduser("~")]
+        self.hist_index = -1
+
         self.transient(parent)
         self.grab_set()
         self.protocol("WM_DELETE_WINDOW", self.quit)
@@ -238,6 +246,7 @@ class FileBrowser(Toplevel):
             self.entry.pack(side="left", fill="x", expand=True)
 
             if initialfile:
+                print(type(initialfile), initialfile, self.entry)
                 self.entry.insert(0, initialfile)
         else:
             self.multiple_selection = multiple_selection
@@ -409,10 +418,6 @@ class FileBrowser(Toplevel):
         # initialization
         if not initialdir:
             initialdir = os.path.expanduser("~")
-
-        # keep track of folders to be able to move backward/foreward in history
-        self.history = []
-        self.hist_index = -1
 
         self.display_folder(initialdir)
         initialpath = os.path.join(initialdir, initialfile)
@@ -922,7 +927,7 @@ class FileBrowser(Toplevel):
                     self.quit()
 
 
-def askopendirname(parent=None, title="Ouvrir", **kwargs):
+def askopendirname(parent=None, title=_("Open"), **kwargs):
     """ Return '' or the absolute path of the chosen directory.
         Options:
         - initialdir: initial folder whose content is displayed
@@ -936,7 +941,7 @@ def askopendirname(parent=None, title="Ouvrir", **kwargs):
     return dialog.get_result()
 
 
-def askopendirnames(parent=None, title="Ouvrir", **kwargs):
+def askopendirnames(parent=None, title=_("Open"), **kwargs):
     """ Return () or the tuple of the absolute paths of the chosen directories
         Options:
         - initialdir: initial folder whose content is displayed
@@ -953,7 +958,7 @@ def askopendirnames(parent=None, title="Ouvrir", **kwargs):
     return res
 
 
-def askopenfilename(parent=None, title="Ouvrir", **kwargs):
+def askopenfilename(parent=None, title=_("Open"), **kwargs):
     """ Return '' or the absolute path of the chosen file
         Options:
         - initialdir: initial folder whose content is displayed
@@ -967,7 +972,7 @@ def askopenfilename(parent=None, title="Ouvrir", **kwargs):
     return dialog.get_result()
 
 
-def askopenfilenames(parent=None, title="Ouvrir", **kwargs):
+def askopenfilenames(parent=None, title=_("Open"), **kwargs):
     """ Return () or the tuple of the absolute paths of the chosen files
         Options:
         - initialdir: initial folder whose content is displayed
@@ -984,7 +989,7 @@ def askopenfilenames(parent=None, title="Ouvrir", **kwargs):
     return res
 
 
-def asksaveasfilename(parent=None, title="Enregistrer sous", **kwargs):
+def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
     """ Return '' or the chosen absolute path (the file might not exist)
         Options:
         - initialdir: initial folder whose content is displayed

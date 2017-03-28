@@ -1,3 +1,4 @@
+CHANGELOG.rst
 LICENSE.txt
 MANIFEST.in
 README.rst

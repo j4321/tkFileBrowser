@@ -3,6 +3,10 @@ tkFileBrowser
 
 Alternative to filedialog for Tkinter - Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 
+* tkFileBrowser 1.0.2
+
+    Corrected bug concerning the initialfile argument
+
 * tkFileBrowser 1.0.1
 
     Set default filebrowser parent to None as for the usual filedialogs 
