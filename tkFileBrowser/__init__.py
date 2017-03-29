@@ -44,7 +44,7 @@ EN = {}
 FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
       "Name: ": "Nom : ", "Folder: ": "Dossier : ", "Size": "Taille",
       "Modified": "Modifié", "Save": "Enregistrer", "Open": "Ouvrir",
-      "Cancel": "Annuler", "Confirmation": "Confirmation",
+      "Cancel": "Annuler", "Confirmation": "Confirmation", "Today": "Aujourd'hui",
       "The file {file} already exists, do you want to replace it?": "Le fichier {file} existe déjà, voulez-vous le remplacer ?",
       "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous"}
 LANGUAGES = {"fr": FR, "en": EN}
@@ -81,9 +81,9 @@ def get_modification_date(file):
     tps = time.localtime(os.path.getmtime(file))
     date = time.strftime("%x", tps)
     if date == TODAY:
-        date = time.strftime("%H:%M", tps)
+        date = _("Today") + time.strftime(" %H:%M", tps)
     elif time.strftime("%Y", tps) == YEAR and (DAY - int(time.strftime("%j", tps))) < 7:
-        date = time.strftime("%A à %H:%M", tps)
+        date = time.strftime("%A %H:%M", tps)
     return date
 
 
@@ -220,7 +220,7 @@ class FileBrowser(Toplevel):
         self.im_drive = PhotoImage(file=IM_DRIVE, master=self)
         self.im_home = PhotoImage(file=IM_HOME, master=self)
 
-         # filetypes
+        # filetypes
         self.filetype = StringVar(self)
         self.filetypes = {}
         if filetypes:
@@ -265,7 +265,6 @@ class FileBrowser(Toplevel):
             self.entry.pack(side="left", fill="x", expand=True)
 
             if initialfile:
-                print(type(initialfile), initialfile, self.entry)
                 self.entry.insert(0, initialfile)
         else:
             self.multiple_selection = multiple_selection
@@ -359,12 +358,16 @@ class FileBrowser(Toplevel):
 
         self.right_tree = Treeview(right_pane, selectmode=selectmode,
                                    columns=("size", "date"))
-        self.right_tree.heading("#0", text=_("Name"))
-        self.right_tree.heading("size", text=_("Size"))
-        self.right_tree.heading("date", text=_("Modified"))
+
+        self.right_tree.heading("#0", text=_("Name"),
+                                command=lambda: self.sort_files_by_name(True))
+        self.right_tree.heading("size", text=_("Size"),
+                                command=lambda: self.sort_by_size(False))
+        self.right_tree.heading("date", text=_("Modified"),
+                                command=lambda: self.sort_by_date(False))
         self.right_tree.column("#0", width=250)
         self.right_tree.column("size", stretch=False, width=85)
-        self.right_tree.column("date", stretch=False, width=115)
+        self.right_tree.column("date", stretch=False, width=120)
         self.right_tree.tag_configure("0", background="white")
         self.right_tree.tag_configure("1", background="#E7E7E7")
         self.right_tree.tag_configure("folder", image=self.im_folder)
@@ -741,6 +744,49 @@ class FileBrowser(Toplevel):
         except StopIteration:
             print("err")
 
+    def sort_files_by_name(self, reverse):
+        """ Sort files and folders by (reversed) alphabetical order """
+        files = list(self.right_tree.tag_has("file"))
+        folders = list(self.right_tree.tag_has("folder"))
+        files.sort(reverse=reverse)
+        folders.sort(reverse=reverse)
+
+        for index, item in enumerate(folders):
+            self.right_tree.move(item, "", index)
+        l = len(folders)
+        for index, item in enumerate(files):
+            self.right_tree.move(item, "", index + l)
+
+        self.right_tree.heading("#0",
+                                command=lambda: self.sort_files_by_name(not reverse))
+
+    def sort_by_size(self, reverse):
+        """ Sort files by size """
+        files = list(self.right_tree.tag_has("file"))
+        nb_folders = len(self.right_tree.tag_has("folder"))
+        files.sort(reverse=reverse, key=os.path.getsize)
+
+        for index, item in enumerate(files):
+            self.right_tree.move(item, '', index + nb_folders)
+
+        self.right_tree.heading("size",
+                                command=lambda: self.sort_by_size(not reverse))
+    def sort_by_date(self, reverse):
+        """ Sort files and folders by modification date """
+        files = list(self.right_tree.tag_has("file"))
+        folders = list(self.right_tree.tag_has("folder"))
+        l = len(folders)
+        folders.sort(reverse=reverse, key=os.path.getmtime)
+        files.sort(reverse=reverse, key=os.path.getmtime)
+
+        for index, item in enumerate(folders):
+            self.right_tree.move(item, '', index)
+        for index, item in enumerate(files):
+            self.right_tree.move(item, '', index + l)
+
+        self.right_tree.heading("date",
+                                command=lambda: self.sort_by_date(not reverse))
+
     def file_selection_save(self, event):
         """ save mode only: put selected file name in name_entry """
         sel = self.right_tree.selection()
@@ -1002,3 +1048,6 @@ def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
     dialog = FileBrowser(parent, mode="save", title=title, **kwargs)
     dialog.wait_window(dialog)
     return dialog.get_result()
+
+if __name__ == '__main__':
+    askopenfilename()

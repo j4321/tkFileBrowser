@@ -3,9 +3,10 @@ tkFileBrowser
 
 Alternative to filedialog for Tkinter - Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 
-* tkFileBrowser 1.0.2
+* tkFileBrowser 1.1.0
 
     Corrected bug concerning the initialfile argument
+    Added column sorting (by name, size, modification date)
 
 * tkFileBrowser 1.0.1
 
