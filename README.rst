@@ -89,7 +89,26 @@ Documentation
     Additional option:
         - defaultext: extension added to filename if none is given (default is none)
 
+Changelog
+---------
 
+- tkFileBrowser 1.1.1
+    * Corrected bug: key browsing did not work with capital letters
+    * Added specific icons for symlinks
+    * Added handling of symlinks, the real path is returned instead of the link path
+
+- tkFileBrowser 1.1.0
+    * Corrected bug concerning the initialfile argument
+    * Added column sorting (by name, size, modification date)
+
+- tkFileBrowser 1.0.1
+    * Set default filebrowser parent to None as for the usual filedialogs
+      and messageboxes.
+
+- tkFileBrowser 1.0.0
+    * Initial version
+    
+    
 Example
 =======
 
