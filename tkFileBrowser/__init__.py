@@ -80,20 +80,10 @@ class FileBrowser(Toplevel):
         style = Style(self)
         style.theme_use("clam")
         bg = "#E7E7E7"
-        style.configure("left.Treeview", background=bg,
+        style.configure("left.Treeview", background=bg, font="TkDefaultFont",
                         fieldbackground=bg)
-        style.configure("Treeview.Heading", font="TkDefaultFont")
+        style.configure("right.Treeview.Heading", font="TkDefaultFont")
         style.configure("listbox.TFrame", background="white", relief="sunken")
-        style.layout("Treeview.Heading",
-                     [('Treeheading.cell', {'sticky': 'nswe'}),
-                      ('Treeheading.border',
-                       {'children': [('Treeheading.padding',
-                                      {'children': [('Treeheading.image',
-                                                     {'side': 'right', 'sticky': ''}),
-                                                    ('Treeheading.text',
-                                                     {'sticky': 'w'})],
-                                       'sticky': 'nswe'})],
-                        'sticky': 'nswe'})])
 
         ### images
         self.im_file = PhotoImage(file=cst.IM_FILE, master=self)
@@ -186,7 +176,7 @@ class FileBrowser(Toplevel):
         self.left_tree = Treeview(left_pane, selectmode="browse",
                                   style="left.Treeview")
         self.left_tree.column("#0", width=150)
-        self.left_tree.heading("#0", text=_("Shortcuts"))
+        self.left_tree.heading("#0", text=_("Shortcuts"), anchor="w")
         self.left_tree.grid(row=0, column=0, sticky="sewn")
         self.left_tree.bind("<<TreeviewSelect>>", self.shortcut_select)
 
@@ -241,13 +231,13 @@ class FileBrowser(Toplevel):
             selectmode = "browse"
 
         self.right_tree = Treeview(right_pane, selectmode=selectmode,
-                                   columns=("size", "date"))
+                                   style="right.Treeview", columns=("size", "date"))
 
-        self.right_tree.heading("#0", text=_("Name"),
+        self.right_tree.heading("#0", text=_("Name"), anchor="w",
                                 command=lambda: self.sort_files_by_name(True))
-        self.right_tree.heading("size", text=_("Size"),
+        self.right_tree.heading("size", text=_("Size"), anchor="w",
                                 command=lambda: self.sort_by_size(False))
-        self.right_tree.heading("date", text=_("Modified"),
+        self.right_tree.heading("date", text=_("Modified"), anchor="w",
                                 command=lambda: self.sort_by_date(False))
         self.right_tree.column("#0", width=250)
         self.right_tree.column("size", stretch=False, width=85)
