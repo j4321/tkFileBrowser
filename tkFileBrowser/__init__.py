@@ -35,6 +35,7 @@ from urllib.parse import unquote
 import tkFileBrowser.constants as cst
 from tkFileBrowser.autoscrollbar import AutoScrollbar
 from tkFileBrowser.path_button import PathButton
+from tkFileBrowser.tooltip import TooltipTreeWrapper
 _ = cst._
 
 
@@ -80,9 +81,10 @@ class FileBrowser(Toplevel):
         style = Style(self)
         style.theme_use("clam")
         bg = "#E7E7E7"
-        style.configure("left.Treeview", background=bg, font="TkDefaultFont",
+        style.configure("left.tkFileBrowser.Treeview", background=bg, font="TkDefaultFont",
                         fieldbackground=bg)
-        style.configure("right.Treeview.Heading", font="TkDefaultFont")
+        style.configure("right.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
+        style.configure("left.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
         style.configure("listbox.TFrame", background="white", relief="sunken")
 
         ### images
@@ -174,7 +176,9 @@ class FileBrowser(Toplevel):
 
         paned.add(left_pane, weight=0)
         self.left_tree = Treeview(left_pane, selectmode="browse",
-                                  style="left.Treeview")
+                                  style="left.tkFileBrowser.Treeview")
+        wrapper = TooltipTreeWrapper(self.left_tree, background='black',
+                                     foreground='white')
         self.left_tree.column("#0", width=150)
         self.left_tree.heading("#0", text=_("Shortcuts"), anchor="w")
         self.left_tree.grid(row=0, column=0, sticky="sewn")
@@ -195,9 +199,11 @@ class FileBrowser(Toplevel):
                 txt = split(m)[-1]
             self.left_tree.insert("", "end", iid=m, text=txt,
                                   image=self.im_drive)
+            wrapper.add_tooltip(m, m)
         home = expanduser("~")
         self.left_tree.insert("", "end", iid=home, image=self.im_home,
                               text=split(home)[-1])
+        wrapper.add_tooltip(home, home)
         path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
         path_bm2 = join(home, ".gtk-bookmarks")  # old location
         if exists(path_bm):
@@ -211,13 +217,13 @@ class FileBrowser(Toplevel):
         bm = [unquote(ch).replace("file://", "").split() for ch in bm]
         for l in bm:
             if len(l) == 1:
-                self.left_tree.insert("", "end", iid=l[0],
-                                      text=split(l[0])[-1],
-                                      image=self.im_folder)
+                txt = split(l[0])[-1]
             else:
-                self.left_tree.insert("", "end", iid=l[0],
-                                      text=l[1],
-                                      image=self.im_folder)
+                txt=l[1]
+            self.left_tree.insert("", "end", iid=l[0],
+                                  text=txt,
+                                  image=self.im_folder)
+            wrapper.add_tooltip(l[0], l[0])
 
         ### right pane
         right_pane = Frame(paned)
@@ -231,7 +237,7 @@ class FileBrowser(Toplevel):
             selectmode = "browse"
 
         self.right_tree = Treeview(right_pane, selectmode=selectmode,
-                                   style="right.Treeview", columns=("size", "date"))
+                                   style="right.tkFileBrowser.Treeview", columns=("size", "date"))
 
         self.right_tree.heading("#0", text=_("Name"), anchor="w",
                                 command=lambda: self.sort_files_by_name(True))

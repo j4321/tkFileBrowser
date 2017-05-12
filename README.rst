@@ -92,6 +92,11 @@ Documentation
 Changelog
 ---------
 
+- tkFileBrowser 1.1.2
+    * Added tooltips to display the full path of the shortcut if the mouse stays
+      long enough over it.
+    * Corrected bug: style of browser treeview applied to parent
+
 - tkFileBrowser 1.1.1
     * Corrected bug: key browsing did not work with capital letters
     * Added specific icons for symlinks
@@ -107,8 +112,8 @@ Changelog
 
 - tkFileBrowser 1.0.0
     * Initial version
-    
-    
+
+
 Example
 =======
 
