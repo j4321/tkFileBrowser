@@ -958,5 +958,3 @@ def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
     dialog.wait_window(dialog)
     return dialog.get_result()
 
-if __name__ == '__main__':
-    print(askopendirname())

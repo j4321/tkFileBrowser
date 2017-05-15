@@ -25,6 +25,7 @@ when the mouse stays over long enough
 from tkinter import Toplevel, Tk, TclError
 from tkinter.ttk import Label, Style, Treeview
 
+
 class Tooltip(Toplevel):
     def __init__(self, parent, **kwargs):
         Toplevel.__init__(self, parent)
@@ -105,16 +106,3 @@ class TooltipTreeWrapper:
             x = self.tree.winfo_pointerx() + 14
             y = self.tree.winfo_rooty() + self.tree.bbox(item)[1] + self.tree.bbox(item)[3]
             self.tooltip.geometry('+%i+%i' % (x, y))
-
-if __name__ == '__main__':
-
-    root = Tk()
-    tree = Treeview(root)
-    tree.pack()
-    tree.insert("", 0, text='0')
-    tree.insert("", 0, text='1')
-    tree.insert("", 0, text='2')
-    w = TooltipTreeWrapper(tree, background='black', foreground='white')
-    for item in tree.get_children(''):
-        w.add_tooltip(item, 'hello ' + item)
-    root.mainloop()
