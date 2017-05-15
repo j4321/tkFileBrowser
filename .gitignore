@@ -2,4 +2,5 @@ build
 dist
 __pycache__
 AUR
-.spyproject/
+.spyproject
+tkFileBrowser.egg-info
