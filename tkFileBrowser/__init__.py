@@ -83,9 +83,11 @@ class FileBrowser(Toplevel):
         bg = "#E7E7E7"
         style.configure("left.tkFileBrowser.Treeview", background=bg, font="TkDefaultFont",
                         fieldbackground=bg)
+        style.configure("right.tkFileBrowser.Treeview", font="TkDefaultFont")
         style.configure("right.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
         style.configure("left.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
         style.configure("listbox.TFrame", background="white", relief="sunken")
+        self.configure(background=style.lookup("TFrame",  "background"))
 
         ### images
         self.im_file = PhotoImage(file=cst.IM_FILE, master=self)

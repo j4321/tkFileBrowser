@@ -22,6 +22,7 @@ class PathButton(Button):
         self.style.configure("%s.TButton" % value, padding=2)
         self.selected_bg = self.style.lookup("TButton", "background",
                                              ("pressed",))
+        self.normal_bg = self.style.lookup("TButton", "background")
         self.configure(style="%s.TButton" % value)
         add_trace(self.variable, "write", self.var_change)
         self.bind("<Button-1>", self.on_press)
@@ -42,4 +43,4 @@ class PathButton(Button):
         else:
             self.style.configure("%s.TButton" % self.value,
                                  font="TkDefaultFont",
-                                 background="lightgray")
+                                 background=self.normal_bg)
