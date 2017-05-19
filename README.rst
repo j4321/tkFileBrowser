@@ -92,6 +92,10 @@ Documentation
 Changelog
 ---------
 
+- tkFileBrowser 1.1.3
+    * Corrected bug: grey/white color alternance not respected after sorting
+    * Added __main__.py with an example
+
 - tkFileBrowser 1.1.2
     * Added tooltips to display the full path of the shortcut if the mouse stays
       long enough over it.
