@@ -77,14 +77,23 @@ class FileBrowser(Toplevel):
         ### style
         style = Style(self)
         style.theme_use("clam")
-        bg = "#E7E7E7"
-        style.configure("left.tkFileBrowser.Treeview", background=bg, font="TkDefaultFont",
-                        fieldbackground=bg)
+        bg = style.lookup("TFrame", "background")
         style.configure("right.tkFileBrowser.Treeview", font="TkDefaultFont")
         style.configure("right.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
         style.configure("left.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
         style.configure("listbox.TFrame", background="white", relief="sunken")
-        self.configure(background=style.lookup("TFrame",  "background"))
+        field_bg = style.lookup("TEntry", "fieldbackground", default='white')
+        fg = style.lookup('TLabel', 'foreground', default='black')
+        active_bg = style.lookup('TButton', 'background', ('active',))
+        active_fg = style.lookup('TButton', 'foreground', ('active',))
+        disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
+        sel_bg = style.lookup('Treeview', 'background', ('selected',))
+        sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
+        style.configure("left.tkFileBrowser.Treeview", background=active_bg,
+                        font="TkDefaultFont",
+                        fieldbackground=active_bg)
+        self.configure(background=bg)
+
 
         ### images
         self.im_file = PhotoImage(file=cst.IM_FILE, master=self)
@@ -100,7 +109,13 @@ class FileBrowser(Toplevel):
         self.filetypes = {}
         if filetypes:
             b_filetype = Menubutton(self, textvariable=self.filetype)
-            self.menu = Menu(self, tearoff=False)
+            self.menu = Menu(self, tearoff=False, foreground=fg, background=field_bg,
+                             disabledforeground=disabled_fg,
+                             activeforeground=active_fg,
+                             selectcolor=fg,
+                             activeborderwidth=0,
+                             borderwidth=0,
+                             activebackground=active_bg)
             for name, exts in filetypes:
                 self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
                 self.menu.add_radiobutton(label=name, value=name,
@@ -122,9 +137,10 @@ class FileBrowser(Toplevel):
                                listvariable=self.listbox_var,
                                highlightthickness=0,
                                borderwidth=0,
-                               selectbackground=style.lookup("Treeview",
-                                                             "background",
-                                                             ("selected",)))
+                               background=field_bg,
+                               foreground=fg,
+                               selectforeground=sel_fg,
+                               selectbackground=sel_bg)
         self.listbox.pack(expand=True, fill="x")
 
         ### file name
@@ -247,8 +263,8 @@ class FileBrowser(Toplevel):
         self.right_tree.column("#0", width=250)
         self.right_tree.column("size", stretch=False, width=85)
         self.right_tree.column("date", stretch=False, width=120)
-        self.right_tree.tag_configure("0", background="white")
-        self.right_tree.tag_configure("1", background="#E7E7E7")
+        self.right_tree.tag_configure("0", background=field_bg)
+        self.right_tree.tag_configure("1", background=active_bg)
         self.right_tree.tag_configure("folder", image=self.im_folder)
         self.right_tree.tag_configure("file", image=self.im_file)
         self.right_tree.tag_configure("folder_link", image=self.im_folder_link)
