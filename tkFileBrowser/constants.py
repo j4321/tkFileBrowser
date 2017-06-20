@@ -49,6 +49,8 @@ IM_NEW = os.path.join(PATH, "images", "new_folder.png")
 IM_FILE = os.path.join(PATH, "images", "file.png")
 IM_FILE_LINK = os.path.join(PATH, "images", "file_link.png")
 IM_DRIVE = os.path.join(PATH, "images", "drive.png")
+IM_RECENT = os.path.join(PATH, "images", "recent.png")
+IM_RECENT_24 = os.path.join(PATH, "images", "recent_24.png")
 
 
 ### translation
@@ -60,7 +62,8 @@ FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
       "Modified": "Modifié", "Save": "Enregistrer", "Open": "Ouvrir",
       "Cancel": "Annuler", "Confirmation": "Confirmation", "Today": "Aujourd'hui",
       "The file {file} already exists, do you want to replace it?": "Le fichier {file} existe déjà, voulez-vous le remplacer ?",
-      "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous"}
+      "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous",
+      "Recent": "Récents", "Recently used": "Récemment utilisés"}
 LANGUAGES = {"fr": FR, "en": EN}
 if lang == "fr":
     TR = LANGUAGES["fr"]

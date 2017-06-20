@@ -55,6 +55,12 @@ Documentation
       pictures or dispalying all files:
       filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
 
+    - okbuttontext: text displayed on the validate button, if None, the
+      default text corresponding to the mode is used (either "Open" or "Save")
+
+    - cancelbuttontext: text displayed on the button that cancels the
+      selection.
+
 * askopendirname
 
     Allow the user to choose a single directory. The absolute path of the
@@ -93,22 +99,24 @@ Changelog
 ---------
 
 - tkFileBrowser 1.1.3
-    * Corrected bug: grey/white color alternance not respected after sorting
-    * Added __main__.py with an example
+    * Correct bug: grey/white color alternance not respected after sorting
+    * Add __main__.py with an example
+    * Add recent files shortcut
+    * Make the text of the validate and cancel buttons customizable
 
 - tkFileBrowser 1.1.2
-    * Added tooltips to display the full path of the shortcut if the mouse stays
+    * Add tooltips to display the full path of the shortcut if the mouse stays
       long enough over it.
-    * Corrected bug: style of browser treeview applied to parent
+    * Correct bug: style of browser treeview applied to parent
 
 - tkFileBrowser 1.1.1
-    * Corrected bug: key browsing did not work with capital letters
-    * Added specific icons for symlinks
-    * Added handling of symlinks, the real path is returned instead of the link path
+    * Correct bug: key browsing did not work with capital letters
+    * Add specific icons for symlinks
+    * Add handling of symlinks, the real path is returned instead of the link path
 
 - tkFileBrowser 1.1.0
-    * Corrected bug concerning the initialfile argument
-    * Added column sorting (by name, size, modification date)
+    * Correct bug concerning the initialfile argument
+    * Add column sorting (by name, size, modification date)
 
 - tkFileBrowser 1.0.1
     * Set default filebrowser parent to None as for the usual filedialogs
