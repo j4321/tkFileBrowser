@@ -34,6 +34,13 @@ from math import log10
 
 PATH = os.path.dirname(__file__)
 
+LOCAL_PATH = os.path.join(os.path.expanduser('~'), '.config', 'tkfilebrowser')
+
+if not os.path.exists(LOCAL_PATH):
+    os.mkdir(LOCAL_PATH)
+
+RECENT_FILES = os.path.join(LOCAL_PATH, 'recent_files')
+
 ### images
 IM_HOME = os.path.join(PATH, "images", "home.png")
 IM_FOLDER = os.path.join(PATH, "images", "dossier.png")
