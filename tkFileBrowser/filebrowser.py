@@ -770,6 +770,7 @@ class FileBrowser(Toplevel):
             root, dirs, files = walk(folder).send(None)
             # display folders first
             dirs.sort(key=lambda n: n.lower())
+            i = 0
             for i, d in enumerate(dirs):
                 p = join(root, d)
                 if islink(p):
