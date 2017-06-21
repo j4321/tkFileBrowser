@@ -36,6 +36,7 @@ def askopendirname(parent=None, title=_("Open"), **kwargs):
           default text corresponding to the mode is used (either Open or Save)
         - cancelbuttontext: text displayed on the button that cancels the
           selection.
+        - foldercreation: enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="opendir", multiple_selection=False,
                          title=title, **kwargs)
@@ -55,6 +56,7 @@ def askopendirnames(parent=None, title=_("Open"), **kwargs):
           default text corresponding to the mode is used (either Open or Save)
         - cancelbuttontext: text displayed on the button that cancels the
           selection.
+        - foldercreation: enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="opendir", multiple_selection=True,
                          title=title, **kwargs)
@@ -76,6 +78,7 @@ def askopenfilename(parent=None, title=_("Open"), **kwargs):
           default text corresponding to the mode is used (either Open or Save)
         - cancelbuttontext: text displayed on the button that cancels the
           selection.
+        - foldercreation: enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="openfile", multiple_selection=False,
                          title=title, **kwargs)
@@ -94,6 +97,7 @@ def askopenfilenames(parent=None, title=_("Open"), **kwargs):
           default text corresponding to the mode is used (either Open or Save)
         - cancelbuttontext: text displayed on the button that cancels the
           selection.
+        - foldercreation: enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent,  mode="openfile", multiple_selection=True,
                          title=title, **kwargs)
@@ -116,6 +120,7 @@ def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
           default text corresponding to the mode is used (either Open or Save)
         - cancelbuttontext: text displayed on the button that cancels the
           selection.
+        - foldercreation: enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="save", title=title, **kwargs)
     dialog.wait_window(dialog)

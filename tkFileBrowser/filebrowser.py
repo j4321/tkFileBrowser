@@ -41,7 +41,8 @@ class FileBrowser(Toplevel):
     """ Filebrowser dialog class """
     def __init__(self, parent, initialdir="", initialfile="", mode="openfile",
                  multiple_selection=False, defaultext="", title="Filebrowser",
-                 filetypes=[], okbuttontext=None, cancelbuttontext=_("Cancel")):
+                 filetypes=[], okbuttontext=None, cancelbuttontext=_("Cancel"),
+                 foldercreation=True):
         """
             Create a filebrowser dialog.
             - initialdir: initial folder whose content is displayed
@@ -55,6 +56,7 @@ class FileBrowser(Toplevel):
               default text corresponding to the mode is used (either Open or Save)
             - cancelbuttontext: text displayed on the button that cancels the
               selection.
+            - foldercreation: enable the user to create new folders if True (default)
         """
         Toplevel.__init__(self, parent)
 
@@ -75,6 +77,7 @@ class FileBrowser(Toplevel):
 
         self.mode = mode
         self.result = ""
+        self.foldercreation = foldercreation
 
         # hidden files/folders visibility
         self.hide = False
@@ -89,6 +92,7 @@ class FileBrowser(Toplevel):
         style.configure("left.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
         style.configure("listbox.TFrame", background="white", relief="sunken")
         field_bg = style.lookup("TEntry", "fieldbackground", default='white')
+        tree_field_bg = style.lookup("Treeview", "fieldbackground", default='white')
         fg = style.lookup('TLabel', 'foreground', default='black')
         active_bg = style.lookup('TButton', 'background', ('active',))
         active_fg = style.lookup('TButton', 'foreground', ('active',))
@@ -182,8 +186,10 @@ class FileBrowser(Toplevel):
         self.path_bar = Frame(frame_bar)
         self.path_bar.grid(row=0, column=0, sticky="ew")
         self.path_bar_buttons = []
-        Button(frame_bar, image=self.im_new,
-               command=self.create_folder).grid(row=0, column=1, sticky="e")
+        self.b_new_folder = Button(frame_bar, image=self.im_new,
+                                   command=self.create_folder)
+        if self.foldercreation:
+            self.b_new_folder.grid(row=0, column=1, sticky="e")
         if mode == "save":
             Label(self.path_bar, text=_("Folder: ")).grid(row=0, column=0)
         else:
@@ -270,7 +276,8 @@ class FileBrowser(Toplevel):
             selectmode = "browse"
 
         self.right_tree = Treeview(right_pane, selectmode=selectmode,
-                                   style="right.tkFileBrowser.Treeview", columns=("size", "date"))
+                                   style="right.tkFileBrowser.Treeview",
+                                   columns=("size", "date"))
 
         self.right_tree.heading("#0", text=_("Name"), anchor="w",
                                 command=lambda: self._sort_files_by_name(True))
@@ -281,7 +288,7 @@ class FileBrowser(Toplevel):
         self.right_tree.column("#0", width=250)
         self.right_tree.column("size", stretch=False, width=85)
         self.right_tree.column("date", stretch=False, width=120)
-        self.right_tree.tag_configure("0", background=field_bg)
+        self.right_tree.tag_configure("0", background=tree_field_bg)
         self.right_tree.tag_configure("1", background=active_bg)
         self.right_tree.tag_configure("folder", image=self.im_folder)
         self.right_tree.tag_configure("file", image=self.im_file)
@@ -518,6 +525,8 @@ class FileBrowser(Toplevel):
     def _display_recents(self):
         """ display recently used files/folders """
         self.path_bar.grid_remove()
+        if self.foldercreation:
+            self.b_new_folder.grid_remove()
         extension = self.filetypes[self.filetype.get()]
         files = self._recent_files.get()
         self.right_tree.delete(*self.right_tree.get_children(""))
@@ -741,6 +750,8 @@ class FileBrowser(Toplevel):
         folder = abspath(folder)  # remove trailing / if any
         if not self.path_bar.winfo_ismapped():
             self.path_bar.grid()
+            if self.foldercreation:
+                self.b_new_folder.grid()
         if reset:  # reset history
             if not self._hist_index == -1:
                 self.history = self.history[:self._hist_index+1]
@@ -771,15 +782,16 @@ class FileBrowser(Toplevel):
                 self.right_tree.insert("", "end", p, text=d, tags=tags,
                                        values=("", cst.get_modification_date(p)))
             # display files
+            i += 1
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
             if extension == [""]:
-                for i, f in enumerate(files):
+                for j, f in enumerate(files):
                     p = join(root, f)
                     if islink(p):
-                        tags = ("file_link", str(i % 2))
+                        tags = ("file_link", str((i + j) % 2))
                     else:
-                        tags = ("file", str(i % 2))
+                        tags = ("file", str((i + j) % 2))
                     if f[0] == ".":
                         tags = tags + ("hidden",)
 
@@ -787,7 +799,7 @@ class FileBrowser(Toplevel):
                                            values=(cst.get_size(p),
                                                    cst.get_modification_date(p)))
             else:
-                for i, f in enumerate(files):
+                for f in files:
                     ext = splitext(f)[-1]
                     if ext in extension:
                         p = join(root, f)
@@ -797,6 +809,7 @@ class FileBrowser(Toplevel):
                             tags = ("file", str(i % 2))
                         if f[0] == ".":
                             tags = tags + ("hidden",)
+                        i += 1
 
                         self.right_tree.insert("", "end", p, text=f, tags=tags,
                                                values=(cst.get_size(p),

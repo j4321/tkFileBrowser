@@ -61,6 +61,8 @@ Documentation
     - cancelbuttontext: text displayed on the button that cancels the
       selection.
 
+    - foldercreation: enable the user to create new folders if True (default)
+
 * askopendirname
 
     Allow the user to choose a single directory. The absolute path of the
@@ -78,7 +80,6 @@ Documentation
     Allow the user to choose a single file. The absolute path of the
     chosen file is returned. If the user cancels, an empty string is
     returned.
-
 
 * askopenfilenames
 
@@ -99,10 +100,11 @@ Changelog
 ---------
 
 - tkFileBrowser 1.1.3
-    * Correct bug: grey/white color alternance not respected after sorting
+    * Correct bug: grey/white color alternance not always respected
     * Add __main__.py with an example
     * Add recent files shortcut
     * Make the text of the validate and cancel buttons customizable
+    * Add possibility to disable new folder creation
 
 - tkFileBrowser 1.1.2
     * Add tooltips to display the full path of the shortcut if the mouse stays
