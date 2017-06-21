@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
@@ -20,14 +19,13 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-Scrollbar that hides automatically when not needed
+ttk.Scrollbar that hides automatically when not needed
 """
 
 
-from tkinter import TclError
-from tkinter.ttk import Scrollbar
+from tkFileBrowser.constants import tk, ttk
 
-class AutoScrollbar(Scrollbar):
+class AutoScrollbar(ttk.Scrollbar):
     """ a scrollbar that hides itself if it's not needed.  only
         works if you use the grid geometry manager. """
 
@@ -36,10 +34,10 @@ class AutoScrollbar(Scrollbar):
             self.grid_remove()
         else:
             self.grid()
-        Scrollbar.set(self, lo, hi)
+        ttk.Scrollbar.set(self, lo, hi)
 
     def pack(self, **kw):
-        raise TclError("cannot use pack with this widget")
+        raise tk.TclError("cannot use pack with this widget")
 
     def place(self, **kw):
-        raise TclError("cannot use place with this widget")
+        raise tk.TclError("cannot use place with this widget")

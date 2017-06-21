@@ -1,5 +1,4 @@
-import tkinter as tk
-import tkinter.ttk as ttk
+from tkFileBrowser.constants import tk, ttk
 from tkFileBrowser import askopendirnames, asksaveasfilename
 
 root = tk.Tk()

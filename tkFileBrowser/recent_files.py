@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
@@ -27,7 +26,6 @@ Recent files management
 """
 
 
-
 class RecentFiles:
     """ Recent files manager """
     def __init__(self, filename, nbmax=30):
@@ -44,6 +42,7 @@ class RecentFiles:
         return self._files
 
     def add(self, file):
+        print(file, self._files, file in self._files)
         if not file in self._files:
             self._files.insert(0, file)
             if len(self._files) > self.nbmax:

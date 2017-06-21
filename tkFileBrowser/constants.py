@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
@@ -32,6 +31,20 @@ import time
 import os
 from math import log10
 
+try:
+    import tkinter as tk
+    from tkinter import ttk
+    from tkinter.messagebox import askyesnocancel
+    from urllib.parse import unquote
+except ImportError:
+    import Tkinter as tk
+    import ttk
+    from tkMessageBox import askyesnocancel
+    from urllib import unquote
+    import sys
+    reload(sys)  
+    sys.setdefaultencoding('utf8')
+    
 PATH = os.path.dirname(__file__)
 
 LOCAL_PATH = os.path.join(os.path.expanduser('~'), '.config', 'tkfilebrowser')
@@ -59,8 +72,9 @@ lang = locale.getdefaultlocale()[0][:2]
 EN = {}
 FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
       "Name: ": "Nom : ", "Folder: ": "Dossier : ", "Size": "Taille",
-      "Modified": "Modifié", "Save": "Enregistrer", "Open": "Ouvrir",
-      "Cancel": "Annuler", "Confirmation": "Confirmation", "Today": "Aujourd'hui",
+      "Name": "Nom", "Modified": "Modifié", "Save": "Enregistrer", 
+      "Open": "Ouvrir", "Cancel": "Annuler", 
+      "Today": "Aujourd'hui", "Confirmation": "Confirmation",
       "The file {file} already exists, do you want to replace it?": "Le fichier {file} existe déjà, voulez-vous le remplacer ?",
       "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous",
       "Recent": "Récents", "Recently used": "Récemment utilisés"}
