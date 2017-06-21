@@ -887,13 +887,10 @@ class FileBrowser(Toplevel):
         self.unbind_all("<Button-1>")
         self.destroy()
         if self.result:
-            print(1)
             if isinstance(self.result, tuple):
-                print(2)
                 for path in self.result:
                     self._recent_files.add(path)
             else:
-                print(3)
                 self._recent_files.add(self.result)
 
     def validate(self, event=None):
