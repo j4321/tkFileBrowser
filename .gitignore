@@ -4,3 +4,4 @@ __pycache__
 AUR
 .spyproject
 tkFileBrowser.egg-info
+*.pyc

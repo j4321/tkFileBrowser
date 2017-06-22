@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
@@ -25,7 +24,6 @@ Copyright 2007-2013 elementary LLC.
 
 Recent files management
 """
-
 
 
 class RecentFiles:

@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
@@ -22,13 +21,13 @@ Tooltip and TooltipTreeWrapper classes to display the full path of a shortcut
 when the mouse stays over long enough
 """
 
-from tkinter import Toplevel, Tk, TclError
-from tkinter.ttk import Label, Style, Treeview
+
+from tkFileBrowser.constants import tk, ttk
 
 
-class Tooltip(Toplevel):
+class Tooltip(tk.Toplevel):
     def __init__(self, parent, **kwargs):
-        Toplevel.__init__(self, parent)
+        tk.Toplevel.__init__(self, parent)
         if 'title' in kwargs:
             self.title(kwargs['title'])
         self.transient(parent)
@@ -38,7 +37,7 @@ class Tooltip(Toplevel):
         self.configure(padx=kwargs.get('padx', 4))
         self.configure(pady=kwargs.get('pady', 4))
 
-        self.style = Style(self)
+        self.style = ttk.Style(self)
         if 'background' in kwargs:
             bg = kwargs['background']
             self.configure(background=bg)
@@ -47,7 +46,7 @@ class Tooltip(Toplevel):
             self.style.configure('tooltip.TLabel', foreground=kwargs['foreground'])
 
         self.im = kwargs.get('image', None)
-        self.label = Label(self, text=kwargs.get('text', ''), image=self.im,
+        self.label = ttk.Label(self, text=kwargs.get('text', ''), image=self.im,
                            style='tooltip.TLabel',
                            compound=kwargs.get('compound', 'left'))
         self.label.pack()
@@ -64,7 +63,7 @@ class Tooltip(Toplevel):
             self.style.configure('tooltip.TLabel', foreground=fg)
         if 'alpha' in kwargs:
             self.attributes('-alpha', kwargs.pop('alpha'))
-        Toplevel.configure(self, **kwargs)
+        tk.Toplevel.configure(self, **kwargs)
 
 
 class TooltipTreeWrapper:
