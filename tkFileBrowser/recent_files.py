@@ -42,7 +42,6 @@ class RecentFiles:
         return self._files
 
     def add(self, file):
-        print(file, self._files, file in self._files)
         if not file in self._files:
             self._files.insert(0, file)
             if len(self._files) > self.nbmax:

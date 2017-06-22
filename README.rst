@@ -100,24 +100,26 @@ Changelog
 ---------
 
 - tkFileBrowser 1.1.3
-    * Correct bug: grey/white color alternance not always respected
+    * Fix bug: grey/white color alternance not always respected
     * Add __main__.py with an example
     * Add recent files shortcut
     * Make the text of the validate and cancel buttons customizable
     * Add possibility to disable new folder creation
+    * Add python 2 support
+    * Add horizontal scrollbar
 
 - tkFileBrowser 1.1.2
     * Add tooltips to display the full path of the shortcut if the mouse stays
       long enough over it.
-    * Correct bug: style of browser treeview applied to parent
+    * Fix bug: style of browser treeview applied to parent
 
 - tkFileBrowser 1.1.1
-    * Correct bug: key browsing did not work with capital letters
+    * Fix bug: key browsing did not work with capital letters
     * Add specific icons for symlinks
     * Add handling of symlinks, the real path is returned instead of the link path
 
 - tkFileBrowser 1.1.0
-    * Correct bug concerning the initialfile argument
+    * Fix bug concerning the initialfile argument
     * Add column sorting (by name, size, modification date)
 
 - tkFileBrowser 1.0.1
