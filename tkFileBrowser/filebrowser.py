@@ -581,8 +581,11 @@ class FileBrowser(tk.Toplevel):
                 d, f = split(p)
                 tags = [str(i % 2)]
                 vals = ()
-                if f[0] == ".":
-                    tags.append("hidden")
+                if f:
+                    if f[0] == ".":
+                        tags.append("hidden")
+                else:
+                    f = "/"
                 if isdir(p):
                     if islink(p):
                         tags.append("folder_link")
@@ -599,8 +602,11 @@ class FileBrowser(tk.Toplevel):
                 d, f = split(p)
                 tags = [str(i % 2)]
                 vals = ()
-                if f[0] == ".":
-                    tags.append("hidden")
+                if f:
+                    if f[0] == ".":
+                        tags.append("hidden")
+                else:
+                    f = "/"
                 if islink(p):
                     if isfile(p):
                         ext = splitext(f)[-1]
