@@ -14,7 +14,6 @@ Changelog
     * Add python 2 support
     * Add horizontal scrollbar
 
-
 - tkFileBrowser 1.1.2
     * Add tooltips to display the full path of the shortcut if the mouse stays
       long enough over it.

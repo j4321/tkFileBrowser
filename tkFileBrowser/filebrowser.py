@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
