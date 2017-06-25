@@ -322,7 +322,6 @@ class FileBrowser(tk.Toplevel):
         self.right_tree.bind("<Double-1>", self._select)
         self.right_tree.bind("<Return>", self._select)
         self.right_tree.bind("<Left>", self._go_left)
-        self.right_tree.bind("<Control-Shift-N>", self.create_folder)
 
         if mode == "opendir":
             self.right_tree.tag_configure("file", foreground="gray")
@@ -361,7 +360,7 @@ class FileBrowser(tk.Toplevel):
         ### key browsing entry
         self.key_browse_var = tk.StringVar(self)
         self.key_browse_entry = ttk.Entry(self, textvariable=self.key_browse_var,
-                                      width=10)
+                                          width=10)
         cst.add_trace(self.key_browse_var, "write", self._key_browse)
         self.key_browse_entry.bind("<FocusOut>", self._key_browse_hide)
         self.key_browse_entry.bind("<Escape>", self._key_browse_hide)
@@ -397,6 +396,8 @@ class FileBrowser(tk.Toplevel):
 
         if mode != "save":
             self.bind("<Control-l>", self.toggle_path_entry)
+        if self.foldercreation:
+            self.right_tree.bind("<Control-Shift-N>", self.create_folder)
 
         self.update_idletasks()
         self.lift()
@@ -413,13 +414,14 @@ class FileBrowser(tk.Toplevel):
         """ show key browsing entry """
         if event.char.isalnum() or event.char in [".", "_", "(", "-", "*"]:
             self.key_browse_entry.place(in_=self.right_tree, relx=0, rely=1,
-                                        y=4, x=20, anchor="nw")
+                                        y=4, x=1, anchor="nw")
             self.key_browse_entry.focus_set()
             self.key_browse_entry.insert(0, event.char)
 
     def _key_browse_validate(self, event):
         """ hide key browsing entry and validate selection """
         self._key_browse_hide(event)
+        self.right_tree.focus_set()
         self.validate()
 
     def _key_browse(self, *args):
@@ -428,7 +430,11 @@ class FileBrowser(tk.Toplevel):
         self.key_browse_entry.unbind("<Down>")
         deb = self.key_browse_entry.get().lower()
         if deb:
-            children = self.right_tree.get_children("")
+            if self.mode == 'opendir':
+                children = list(self.right_tree.tag_has("folder"))
+                children.extend(self.right_tree.tag_has("folder_link"))
+            else:
+                children = self.right_tree.get_children("")
             self.paths_beginning_by = [i for i in children if split(i)[-1][:len(deb)].lower() == deb]
             sel = self.right_tree.selection()
             if sel:
@@ -523,7 +529,11 @@ class FileBrowser(tk.Toplevel):
             tags = self.right_tree.item(sel, "tags")
             if ("file" in tags) or ("file_link" in tags):
                 self.entry.delete(0, "end")
-                self.entry.insert(0, self.right_tree.item(sel, "text"))
+                if self.path_bar.winfo_ismapped():
+                    self.entry.insert(0, self.right_tree.item(sel, "text"))
+                else:
+                    # recently used files
+                    self.entry.insert(0, sel)
 
     def _file_selection_openfile(self, event):
         """ put selected file name in path_entry if visible """
@@ -924,15 +934,16 @@ class FileBrowser(tk.Toplevel):
             e.destroy()
             self.right_tree.delete("tmp")
 
-        self.right_tree.insert("", 0, "tmp", tags=("folder",))
-        e = ttk.Entry(self)
-        x, y, w, h = self.right_tree.bbox("tmp", column="#0")
-        e.place(in_=self.right_tree, x=x+40, y=y,
-                width=w - x - 40)
-        e.bind("<Return>", ok)
-        e.bind("<Escape>", cancel)
-        e.bind("<FocusOut>", cancel)
-        e.focus_set()
+        if self.path_bar.winfo_ismapped():
+            self.right_tree.insert("", 0, "tmp", tags=("folder",))
+            e = ttk.Entry(self)
+            x, y, w, h = self.right_tree.bbox("tmp", column="#0")
+            e.place(in_=self.right_tree, x=x + 4, y=y,
+                    width=w - x - 4)
+            e.bind("<Return>", ok)
+            e.bind("<Escape>", cancel)
+            e.bind("<FocusOut>", cancel)
+            e.focus_set()
 
     def move_item(self, item, index):
         self.right_tree.move(item, "", index)

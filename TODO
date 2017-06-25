@@ -1,0 +1,5 @@
+FIXME:
+- Error in new folder when right_tree not selected/focused
+- New folder name entry position (more on the left) - DONE
+- Better gestion of extensions (set default extension to selected ext in list)
+- Improve look of filetype selection -> Listbox in Toplevel? Combobox?

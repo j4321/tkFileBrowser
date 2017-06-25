@@ -12,6 +12,8 @@ def c_save():
                             filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
     print(rep)
 
+s = ttk.Style(root)
+s.theme_use('clam')
 ttk.Button(root, text="Open folders", command=c_open).pack()
 ttk.Button(root, text="Save file", command=c_save).pack()
 
