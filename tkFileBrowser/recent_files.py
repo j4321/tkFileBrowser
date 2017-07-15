@@ -27,11 +27,18 @@ Recent files management
 
 
 class RecentFiles:
-    """ Recent files manager """
+    """Recent files manager."""
     def __init__(self, filename, nbmax=30):
+        """
+        Create a recent file manager.
+
+        Options:
+            * filename: file where the recent file list is read/saved
+            * nbmax: maximum number of recent files to remember
+        """
         self._filename = filename
         self.nbmax = nbmax
-        self._files = [] # most recent files first
+        self._files = []  # most recent files first
         try:
             with open(filename) as file:
                 self._files = file.read().split()
@@ -39,10 +46,12 @@ class RecentFiles:
             pass
 
     def get(self):
+        """Return recent file list."""
         return self._files
 
     def add(self, file):
-        if not file in self._files:
+        """Add file to recent files."""
+        if file not in self._files:
             self._files.insert(0, file)
             if len(self._files) > self.nbmax:
                 del(self._files[-1])

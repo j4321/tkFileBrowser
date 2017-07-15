@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+# *** coding: utf-8 -*-
 """
 tkFileBrowser - Alternative to filedialog for Tkinter
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
@@ -22,14 +22,26 @@ when the mouse stays over long enough
 """
 
 
-from tkFileBrowser.constants import tk, ttk
+from .constants import tk, ttk
 
 
 class Tooltip(tk.Toplevel):
+    """Tooltip to display when the mouse stays long enough on an item."""
     def __init__(self, parent, **kwargs):
+        """
+        Create Tooltip.
+
+        Options:
+            * parent: parent window
+            * background: background color
+            * foreground: foreground color
+            * image: PhotoImage/BitmapImage to display in the tooltip
+            * text: text (str) to display in the tooltip
+            * compound: relative orientation of the graphic relative to the text
+            * alpha: opacity of the tooltip (0 for transparent, 1 for opaque),
+                     the text is affected too, so 0 would mean an invisible tooltip
+        """
         tk.Toplevel.__init__(self, parent)
-        if 'title' in kwargs:
-            self.title(kwargs['title'])
         self.transient(parent)
         self.attributes('-type', 'tooltip')
         self.attributes('-alpha', kwargs.get('alpha', 0.8))
@@ -47,8 +59,8 @@ class Tooltip(tk.Toplevel):
 
         self.im = kwargs.get('image', None)
         self.label = ttk.Label(self, text=kwargs.get('text', ''), image=self.im,
-                           style='tooltip.TLabel',
-                           compound=kwargs.get('compound', 'left'))
+                               style='tooltip.TLabel',
+                               compound=kwargs.get('compound', 'left'))
         self.label.pack()
 
     def configure(self, **kwargs):
@@ -67,8 +79,19 @@ class Tooltip(tk.Toplevel):
 
 
 class TooltipTreeWrapper:
-
+    """Tooltip wrapper for a Treeview."""
     def __init__(self, tree, delay=1500, **kwargs):
+        """
+        Create a Tooltip wrapper for the Treeview tree.
+
+        This wrapper enables the creation of tooltips for tree's items with all
+        the bindings to make them appear/disappear.
+
+        Options:
+            * tree: wrapped Treeview
+            * delay: hover delay before displaying the tooltip (ms)
+            * all keyword arguments of a Tooltip
+        """
         self.tree = tree
         self.delay = delay
         self._timer_id = ''
@@ -80,11 +103,12 @@ class TooltipTreeWrapper:
         self.tree.bind('<Motion>', self._on_motion)
         self.tree.bind('<Leave>', lambda e: self.tree.after_cancel(self._timer_id))
 
-
     def add_tooltip(self, item, text):
+        """Add a tooltip with given text to the item."""
         self.tooltip_text[item] = text
 
     def _on_motion(self, event):
+        """Withdraw tooltip on mouse motion and cancel its appearance."""
         if self.tooltip.winfo_ismapped():
             x, y = self.tree.winfo_pointerxy()
             if self.tree.winfo_containing(x, y) != self.tooltip:
@@ -96,6 +120,7 @@ class TooltipTreeWrapper:
             self._timer_id = self.tree.after(self.delay, self.display_tooltip)
 
     def display_tooltip(self):
+        """Display the tooltip corresponding to the hovered item."""
         item = self.tree.identify_row(self.tree.winfo_pointery() - self.tree.winfo_rooty())
         text = self.tooltip_text.get(item, '')
         self.current_item = item

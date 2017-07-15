@@ -23,11 +23,11 @@ Scrollbar that hides automatically when not needed
 """
 
 
-from tkFileBrowser.constants import tk, ttk
+from .constants import tk, ttk
+
 
 class AutoScrollbar(ttk.Scrollbar):
-    """ a scrollbar that hides itself if it's not needed.  only
-        works if you use the grid geometry manager. """
+    """Scrollbar that hides itself if it's not needed."""
 
     def set(self, lo, hi):
         if float(lo) <= 0.0 and float(hi) >= 1.0:

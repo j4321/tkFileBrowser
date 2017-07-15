@@ -54,7 +54,7 @@ if not os.path.exists(LOCAL_PATH):
 
 RECENT_FILES = os.path.join(LOCAL_PATH, 'recent_files')
 
-### images
+# ---  images
 IM_HOME = os.path.join(PATH, "images", "home.png")
 IM_FOLDER = os.path.join(PATH, "images", "dossier.png")
 IM_FOLDER_LINK = os.path.join(PATH, "images", "dossier_link.png")
@@ -66,7 +66,7 @@ IM_RECENT = os.path.join(PATH, "images", "recent.png")
 IM_RECENT_24 = os.path.join(PATH, "images", "recent_24.png")
 
 
-### translation
+# ---  translation
 lang = locale.getdefaultlocale()[0][:2]
 
 EN = {}
@@ -89,26 +89,47 @@ def _(text):
     """ translation function """
     return TR.get(text, text)
 
+
 SIZES = [(_("B"), 1), ("kB", 1e3), ("MB", 1e6), ("GB", 1e9), ("TB", 1e12)]
 
-### locale settings for dates
+# ---  locale settings for dates
 locale.setlocale(locale.LC_ALL, "")
 TODAY = time.strftime("%x")
 YEAR = time.strftime("%Y")
 DAY = int(time.strftime("%j"))
 
-### functions
+
+# ---  functions
 def add_trace(variable, mode, callback):
-    """ ensure compatibility with old and new trace method
-        mode: "read", "write", "unset" (new syntax)
+    """
+    Add trace to variable.
+
+    Ensure compatibility with old and new trace method.
+    mode: "read", "write", "unset" (new syntax)
     """
     try:
-        variable.trace_add(mode, callback)
+        return variable.trace_add(mode, callback)
     except AttributeError:
         # fallback to old method
-        variable.trace(mode[0], callback)
+        return variable.trace(mode[0], callback)
+
+
+def remove_trace(variable, mode, cbname):
+    """
+    Remove trace from variable.
+
+    Ensure compatibility with old and new trace method.
+    mode: "read", "write", "unset" (new syntax)
+    """
+    try:
+        variable.trace_remove(mode, cbname)
+    except AttributeError:
+        # fallback to old method
+        variable.trace_vdelete(mode[0], cbname)
+
 
 def get_modification_date(file):
+    """Return the modification date of file."""
     tps = time.localtime(os.path.getmtime(file))
     date = time.strftime("%x", tps)
     if date == TODAY:
@@ -117,15 +138,17 @@ def get_modification_date(file):
         date = time.strftime("%A %H:%M", tps)
     return date
 
+
 def get_size(file):
+    """Return the size of file."""
     size_o = os.path.getsize(file)
     if size_o > 0:
-        m = int(log10(size_o)//3)
+        m = int(log10(size_o) // 3)
         if m < len(SIZES):
             unit, div = SIZES[m]
         else:
             unit, div = SIZES[-1]
-        size = "%s %s" % (locale.format("%.1f", size_o/div), unit)
+        size = "%s %s" % (locale.format("%.1f", size_o / div), unit)
     else:
         size = "0 " + _("B")
     return size

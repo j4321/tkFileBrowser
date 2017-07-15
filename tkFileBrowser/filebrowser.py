@@ -25,11 +25,12 @@ from os import walk, mkdir
 from os.path import exists, join, getmtime, realpath, split, expanduser, abspath
 from os.path import isabs, splitext, dirname, getsize, isdir, isfile, islink
 
-import tkFileBrowser.constants as cst
-from tkFileBrowser.autoscrollbar import AutoScrollbar
-from tkFileBrowser.path_button import PathButton
-from tkFileBrowser.tooltip import TooltipTreeWrapper
-from tkFileBrowser.recent_files import RecentFiles
+#import tkFileBrowser.constants as cst
+from . import constants as cst
+from .autoscrollbar import AutoScrollbar
+from .path_button import PathButton
+from .tooltip import TooltipTreeWrapper
+from .recent_files import RecentFiles
 _ = cst._
 unquote = cst.unquote
 tk = cst.tk
@@ -37,25 +38,27 @@ ttk = cst.ttk
 
 
 class FileBrowser(tk.Toplevel):
-    """ Filebrowser dialog class """
+    """Filebrowser dialog class."""
     def __init__(self, parent, initialdir="", initialfile="", mode="openfile",
                  multiple_selection=False, defaultext="", title="Filebrowser",
                  filetypes=[], okbuttontext=None, cancelbuttontext=_("Cancel"),
                  foldercreation=True):
         """
-            Create a filebrowser dialog.
-            - initialdir: initial folder whose content is displayed
-            - initialfile: initial selected item (just the name, not the full path)
-            - mode: openfile, opendir or save
-            - multiple_selection (open modes only): boolean, allow to select multiple files,
-            - defaultext (save mode only): extension added to filename if none is given
-            - filetypes: [('name', '*.ext1|*.ext2|..'), ...]
+        Create a filebrowser dialog.
+
+        Arguments:
+            * initialdir: initial folder whose content is displayed
+            * initialfile: initial selected item (just the name, not the full path)
+            * mode: openfile, opendir or save
+            * multiple_selection (open modes only): boolean, allow to select multiple files,
+            * defaultext (save mode only): extension added to filename if none is given
+            * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
               show only files of given filetype ("*" for all files)
-            - okbuttontext: text displayed on the validate button, if None, the
+            * okbuttontext: text displayed on the validate button, if None, the
               default text corresponding to the mode is used (either Open or Save)
-            - cancelbuttontext: text displayed on the button that cancels the
+            * cancelbuttontext: text displayed on the button that cancels the
               selection.
-            - foldercreation: enable the user to create new folders if True (default)
+            * foldercreation: enable the user to create new folders if True (default)
         """
         tk.Toplevel.__init__(self, parent)
 
@@ -83,35 +86,41 @@ class FileBrowser(tk.Toplevel):
         # hidden items
         self.hidden = ()
 
-        ### style
+        # ---  style
         style = ttk.Style(self)
         bg = style.lookup("TFrame", "background")
         style.layout("right.tkFileBrowser.Treeview.Item",
                      [('Treeitem.padding',
-                      {'children': [
-                        ('Treeitem.image', {'side': 'left', 'sticky': ''}),
-                        ('Treeitem.focus',
-                         {'children': [('Treeitem.text', {'side': 'left', 'sticky': ''})],
-                          'side': 'left',
-                          'sticky': ''})],
-                       'sticky': 'nswe'})])
+                       {'children':
+                           [('Treeitem.image', {'side': 'left', 'sticky': ''}),
+                            ('Treeitem.focus',
+                             {'children':
+                                 [('Treeitem.text',
+                                   {'side': 'left', 'sticky': ''})],
+                              'side': 'left',
+                              'sticky': ''})],
+                        'sticky': 'nswe'})])
         style.layout("left.tkFileBrowser.Treeview.Item",
                      [('Treeitem.padding',
-                      {'children': [
-                        ('Treeitem.image', {'side': 'left', 'sticky': ''}),
-                        ('Treeitem.focus',
-                         {'children': [('Treeitem.text', {'side': 'left', 'sticky': ''})],
-                          'side': 'left',
-                          'sticky': ''})],
-                       'sticky': 'nswe'})])
+                       {'children':
+                           [('Treeitem.image', {'side': 'left', 'sticky': ''}),
+                            ('Treeitem.focus',
+                             {'children':
+                                 [('Treeitem.text', {'side': 'left', 'sticky': ''})],
+                              'side': 'left',
+                              'sticky': ''})],
+                        'sticky': 'nswe'})])
         style.configure("right.tkFileBrowser.Treeview", font="TkDefaultFont")
         style.configure("right.tkFileBrowser.Treeview.Item", padding=2)
-        style.configure("right.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
-        style.configure("left.tkFileBrowser.Treeview.Heading", font="TkDefaultFont")
+        style.configure("right.tkFileBrowser.Treeview.Heading",
+                        font="TkDefaultFont")
+        style.configure("left.tkFileBrowser.Treeview.Heading",
+                        font="TkDefaultFont")
         style.configure("left.tkFileBrowser.Treeview.Item", padding=2)
         style.configure("listbox.TFrame", background="white", relief="sunken")
         field_bg = style.lookup("TEntry", "fieldbackground", default='white')
-        tree_field_bg = style.lookup("ttk.Treeview", "fieldbackground", default='white')
+        tree_field_bg = style.lookup("ttk.Treeview", "fieldbackground",
+                                     default='white')
         fg = style.lookup('TLabel', 'foreground', default='black')
         active_bg = style.lookup('TButton', 'background', ('active',))
         active_fg = style.lookup('TButton', 'foreground', ('active',))
@@ -122,8 +131,16 @@ class FileBrowser(tk.Toplevel):
                         font="TkDefaultFont",
                         fieldbackground=active_bg)
         self.configure(background=bg)
+        # path button style
+        style.configure("path.TButton", padding=2)
+        selected_bg = style.lookup("TButton", "background", ("pressed",))
+        map_bg = style.map("TButton", "background")
+        map_bg.append(("selected", selected_bg))
+        style.map("path.TButton",
+                  background=map_bg,
+                  font=[("selected", "TkDefaultFont 9 bold")])
 
-        ### images
+        # ---  images
         self.im_file = tk.PhotoImage(file=cst.IM_FILE, master=self)
         self.im_folder = tk.PhotoImage(file=cst.IM_FOLDER, master=self)
         self.im_file_link = tk.PhotoImage(file=cst.IM_FILE_LINK, master=self)
@@ -134,18 +151,18 @@ class FileBrowser(tk.Toplevel):
         self.im_recent = tk.PhotoImage(file=cst.IM_RECENT, master=self)
         self.im_recent_24 = tk.PhotoImage(file=cst.IM_RECENT_24, master=self)
 
-        ### filetypes
+        # ---  filetypes
         self.filetype = tk.StringVar(self)
         self.filetypes = {}
         if filetypes:
             b_filetype = ttk.Menubutton(self, textvariable=self.filetype)
             self.menu = tk.Menu(self, tearoff=False, foreground=fg, background=field_bg,
-                             disabledforeground=disabled_fg,
-                             activeforeground=active_fg,
-                             selectcolor=fg,
-                             activeborderwidth=0,
-                             borderwidth=0,
-                             activebackground=active_bg)
+                                disabledforeground=disabled_fg,
+                                activeforeground=active_fg,
+                                selectcolor=fg,
+                                activeborderwidth=0,
+                                borderwidth=0,
+                                activebackground=active_bg)
             for name, exts in filetypes:
                 self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
                 self.menu.add_radiobutton(label=name, value=name,
@@ -158,24 +175,24 @@ class FileBrowser(tk.Toplevel):
             self.filetypes[""] = [""]
             self.menu = None
 
-        ### recent files
+        # ---  recent files
         self._recent_files = RecentFiles(cst.RECENT_FILES, 30)
 
-        ### path completion
+        # ---  path completion
         self.complete = self.register(self._completion)
         self.listbox_var = tk.StringVar(self)
         self.listbox_frame = ttk.Frame(self, style="listbox.TFrame", borderwidth=1)
         self.listbox = tk.Listbox(self.listbox_frame,
-                               listvariable=self.listbox_var,
-                               highlightthickness=0,
-                               borderwidth=0,
-                               background=field_bg,
-                               foreground=fg,
-                               selectforeground=sel_fg,
-                               selectbackground=sel_bg)
+                                  listvariable=self.listbox_var,
+                                  highlightthickness=0,
+                                  borderwidth=0,
+                                  background=field_bg,
+                                  foreground=fg,
+                                  selectforeground=sel_fg,
+                                  selectbackground=sel_bg)
         self.listbox.pack(expand=True, fill="x")
 
-        ### file name
+        # ---  file name
         if mode == "save":
             self.defaultext = defaultext
 
@@ -183,8 +200,8 @@ class FileBrowser(tk.Toplevel):
             frame_name.grid(row=0, pady=(10, 0), padx=10, sticky="ew")
             ttk.Label(frame_name, text=_("Name: ")).pack(side="left")
             self.entry = ttk.Entry(frame_name, validate="key",
-                               validatecommand=(self.complete, "%d", "%S",
-                                                "%i", "%s"))
+                                   validatecommand=(self.complete, "%d", "%S",
+                                                    "%i", "%s"))
             self.entry.pack(side="left", fill="x", expand=True)
 
             if initialfile:
@@ -192,7 +209,7 @@ class FileBrowser(tk.Toplevel):
         else:
             self.multiple_selection = multiple_selection
 
-        ### path bar
+        # ---  path bar
         self.path_var = tk.StringVar(self)
         frame_bar = ttk.Frame(self)
         frame_bar.columnconfigure(0, weight=1)
@@ -201,20 +218,20 @@ class FileBrowser(tk.Toplevel):
         frame_recent.grid(row=0, column=0, sticky="w")
         ttk.Label(frame_recent, image=self.im_recent_24).pack(side="left")
         ttk.Label(frame_recent, text=_("Recently used"),
-              font="TkDefaultFont 9 bold").pack(side="left", padx=4)
+                  font="TkDefaultFont 9 bold").pack(side="left", padx=4)
         self.path_bar = ttk.Frame(frame_bar)
         self.path_bar.grid(row=0, column=0, sticky="ew")
         self.path_bar_buttons = []
         self.b_new_folder = ttk.Button(frame_bar, image=self.im_new,
-                                   command=self.create_folder)
+                                       command=self.create_folder)
         if self.foldercreation:
             self.b_new_folder.grid(row=0, column=1, sticky="e")
         if mode == "save":
             ttk.Label(self.path_bar, text=_("Folder: ")).grid(row=0, column=0)
         else:
             self.entry = ttk.Entry(frame_bar, validate="key",
-                               validatecommand=(self.complete, "%d", "%S",
-                                                "%i", "%s"))
+                                   validatecommand=(self.complete, "%d", "%S",
+                                                    "%i", "%s"))
             self.entry.grid(row=1, column=0, sticky="ew", padx=(0, 4),
                             pady=(10, 0))
             self.entry.grid_remove()
@@ -223,14 +240,14 @@ class FileBrowser(tk.Toplevel):
         paned = ttk.PanedWindow(self, orient="horizontal")
         paned.grid(row=2, sticky="eswn", padx=10)
 
-        ### left pane
+        # ---  left pane
         left_pane = ttk.Frame(paned)
         left_pane.columnconfigure(0, weight=1)
         left_pane.rowconfigure(0, weight=1)
 
         paned.add(left_pane, weight=0)
         self.left_tree = ttk.Treeview(left_pane, selectmode="browse",
-                                  style="left.tkFileBrowser.Treeview")
+                                      style="left.tkFileBrowser.Treeview")
         wrapper = TooltipTreeWrapper(self.left_tree, background='black',
                                      foreground='white')
         self.left_tree.column("#0", width=150)
@@ -242,7 +259,7 @@ class FileBrowser(tk.Toplevel):
         scroll_left.grid(row=0, column=1, sticky="ns")
         self.left_tree.configure(yscrollcommand=scroll_left.set)
 
-        ### list devices and bookmarked locations
+        # ---  list devices and bookmarked locations
         self.left_tree.insert("", "end", iid="recent", text=_("Recent"),
                               image=self.im_recent)
         wrapper.add_tooltip("recent", _("Recently used"))
@@ -277,13 +294,13 @@ class FileBrowser(tk.Toplevel):
             if len(l) == 1:
                 txt = split(l[0])[-1]
             else:
-                txt=l[1]
+                txt = l[1]
             self.left_tree.insert("", "end", iid=l[0],
                                   text=txt,
                                   image=self.im_folder)
             wrapper.add_tooltip(l[0], l[0])
 
-        ### right pane
+        # ---  right pane
         right_pane = ttk.Frame(paned)
         right_pane.columnconfigure(0, weight=1)
         right_pane.rowconfigure(0, weight=1)
@@ -295,9 +312,9 @@ class FileBrowser(tk.Toplevel):
             selectmode = "browse"
 
         self.right_tree = ttk.Treeview(right_pane, selectmode=selectmode,
-                                   style="right.tkFileBrowser.Treeview",
-                                   columns=("location", "size", "date"),
-                                   displaycolumns=("size", "date"))
+                                       style="right.tkFileBrowser.Treeview",
+                                       columns=("location", "size", "date"),
+                                       displaycolumns=("size", "date"))
 
         self.right_tree.heading("#0", text=_("Name"), anchor="w",
                                 command=lambda: self._sort_files_by_name(True))
@@ -336,7 +353,7 @@ class FileBrowser(tk.Toplevel):
                                  self._file_selection_save)
         self.right_tree.bind("<KeyPress>", self._key_browse_show)
 
-        self._scroll_h = AutoScrollbar(right_pane,  orient='horizontal',
+        self._scroll_h = AutoScrollbar(right_pane, orient='horizontal',
                                        command=self.right_tree.xview)
         self._scroll_h.grid(row=1, column=0, sticky='ew')
         scroll_right = AutoScrollbar(right_pane, command=self.right_tree.yview)
@@ -344,7 +361,7 @@ class FileBrowser(tk.Toplevel):
         self.right_tree.configure(yscrollcommand=scroll_right.set,
                                   xscrollcommand=self._scroll_h.set)
 
-        ### buttons
+        # ---  buttons
         frame_buttons = ttk.Frame(self)
         frame_buttons.grid(row=4, sticky="ew", pady=10, padx=10)
         if okbuttontext is None:
@@ -353,11 +370,11 @@ class FileBrowser(tk.Toplevel):
             else:
                 okbuttontext = _("Open")
         ttk.Button(frame_buttons, text=okbuttontext,
-               command=self.validate).pack(side="right")
+                   command=self.validate).pack(side="right")
         ttk.Button(frame_buttons, text=cancelbuttontext,
-               command=self.quit).pack(side="right", padx=4)
+                   command=self.quit).pack(side="right", padx=4)
 
-        ### key browsing entry
+        # ---  key browsing entry
         self.key_browse_var = tk.StringVar(self)
         self.key_browse_entry = ttk.Entry(self, textvariable=self.key_browse_var,
                                           width=10)
@@ -369,7 +386,7 @@ class FileBrowser(tk.Toplevel):
         self.paths_beginning_by = []
         self.paths_beginning_by_index = 0  # current index in the list
 
-        ### initialization
+        # ---  initialization
         if not initialdir:
             initialdir = expanduser("~")
 
@@ -378,7 +395,7 @@ class FileBrowser(tk.Toplevel):
         if initialpath in self.right_tree.get_children(""):
             self.right_tree.selection_add(initialpath)
 
-        ### bindings
+        # ---  bindings
         self.listbox.bind("<FocusOut>",
                           lambda e: self.listbox_frame.place_forget())
 
@@ -390,7 +407,7 @@ class FileBrowser(tk.Toplevel):
         self.bind("<Alt-Left>", self._hist_backward)
         self.bind("<Alt-Right>", self._hist_forward)
         self.bind("<Alt-Up>", self._go_to_parent)
-        self.bind("<Alt-Down>", self._go_to_children)
+        self.bind("<Alt-Down>", self._go_to_child)
         self.bind_all("<Button-1>", self._unpost, add=True)
         self.bind_all("<FocusIn>", self._hide_listbox)
 
@@ -402,16 +419,15 @@ class FileBrowser(tk.Toplevel):
         self.update_idletasks()
         self.lift()
 
-
-    ### key browsing
+    # ---  key browsing
     def _key_browse_hide(self, event):
-        """ hide key browsing entry """
+        """Hide key browsing entry."""
         if self.key_browse_entry.winfo_ismapped():
             self.key_browse_entry.place_forget()
             self.key_browse_entry.delete(0, "end")
 
     def _key_browse_show(self, event):
-        """ show key browsing entry """
+        """Show key browsing entry."""
         if event.char.isalnum() or event.char in [".", "_", "(", "-", "*"]:
             self.key_browse_entry.place(in_=self.right_tree, relx=0, rely=1,
                                         y=4, x=1, anchor="nw")
@@ -419,13 +435,13 @@ class FileBrowser(tk.Toplevel):
             self.key_browse_entry.insert(0, event.char)
 
     def _key_browse_validate(self, event):
-        """ hide key browsing entry and validate selection """
+        """Hide key browsing entry and validate selection."""
         self._key_browse_hide(event)
         self.right_tree.focus_set()
         self.validate()
 
     def _key_browse(self, *args):
-        """ use keyboard to browse tree """
+        """Use keyboard to browse tree."""
         self.key_browse_entry.unbind("<Up>")
         self.key_browse_entry.unbind("<Down>")
         deb = self.key_browse_entry.get().lower()
@@ -448,21 +464,25 @@ class FileBrowser(tk.Toplevel):
                                            lambda e: self._browse_list(1))
 
     def _browse_list(self, delta):
-        """ use Up and Down keys to navigate between folders/files beginning by
-            the letters in self.key_browse_entry """
+        """
+        Navigate between folders/files with Up/Down keys.
+
+        Navigation between folders/files beginning by the letters in
+        self.key_browse_entry.
+        """
         self.paths_beginning_by_index += delta
         self.paths_beginning_by_index %= len(self.paths_beginning_by)
         sel = self.right_tree.selection()
         if sel:
             self.right_tree.selection_remove(*sel)
         path = abspath(join(self.history[self._hist_index],
-                                            self.paths_beginning_by[self.paths_beginning_by_index]))
+                            self.paths_beginning_by[self.paths_beginning_by_index]))
         self.right_tree.see(path)
         self.right_tree.selection_add(path)
 
-    ### column sorting
+    # ---  column sorting
     def _sort_files_by_name(self, reverse):
-        """ Sort files and folders by (reversed) alphabetical order """
+        """Sort files and folders by (reversed) alphabetical order."""
         files = list(self.right_tree.tag_has("file"))
         files.extend(list(self.right_tree.tag_has("file_link")))
         folders = list(self.right_tree.tag_has("folder"))
@@ -480,7 +500,7 @@ class FileBrowser(tk.Toplevel):
                                 command=lambda: self._sort_files_by_name(not reverse))
 
     def _sort_by_location(self, reverse):
-        """ Sort files by location """
+        """Sort files by location."""
         l = [(self.right_tree.set(k, "location"), k) for k in self.right_tree.get_children('')]
         l.sort(reverse=reverse)
         for index, (val, k) in enumerate(l):
@@ -489,7 +509,7 @@ class FileBrowser(tk.Toplevel):
                                 command=lambda: self._sort_by_location(not reverse))
 
     def _sort_by_size(self, reverse):
-        """ Sort files by size """
+        """Sort files by size."""
         files = list(self.right_tree.tag_has("file"))
         files.extend(list(self.right_tree.tag_has("file_link")))
         nb_folders = len(self.right_tree.tag_has("folder"))
@@ -503,7 +523,7 @@ class FileBrowser(tk.Toplevel):
                                 command=lambda: self._sort_by_size(not reverse))
 
     def _sort_by_date(self, reverse):
-        """ Sort files and folders by modification date """
+        """Sort files and folders by modification date."""
         files = list(self.right_tree.tag_has("file"))
         files.extend(list(self.right_tree.tag_has("file_link")))
         folders = list(self.right_tree.tag_has("folder"))
@@ -520,9 +540,9 @@ class FileBrowser(tk.Toplevel):
         self.right_tree.heading("date",
                                 command=lambda: self._sort_by_date(not reverse))
 
-    ### file selection
+    # ---  file selection
     def _file_selection_save(self, event):
-        """ save mode only: put selected file name in name_entry """
+        """Save mode only: put selected file name in name_entry."""
         sel = self.right_tree.selection()
         if sel:
             sel = sel[0]
@@ -536,7 +556,7 @@ class FileBrowser(tk.Toplevel):
                     self.entry.insert(0, sel)
 
     def _file_selection_openfile(self, event):
-        """ put selected file name in path_entry if visible """
+        """Put selected file name in path_entry if visible."""
         sel = self.right_tree.selection()
         if sel and self.entry.winfo_ismapped():
             self.entry.insert("end", self.right_tree.item(sel[0], "text"))
@@ -544,8 +564,10 @@ class FileBrowser(tk.Toplevel):
             self.entry.icursor("end")
 
     def _file_selection_opendir(self, event):
-        """ prevent selection of files in opendir mode and
-            put selected folder name in path_entry if visible """
+        """
+        Prevent selection of files in opendir mode and put selected folder
+        name in path_entry if visible.
+        """
         sel = self.right_tree.selection()
         if sel:
             for s in sel:
@@ -559,7 +581,7 @@ class FileBrowser(tk.Toplevel):
                 self.entry.icursor("end")
 
     def _shortcut_select(self, event):
-        """ selection of a shortcut (left pane)"""
+        """Selection of a shortcut (left pane)."""
         sel = self.left_tree.selection()
         if sel:
             sel = sel[0]
@@ -569,7 +591,7 @@ class FileBrowser(tk.Toplevel):
                 self._display_recents()
 
     def _display_recents(self):
-        """ display recently used files/folders """
+        """Display recently used files/folders."""
         self.path_bar.grid_remove()
         self.right_tree.configure(displaycolumns=("location", "size", "date"))
         w = self.right_tree.winfo_width() - 305
@@ -603,7 +625,7 @@ class FileBrowser(tk.Toplevel):
                     else:
                         tags.append("folder")
                     vals = (p, "", cst.get_modification_date(p))
-                if vals and not p in paths:
+                if vals and p not in paths:
                     i += 1
                     paths.append(p)
                     self.right_tree.insert("", "end", p, text=f, tags=tags,
@@ -641,7 +663,7 @@ class FileBrowser(tk.Toplevel):
                                            values=vals)
 
     def _select(self, event):
-        """ display folder content on double click / Enter, validate if file """
+        """display folder content on double click / Enter, validate if file."""
         sel = self.right_tree.selection()
         if sel:
             sel = sel[0]
@@ -654,8 +676,7 @@ class FileBrowser(tk.Toplevel):
             self.validate(event)
 
     def _unpost(self, event):
-        """ unpost the filetype selection menu on click and hide
-            self.key_browse_entry """
+        """Unpost the filetype selection menu on click and hide self.key_browse_entry."""
         if self.menu:
             w, h = self.menu.winfo_width(), self.menu.winfo_height()
             dx = event.x_root - self.menu.winfo_x()
@@ -666,27 +687,32 @@ class FileBrowser(tk.Toplevel):
             self._key_browse_hide(event)
 
     def _hide_listbox(self, event):
+        """Hide the path proposition listbox."""
         if event.widget not in [self.listbox, self.entry, self.listbox_frame]:
             self.listbox_frame.place_forget()
 
     def _change_filetype(self):
+        """Update view on filetype change."""
         if self.path_bar.winfo_ismapped():
             self.display_folder(self.history[self._hist_index])
         else:
             self._display_recents()
 
-    ### path completion in entries: key bindings
+    # ---  path completion in entries: key bindings
     def _down(self, event):
+        """Focus listbox on Down arrow press in entry."""
         self.listbox.focus_set()
         self.listbox.selection_set(0)
 
     def _tab(self, event):
+        """Go to the end of selected text and remove selection on tab press."""
         self.entry = event.widget
         self.entry.selection_clear()
         self.entry.icursor("end")
         return "break"
 
     def _select_enter(self, event, d):
+        """Change entry content on Return key press in listbox."""
         self.entry.delete(0, "end")
         self.entry.insert(0, join(d, self.listbox.selection_get()))
         self.entry.selection_clear()
@@ -694,6 +720,7 @@ class FileBrowser(tk.Toplevel):
         self.entry.icursor("end")
 
     def _select_mouse(self, event, d):
+        """Change entry content on click in listbox."""
         self.entry.delete(0, "end")
         self.entry.insert(0, join(d, self.listbox.get("@%i,%i" % (event.x, event.y))))
         self.entry.selection_clear()
@@ -701,8 +728,7 @@ class FileBrowser(tk.Toplevel):
         self.entry.icursor("end")
 
     def _completion(self, action, modif, pos, prev_txt):
-        """ completion of the text in the path entry with existing
-            folder/file names """
+        """Complete the text in the path entry with existing folder/file names."""
         if self.entry.selection_present():
             sel = self.entry.selection_get()
             txt = prev_txt.replace(sel, '')
@@ -710,7 +736,7 @@ class FileBrowser(tk.Toplevel):
             txt = prev_txt
         if action == "0":
             self.listbox_frame.place_forget()
-            txt = txt[:int(pos)] + txt[int(pos)+1:]
+            txt = txt[:int(pos)] + txt[int(pos) + 1:]
         else:
             txt = txt[:int(pos)] + modif + txt[int(pos):]
             d, f = split(txt)
@@ -757,8 +783,8 @@ class FileBrowser(tk.Toplevel):
                     i = self.entry.index("insert")
                     self.entry.delete(0, "end")
                     self.entry.insert(0, join(d, l2[0]))
-                    self.entry.selection_range(i+1, "end")
-                    self.entry.icursor(i+1)
+                    self.entry.selection_range(i + 1, "end")
+                    self.entry.icursor(i + 1)
 
                 elif len(l2) > 1:
                     self.listbox.bind("<Return>", lambda e, arg=d: self._select_enter(e, arg))
@@ -771,7 +797,7 @@ class FileBrowser(tk.Toplevel):
         return True
 
     def _go_left(self, event):
-        """ move focus to left pane """
+        """Move focus to left pane."""
         sel = self.left_tree.selection()
         if not sel:
             sel = expanduser("~")
@@ -780,24 +806,28 @@ class FileBrowser(tk.Toplevel):
         self.left_tree.focus_set()
         self.left_tree.focus(sel)
 
-    ### go to parent/children folder with Alt+Up/Down
+    # ---  go to parent/children folder with Alt+Up/Down
     def _go_to_parent(self, event):
+        """Go to parent directory."""
         parent = dirname(self.path_var.get())
         self.display_folder(parent, update_bar=False)
 
-    def _go_to_children(self, event):
+    def _go_to_child(self, event):
+        """Go to child directory."""
         lb = [b.get_value() for b in self.path_bar_buttons]
         i = lb.index(self.path_var.get())
         if i < len(lb) - 1:
-            self.display_folder(lb[i+1], update_bar=False)
+            self.display_folder(lb[i + 1], update_bar=False)
 
-    ### navigate in history with Alt+Left/ Right keys
+    # ---  navigate in history with Alt+Left/ Right keys
     def _hist_backward(self, event):
+        """Navigate backward in folder selection history."""
         if self._hist_index > -len(self.history):
             self._hist_index -= 1
             self.display_folder(self.history[self._hist_index], reset=False)
 
     def _hist_forward(self, event):
+        """Navigate forward in folder selection history."""
         try:
             self.left_tree.selection_remove(*self.left_tree.selection())
         except TypeError:
@@ -808,6 +838,7 @@ class FileBrowser(tk.Toplevel):
             self.display_folder(self.history[self._hist_index], reset=False)
 
     def _update_path_bar(self, path):
+        """Update the buttons in path bar."""
         for b in self.path_bar_buttons:
             b.destroy()
         self.path_bar_buttons = []
@@ -829,11 +860,14 @@ class FileBrowser(tk.Toplevel):
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns")
 
-
     def display_folder(self, folder, reset=True, update_bar=True):
-        """ display the content of folder in self.right_tree
-            - reset (boolean): forget all the part of the history right of self._hist_index
-            - update_bar (boolean): update the buttons in path bar """
+        """
+        Display the content of folder in self.right_tree.
+
+        Arguments:
+            * reset (boolean): forget all the part of the history right of self._hist_index
+            * update_bar (boolean): update the buttons in path bar
+        """
         folder = abspath(folder)  # remove trailing / if any
         if not self.path_bar.winfo_ismapped():
             self.path_bar.grid()
@@ -848,7 +882,7 @@ class FileBrowser(tk.Toplevel):
                 self.b_new_folder.grid()
         if reset:  # reset history
             if not self._hist_index == -1:
-                self.history = self.history[:self._hist_index+1]
+                self.history = self.history[:self._hist_index + 1]
                 self._hist_index = -1
             self.history.append(folder)
         if update_bar:  # update path bar
@@ -917,7 +951,7 @@ class FileBrowser(tk.Toplevel):
             print("err")
 
     def create_folder(self, event=None):
-        """ create new folder in current location """
+        """Create new folder in current location."""
         def ok(event):
             name = e.get()
             e.destroy()
@@ -946,13 +980,15 @@ class FileBrowser(tk.Toplevel):
             e.focus_set()
 
     def move_item(self, item, index):
+        """Move item to index and update dark/light line alternance."""
         self.right_tree.move(item, "", index)
         tags = [t for t in self.right_tree.item(item, 'tags')
-                if not t in ['1', '0']]
+                if t not in ['1', '0']]
         tags.append(str(index % 2))
         self.right_tree.item(item, tags=tags)
 
     def toggle_path_entry(self, event):
+        """Toggle visibility of path entry."""
         if self.entry.winfo_ismapped():
             self.entry.grid_remove()
             self.entry.delete(0, "end")
@@ -964,7 +1000,7 @@ class FileBrowser(tk.Toplevel):
             self.entry.focus_set()
 
     def toggle_hidden(self, event=None):
-        """ toggle the visibility of hidden files/folders """
+        """Toggle the visibility of hidden files/folders."""
         if self.hide:
             self.hide = False
             for item in reversed(self.hidden):
@@ -976,9 +1012,11 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.detach(*self.right_tree.tag_has("hidden"))
 
     def get_result(self):
+        """Return selection."""
         return self.result
 
     def quit(self):
+        """Destroy dialog."""
         self.unbind_all("<FocusIn>")
         self.unbind_all("<Button-1>")
         self.destroy()
@@ -990,6 +1028,7 @@ class FileBrowser(tk.Toplevel):
                 self._recent_files.add(self.result)
 
     def validate(self, event=None):
+        """Validate selection and return it (if valid)."""
         if self.mode == "save":
             name = self.entry.get()
             if name:
@@ -1001,8 +1040,8 @@ class FileBrowser(tk.Toplevel):
                         rep = True
                         if isfile(name):
                             rep = cst.askyesnocancel(_("Confirmation"),
-                                                 _("The file {file} already exists, do you want to replace it?").format(file=name),
-                                                 icon="warning")
+                                                     _("The file {file} already exists, do you want to replace it?").format(file=name),
+                                                     icon="warning")
                         elif isdir(name):  # it's a directory
                             rep = False
                             self.display_folder(name)

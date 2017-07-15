@@ -21,39 +21,52 @@ Path bar button class
 """
 
 
-from tkFileBrowser.constants import add_trace, ttk
+from .constants import add_trace, remove_trace, ttk
 
 
 class PathButton(ttk.Button):
-    """ Toggle button class to make the path bar """
+    """Toggle button class to make the path bar."""
 
     def __init__(self, parent, variable, value, **kwargs):
+        """
+        Create a PathButton.
+
+        Like Radiobuttons, only one PathButton in the group (all PathButtons
+        sharing the same control variable) can be selected.
+
+        Options:
+            * parent: parent widget
+            * variable: control variable that the PathButton shares with the
+                        other PathButtons in the group (like for Radiobuttons)
+            * value: when the PathButton is clicked, the control variable is set
+                     to value
+            * all ttk.Button options
+        """
+        kwargs["style"] = "path.TButton"
         ttk.Button.__init__(self, parent, **kwargs)
         self.variable = variable
         self.value = value
-        self.style = ttk.Style(self)
-        self.style.configure("%s.TButton" % value, padding=2)
-        self.selected_bg = self.style.lookup("TButton", "background",
-                                             ("pressed",))
-        self.normal_bg = self.style.lookup("TButton", "background")
-        self.configure(style="%s.TButton" % value)
-        add_trace(self.variable, "write", self.var_change)
+        self._trace = add_trace(self.variable, "write", self.var_change)
         self.bind("<Button-1>", self.on_press)
 
     def on_press(self, event):
+        """Change the control variable value when the button is pressed."""
         self.variable.set(self.value)
 
     def get_value(self):
+        """Return value."""
         return self.value
 
+    def destroy(self):
+        """Remove trace from variable and destroy widget."""
+        remove_trace(self.variable, "write", self._trace)
+        ttk.Button.destroy(self)
+
     def var_change(self, *args):
+        """Change the state of the button when the control variable changes."""
         self.master.update()
         self.master.update_idletasks()
         if self.variable.get() == self.value:
-            self.style.configure("%s.TButton" % self.value,
-                                 background=self.selected_bg,
-                                 font="TkDefaultFont 9 bold")
+            self.state(("selected",))
         else:
-            self.style.configure("%s.TButton" % self.value,
-                                 font="TkDefaultFont",
-                                 background=self.normal_bg)
+            self.state(("!selected",))
