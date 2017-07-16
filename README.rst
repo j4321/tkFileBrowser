@@ -24,7 +24,7 @@ Requirements
 ------------
 
 - Linux
-- Python 3 with tkinter + ttk
+- Python 2.7 or 3.x with tkinter + ttk
 
 
 Installation
@@ -34,7 +34,8 @@ With pip:
 
 ::
 
-    $ pip3 install tkfilebrowser
+    $ pip install tkfilebrowser
+
 
 Documentation
 -------------
@@ -96,12 +97,15 @@ Documentation
     Additional option:
         - defaultext: extension added to filename if none is given (default is none)
 
+
 Changelog
 ---------
 
 - tkfilebrowser 2.0.0
     * Change package name to tkfilebrowser to respect PEP 8
-    * Display error message when issue during folder creation
+    * Display error message when an issue occurs during folder creation
+    * Cycle only through folders with key browsing in "opendir" mode
+    * Complete only with folder names in "opendir" mode
     * Fix bug: grey/white color alternance not always respected
     * Add __main__.py with an example
     * Add "Recent files" shortcut
@@ -137,8 +141,12 @@ Example
 
 .. code:: python
 
-    import tkinter as tk
-    import tkinter.ttk as ttk
+    try:
+        import tkinter as tk
+        import tkinter.ttk as ttk
+    except ImportError:
+        import Tkinter as tk
+        import ttk
     from tkfilebrowser import askopendirnames, asksaveasfilename
 
     root = tk.Tk()
@@ -158,7 +166,3 @@ Example
     ttk.Button(root, text="Save file", command=c_save).pack()
 
     root.mainloop()
-
-
-
-

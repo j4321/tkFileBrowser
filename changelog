@@ -7,7 +7,7 @@ Changelog
 
 - tkfilebrowser 2.0.0
     * Change package name to tkfilebrowser to respect PEP 8
-    * Display error message when issue during folder creation
+    * Display error message when an issue occurs during folder creation
     * Cycle only through folders with key browsing in "opendir" mode
     * Complete only with folder names in "opendir" mode
     * Fix bug: grey/white color alternance not always respected
