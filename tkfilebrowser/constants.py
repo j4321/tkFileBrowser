@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-tkFileBrowser - Alternative to filedialog for Tkinter
+tkfilebrowser - Alternative to filedialog for Tkinter
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 
-tkFileBrowser is free software: you can redistribute it and/or modify
+tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-tkFileBrowser is distributed in the hope that it will be useful,
+tkfilebrowser is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -34,12 +34,12 @@ from math import log10
 try:
     import tkinter as tk
     from tkinter import ttk
-    from tkinter.messagebox import askyesnocancel
+    from tkinter.messagebox import askyesnocancel, showerror
     from urllib.parse import unquote
 except ImportError:
     import Tkinter as tk
     import ttk
-    from tkMessageBox import askyesnocancel
+    from tkMessageBox import askyesnocancel, showerror
     from urllib import unquote
     import sys
     reload(sys)
@@ -75,6 +75,7 @@ FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
       "Name": "Nom", "Modified": "Modifié", "Save": "Enregistrer",
       "Open": "Ouvrir", "Cancel": "Annuler", "Location": "Emplacement",
       "Today": "Aujourd'hui", "Confirmation": "Confirmation",
+      "Error": "Erreur",
       "The file {file} already exists, do you want to replace it?": "Le fichier {file} existe déjà, voulez-vous le remplacer ?",
       "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous",
       "Recent": "Récents", "Recently used": "Récemment utilisés"}

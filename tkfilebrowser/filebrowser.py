@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-tkFileBrowser - Alternative to filedialog for Tkinter
+tkfilebrowser - Alternative to filedialog for Tkinter
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 
-tkFileBrowser is free software: you can redistribute it and/or modify
+tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-tkFileBrowser is distributed in the hope that it will be useful,
+tkfilebrowser is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -24,13 +24,13 @@ import psutil
 from os import walk, mkdir
 from os.path import exists, join, getmtime, realpath, split, expanduser, abspath
 from os.path import isabs, splitext, dirname, getsize, isdir, isfile, islink
+import traceback
+import tkfilebrowser.constants as cst
+from tkfilebrowser.autoscrollbar import AutoScrollbar
+from tkfilebrowser.path_button import PathButton
+from tkfilebrowser.tooltip import TooltipTreeWrapper
+from tkfilebrowser.recent_files import RecentFiles
 
-#import tkFileBrowser.constants as cst
-from . import constants as cst
-from .autoscrollbar import AutoScrollbar
-from .path_button import PathButton
-from .tooltip import TooltipTreeWrapper
-from .recent_files import RecentFiles
 _ = cst._
 unquote = cst.unquote
 tk = cst.tk
@@ -89,7 +89,7 @@ class FileBrowser(tk.Toplevel):
         # ---  style
         style = ttk.Style(self)
         bg = style.lookup("TFrame", "background")
-        style.layout("right.tkFileBrowser.Treeview.Item",
+        style.layout("right.tkfilebrowser.Treeview.Item",
                      [('Treeitem.padding',
                        {'children':
                            [('Treeitem.image', {'side': 'left', 'sticky': ''}),
@@ -100,7 +100,7 @@ class FileBrowser(tk.Toplevel):
                               'side': 'left',
                               'sticky': ''})],
                         'sticky': 'nswe'})])
-        style.layout("left.tkFileBrowser.Treeview.Item",
+        style.layout("left.tkfilebrowser.Treeview.Item",
                      [('Treeitem.padding',
                        {'children':
                            [('Treeitem.image', {'side': 'left', 'sticky': ''}),
@@ -110,13 +110,13 @@ class FileBrowser(tk.Toplevel):
                               'side': 'left',
                               'sticky': ''})],
                         'sticky': 'nswe'})])
-        style.configure("right.tkFileBrowser.Treeview", font="TkDefaultFont")
-        style.configure("right.tkFileBrowser.Treeview.Item", padding=2)
-        style.configure("right.tkFileBrowser.Treeview.Heading",
+        style.configure("right.tkfilebrowser.Treeview", font="TkDefaultFont")
+        style.configure("right.tkfilebrowser.Treeview.Item", padding=2)
+        style.configure("right.tkfilebrowser.Treeview.Heading",
                         font="TkDefaultFont")
-        style.configure("left.tkFileBrowser.Treeview.Heading",
+        style.configure("left.tkfilebrowser.Treeview.Heading",
                         font="TkDefaultFont")
-        style.configure("left.tkFileBrowser.Treeview.Item", padding=2)
+        style.configure("left.tkfilebrowser.Treeview.Item", padding=2)
         style.configure("listbox.TFrame", background="white", relief="sunken")
         field_bg = style.lookup("TEntry", "fieldbackground", default='white')
         tree_field_bg = style.lookup("ttk.Treeview", "fieldbackground",
@@ -127,7 +127,7 @@ class FileBrowser(tk.Toplevel):
         disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
         sel_bg = style.lookup('Treeview', 'background', ('selected',))
         sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
-        style.configure("left.tkFileBrowser.Treeview", background=active_bg,
+        style.configure("left.tkfilebrowser.Treeview", background=active_bg,
                         font="TkDefaultFont",
                         fieldbackground=active_bg)
         self.configure(background=bg)
@@ -232,10 +232,9 @@ class FileBrowser(tk.Toplevel):
             self.entry = ttk.Entry(frame_bar, validate="key",
                                    validatecommand=(self.complete, "%d", "%S",
                                                     "%i", "%s"))
-            self.entry.grid(row=1, column=0, sticky="ew", padx=(0, 4),
+            self.entry.grid(row=1, column=0, columnspan=2, sticky="ew", padx=0,
                             pady=(10, 0))
             self.entry.grid_remove()
-            self.entry.bind("<Escape>", self.toggle_path_entry)
 
         paned = ttk.PanedWindow(self, orient="horizontal")
         paned.grid(row=2, sticky="eswn", padx=10)
@@ -247,13 +246,12 @@ class FileBrowser(tk.Toplevel):
 
         paned.add(left_pane, weight=0)
         self.left_tree = ttk.Treeview(left_pane, selectmode="browse",
-                                      style="left.tkFileBrowser.Treeview")
+                                      style="left.tkfilebrowser.Treeview")
         wrapper = TooltipTreeWrapper(self.left_tree, background='black',
                                      foreground='white')
         self.left_tree.column("#0", width=150)
         self.left_tree.heading("#0", text=_("Shortcuts"), anchor="w")
         self.left_tree.grid(row=0, column=0, sticky="sewn")
-        self.left_tree.bind("<<TreeviewSelect>>", self._shortcut_select)
 
         scroll_left = AutoScrollbar(left_pane, command=self.left_tree.yview)
         scroll_left.grid(row=0, column=1, sticky="ns")
@@ -312,10 +310,10 @@ class FileBrowser(tk.Toplevel):
             selectmode = "browse"
 
         self.right_tree = ttk.Treeview(right_pane, selectmode=selectmode,
-                                       style="right.tkFileBrowser.Treeview",
+                                       style="right.tkfilebrowser.Treeview",
                                        columns=("location", "size", "date"),
                                        displaycolumns=("size", "date"))
-
+        # headings
         self.right_tree.heading("#0", text=_("Name"), anchor="w",
                                 command=lambda: self._sort_files_by_name(True))
         self.right_tree.heading("location", text=_("Location"), anchor="w",
@@ -324,35 +322,24 @@ class FileBrowser(tk.Toplevel):
                                 command=lambda: self._sort_by_size(False))
         self.right_tree.heading("date", text=_("Modified"), anchor="w",
                                 command=lambda: self._sort_by_date(False))
+        # columns
         self.right_tree.column("#0", width=250)
         self.right_tree.column("location", width=100)
         self.right_tree.column("size", stretch=False, width=85)
         self.right_tree.column("date", width=120)
+        # tags
         self.right_tree.tag_configure("0", background=tree_field_bg)
         self.right_tree.tag_configure("1", background=active_bg)
         self.right_tree.tag_configure("folder", image=self.im_folder)
         self.right_tree.tag_configure("file", image=self.im_file)
         self.right_tree.tag_configure("folder_link", image=self.im_folder_link)
         self.right_tree.tag_configure("file_link", image=self.im_file_link)
-        self.right_tree.grid(row=0, column=0, sticky="eswn")
-
-        self.right_tree.bind("<Double-1>", self._select)
-        self.right_tree.bind("<Return>", self._select)
-        self.right_tree.bind("<Left>", self._go_left)
-
         if mode == "opendir":
             self.right_tree.tag_configure("file", foreground="gray")
             self.right_tree.tag_configure("file_link", foreground="gray")
-            self.right_tree.bind("<<TreeviewSelect>>",
-                                 self._file_selection_opendir)
-        elif mode == "openfile":
-            self.right_tree.bind("<<TreeviewSelect>>",
-                                 self._file_selection_openfile)
-        else:
-            self.right_tree.bind("<<TreeviewSelect>>",
-                                 self._file_selection_save)
-        self.right_tree.bind("<KeyPress>", self._key_browse_show)
 
+        self.right_tree.grid(row=0, column=0, sticky="eswn")
+        # scrollbar
         self._scroll_h = AutoScrollbar(right_pane, orient='horizontal',
                                        command=self.right_tree.xview)
         self._scroll_h.grid(row=1, column=0, sticky='ew')
@@ -379,9 +366,6 @@ class FileBrowser(tk.Toplevel):
         self.key_browse_entry = ttk.Entry(self, textvariable=self.key_browse_var,
                                           width=10)
         cst.add_trace(self.key_browse_var, "write", self._key_browse)
-        self.key_browse_entry.bind("<FocusOut>", self._key_browse_hide)
-        self.key_browse_entry.bind("<Escape>", self._key_browse_hide)
-        self.key_browse_entry.bind("<Return>", self._key_browse_validate)
         # list of folders/files beginning by the letters inserted in self.key_browse_entry
         self.paths_beginning_by = []
         self.paths_beginning_by_index = 0  # current index in the list
@@ -396,13 +380,40 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.selection_add(initialpath)
 
         # ---  bindings
+        # left tree
+        self.left_tree.bind("<<TreeviewSelect>>", self._shortcut_select)
+        # right tree
+        self.right_tree.bind("<Double-1>", self._select)
+        self.right_tree.bind("<Return>", self._select)
+        self.right_tree.bind("<Left>", self._go_left)
+
+        if mode == "opendir":
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self._file_selection_opendir)
+        elif mode == "openfile":
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self._file_selection_openfile)
+        else:
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self._file_selection_save)
+        self.right_tree.bind("<KeyPress>", self._key_browse_show)
+        # listbox
         self.listbox.bind("<FocusOut>",
                           lambda e: self.listbox_frame.place_forget())
-
+        # path entry
+        self.entry.bind("<Escape>",
+                        lambda e: self.listbox_frame.place_forget())
         self.entry.bind("<Down>", self._down)
         self.entry.bind("<Return>", self.validate)
         self.entry.bind("<Tab>", self._tab)
+        self.entry.bind("<Control-a>", self._select_all)
 
+        # key browse entry
+        self.key_browse_entry.bind("<FocusOut>", self._key_browse_hide)
+        self.key_browse_entry.bind("<Escape>", self._key_browse_hide)
+        self.key_browse_entry.bind("<Return>", self._key_browse_validate)
+
+        # main bindings
         self.bind("<Control-h>", self.toggle_hidden)
         self.bind("<Alt-Left>", self._hist_backward)
         self.bind("<Alt-Right>", self._hist_forward)
@@ -418,6 +429,11 @@ class FileBrowser(tk.Toplevel):
 
         self.update_idletasks()
         self.lift()
+
+    def _select_all(self, event):
+        """Select all entry content."""
+        event.widget.selection_range(0, "end")
+        return "break"  # suppress class binding
 
     # ---  key browsing
     def _key_browse_hide(self, event):
@@ -610,7 +626,8 @@ class FileBrowser(tk.Toplevel):
         if self.mode == "opendir":
             paths = []
             for p in files:
-                p = dirname(p)
+                if isfile(p):
+                    p = dirname(p)
                 d, f = split(p)
                 tags = [str(i % 2)]
                 vals = ()
@@ -757,13 +774,16 @@ class FileBrowser(tk.Toplevel):
                                     l2.append(i)
                         l2.extend([i + "/" for i in dirs if i[:len(f)] == f])
                     except StopIteration:
+                        # invalid content
                         l2 = []
-                        print("error")
                 else:
                     try:
                         root, dirs, files = walk(d).send(None)
                         dirs.sort(key=lambda n: n.lower())
-                        files.sort(key=lambda n: n.lower())
+                        if self.mode is "opendir":
+                            files = []
+                        else:
+                            files.sort(key=lambda n: n.lower())
                         l2 = [i + "/" for i in dirs if i[:len(f)] == f]
                         extension = self.filetypes[self.filetype.get()]
                         if extension == [""]:
@@ -775,8 +795,8 @@ class FileBrowser(tk.Toplevel):
                                     l2.append(i)
 
                     except StopIteration:
+                        # invalid content
                         l2 = []
-                        print("error")
 
                 if len(l2) == 1:
                     self.listbox_frame.place_forget()
@@ -961,7 +981,8 @@ class FileBrowser(tk.Toplevel):
                 try:
                     mkdir(folder)
                 except Exception:
-                    pass
+                    # show exception to the user (typically PermissionError or FileExistsError)
+                    cst.showerror(_("Error"), traceback.format_exc())
                 self.display_folder(path)
 
         def cancel(event):
@@ -969,10 +990,11 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.delete("tmp")
 
         if self.path_bar.winfo_ismapped():
-            self.right_tree.insert("", 0, "tmp", tags=("folder",))
+            self.right_tree.insert("", 0, "tmp", tags=("folder", "1"))
+            self.right_tree.see("tmp")
             e = ttk.Entry(self)
             x, y, w, h = self.right_tree.bbox("tmp", column="#0")
-            e.place(in_=self.right_tree, x=x + 4, y=y,
+            e.place(in_=self.right_tree, x=x + 24, y=y,
                     width=w - x - 4)
             e.bind("<Return>", ok)
             e.bind("<Escape>", cancel)
@@ -1027,127 +1049,157 @@ class FileBrowser(tk.Toplevel):
             else:
                 self._recent_files.add(self.result)
 
-    def validate(self, event=None):
-        """Validate selection and return it (if valid)."""
-        if self.mode == "save":
-            name = self.entry.get()
-            if name:
-                ext = splitext(name)[-1]
-                if not ext and not name[-1] == "/":
-                    name += self.defaultext
-                if isabs(name):
-                    if exists(dirname(name)):
-                        rep = True
-                        if isfile(name):
-                            rep = cst.askyesnocancel(_("Confirmation"),
-                                                     _("The file {file} already exists, do you want to replace it?").format(file=name),
-                                                     icon="warning")
-                        elif isdir(name):  # it's a directory
-                            rep = False
-                            self.display_folder(name)
-                        path = name
-                    else:  # the path is invalid
-                        rep = False
-                elif self.path_bar.winfo_ismapped():
-                    path = join(self.history[self._hist_index], name)
+    def _validate_save(self):
+        """Validate selection in save mode."""
+        name = self.entry.get()
+        if name:
+            ext = splitext(name)[-1]
+            if not ext and not name[-1] == "/":
+                # append default extension if none given
+                name += self.defaultext
+            if isabs(name):
+                # name is an absolute path
+                if exists(dirname(name)):
                     rep = True
-                    if exists(path):
-                        if isfile(path):
-                            rep = cst.askyesnocancel(_("Confirmation"),
-                                                     _("The file {file} already exists, do you want to replace it?").format(file=name),
-                                                     icon="warning")
-                        else:  # it's a directory
-                            rep = False
-                            self.display_folder(path)
-                    elif not exists(dirname(path)):
-                        # the path is invalid
-                        rep = False
-                else:
-                    # recently used file
-                    sel = self.right_tree.selection()
-                    if len(sel) == 1:
-                        path = sel[0]
-                        tags = self.right_tree.item(sel, "tags")
-                        if ("folder" in tags) or ("folder_link" in tags):
-                            rep = False
-                            self.display_folder(path)
-                        elif isfile(path):
-                            rep = cst.askyesnocancel(_("Confirmation"),
-                                                     _("The file {file} already exists, do you want to replace it?").format(file=name),
-                                                     icon="warning")
-                        else:
-                            rep = True
-                    else:
-                        rep = False
-
-                if rep:
-                    self.result = realpath(path)
-                    self.quit()
-                elif rep is None:
-                    self.quit()
-                else:
-                    self.entry.delete(0, "end")
-                    self.entry.focus_set()
-        else:
-            name = self.entry.get()
-            if name:  # get file/folder from entry
-                if not exists(name):
-                    self.entry.delete(0, "end")
-                elif self.mode == "openfile":
                     if isfile(name):
-                        if self.multiple_selection:
-                            self.result = (realpath(name),)
-                        else:
-                            self.result = realpath(name)
-                        self.quit()
-                    else:
+                        rep = cst.askyesnocancel(_("Confirmation"),
+                                                 _("The file {file} already exists, do you want to replace it?").format(file=name),
+                                                 icon="warning")
+                    elif isdir(name):
+                        # it's a directory
+                        rep = False
                         self.display_folder(name)
+                    path = name
                 else:
+                    # the path is invalid
+                    rep = False
+            elif self.path_bar.winfo_ismapped():
+                # we are not in the "recent files"
+                path = join(self.history[self._hist_index], name)
+                rep = True
+                if exists(path):
+                    if isfile(path):
+                        rep = cst.askyesnocancel(_("Confirmation"),
+                                                 _("The file {file} already exists, do you want to replace it?").format(file=name),
+                                                 icon="warning")
+                    else:
+                        # it's a directory
+                        rep = False
+                        self.display_folder(path)
+                elif not exists(dirname(path)):
+                    # the path is invalid
+                    rep = False
+            else:
+                # recently used file
+                sel = self.right_tree.selection()
+                if len(sel) == 1:
+                    path = sel[0]
+                    tags = self.right_tree.item(sel, "tags")
+                    if ("folder" in tags) or ("folder_link" in tags):
+                        rep = False
+                        self.display_folder(path)
+                    elif isfile(path):
+                        rep = cst.askyesnocancel(_("Confirmation"),
+                                                 _("The file {file} already exists, do you want to replace it?").format(file=name),
+                                                 icon="warning")
+                    else:
+                        rep = True
+                else:
+                    rep = False
+
+            if rep:
+                self.result = realpath(path)
+                self.quit()
+            elif rep is None:
+                self.quit()
+            else:
+                self.entry.delete(0, "end")
+                self.entry.focus_set()
+
+    def _validate_from_entry(self):
+        """
+        Validate selection from path entry in open mode.
+
+        Return False if the entry is empty, True otherwise.
+        """
+        name = self.entry.get()
+        if name:  # get file/folder from entry
+            if not exists(name):
+                self.entry.delete(0, "end")
+            elif self.mode is "openfile":
+                if isfile(name):
                     if self.multiple_selection:
                         self.result = (realpath(name),)
                     else:
                         self.result = realpath(name)
                     self.quit()
-            # get file/folder from tree selection
-            elif self.multiple_selection:
-                sel = self.right_tree.selection()
-                if self.mode == "opendir":
-                    if sel:
-                        self.result = tuple(realpath(s) for s in sel)
-                    else:
-                        self.result = (realpath(self.history[self._hist_index]),)
-                    self.quit()
-                else:  # mode == openfile
-                    if len(sel) == 1:
-                        sel = sel[0]
-                        tags = self.right_tree.item(sel, "tags")
-                        if ("folder" in tags) or ("folder_link" in tags):
-                            self.display_folder(sel)
-                        else:
-                            self.result = (realpath(sel),)
-                            self.quit()
-                    elif len(sel) > 1:
-                        files = tuple(s for s in sel if "file" in self.right_tree.item(s, "tags"))
-                        files = files + tuple(realpath(s) for s in sel if "file_link" in self.right_tree.item(s, "tags"))
-                        if files:
-                            self.result = files
-                            self.quit()
-                        else:
-                            self.right_tree.selection_remove(*sel)
+                else:
+                    self.display_folder(name)
             else:
-                sel = self.right_tree.selection()
-                if self.mode == "openfile":
-                    if len(sel) == 1:
-                        sel = sel[0]
-                        tags = self.right_tree.item(sel, "tags")
-                        if ("folder" in tags) or ("folder_link" in tags):
-                            self.display_folder(sel)
-                        else:
-                            self.result = realpath(sel)
-                            self.quit()
-                else:  # mode == "opendir"
-                    if len(sel) == 1:
-                        self.result = realpath(sel[0])
-                    else:
-                        self.result = realpath(self.history[self._hist_index])
+                if self.multiple_selection:
+                    self.result = (realpath(name),)
+                else:
+                    self.result = realpath(name)
+                self.quit()
+            return True
+        else:
+            return False
+
+    def _validate_multiple_sel(self):
+        """Validate selection in open mode with multiple selection."""
+        sel = self.right_tree.selection()
+        if self.mode is "opendir":
+            if sel:
+                self.result = tuple(realpath(s) for s in sel)
+            else:
+                self.result = (realpath(self.history[self._hist_index]),)
+            self.quit()
+        else:  # mode == openfile
+            if len(sel) == 1:
+                sel = sel[0]
+                tags = self.right_tree.item(sel, "tags")
+                if ("folder" in tags) or ("folder_link" in tags):
+                    self.display_folder(sel)
+                else:
+                    self.result = (realpath(sel),)
                     self.quit()
+            elif len(sel) > 1:
+                files = tuple(s for s in sel if "file" in self.right_tree.item(s, "tags"))
+                files = files + tuple(realpath(s) for s in sel if "file_link" in self.right_tree.item(s, "tags"))
+                if files:
+                    self.result = files
+                    self.quit()
+                else:
+                    self.right_tree.selection_remove(*sel)
+
+    def _validate_single_sel(self):
+        """Validate selection in open mode without multiple selection."""
+        sel = self.right_tree.selection()
+        if self.mode is "openfile":
+            if len(sel) == 1:
+                sel = sel[0]
+                tags = self.right_tree.item(sel, "tags")
+                if ("folder" in tags) or ("folder_link" in tags):
+                    self.display_folder(sel)
+                else:
+                    self.result = realpath(sel)
+                    self.quit()
+        else:  # mode is "opendir"
+            if len(sel) == 1:
+                self.result = realpath(sel[0])
+            else:
+                self.result = realpath(self.history[self._hist_index])
+            self.quit()
+
+    def validate(self, event=None):
+        """Validate selection and store it in self.results if valid."""
+        if self.mode is "save":
+            self._validate_save()
+        else:
+            validation = self._validate_from_entry()
+            if not validation:
+                # the entry is empty
+                if self.multiple_selection:
+                    self._validate_multiple_sel()
+                else:
+                    self._validate_single_sel()

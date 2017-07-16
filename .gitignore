@@ -3,5 +3,5 @@ dist
 __pycache__
 AUR
 .spyproject
-tkFileBrowser.egg-info
+*.egg-info
 *.pyc

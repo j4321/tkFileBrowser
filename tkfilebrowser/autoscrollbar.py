@@ -1,16 +1,16 @@
 # -*- coding: utf-8 -*-
 """
-tkFileBrowser - Alternative to filedialog for Tkinter
+tkfilebrowser - Alternative to filedialog for Tkinter
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 based on code by Fredrik Lundh copyright 1998
 <http://effbot.org/zone/tkinter-autoscrollbar.htm>
 
-tkFileBrowser is free software: you can redistribute it and/or modify
+tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-tkFileBrowser is distributed in the hope that it will be useful,
+tkfilebrowser is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -23,7 +23,7 @@ Scrollbar that hides automatically when not needed
 """
 
 
-from .constants import tk, ttk
+from tkfilebrowser.constants import tk, ttk
 
 
 class AutoScrollbar(ttk.Scrollbar):

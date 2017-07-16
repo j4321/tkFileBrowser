@@ -1,14 +1,18 @@
-tkFileBrowser - Alternative to filedialog for Tkinter
+tkfilebrowser - Alternative to filedialog for Tkinter
 =====================================================
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 
 Changelog
 ---------
 
-- tkFileBrowser 1.1.3
+- tkfilebrowser 2.0.0
+    * Change package name to tkfilebrowser to respect PEP 8
+    * Display error message when issue during folder creation
+    * Cycle only through folders with key browsing in "opendir" mode
+    * Complete only with folder names in "opendir" mode
     * Fix bug: grey/white color alternance not always respected
     * Add __main__.py with an example
-    * Add recent files shortcut
+    * Add "Recent files" shortcut
     * Make the text of the validate and cancel buttons customizable
     * Add possibility to disable new folder creation
     * Add python 2 support

@@ -1,7 +1,7 @@
-tkFileBrowser
+tkfilebrowser
 =============
 
-tkFileBrowser is an alternative to tkinter.filedialog that allows the
+tkfilebrowser is an alternative to tkinter.filedialog that allows the
 user to select files or directories. The GUI is written with tkinter but
 the look is closer to GTK and the application uses GTK bookmarks (the
 one displayed in nautilus or thunar for instance). This filebrowser
@@ -34,7 +34,7 @@ With pip:
 
 ::
 
-    $ pip3 install tkFileBrowser
+    $ pip3 install tkfilebrowser
 
 Documentation
 -------------
@@ -99,10 +99,12 @@ Documentation
 Changelog
 ---------
 
-- tkFileBrowser 1.1.3
+- tkfilebrowser 2.0.0
+    * Change package name to tkfilebrowser to respect PEP 8
+    * Display error message when issue during folder creation
     * Fix bug: grey/white color alternance not always respected
     * Add __main__.py with an example
-    * Add recent files shortcut
+    * Add "Recent files" shortcut
     * Make the text of the validate and cancel buttons customizable
     * Add possibility to disable new folder creation
     * Add python 2 support
@@ -137,9 +139,11 @@ Example
 
     import tkinter as tk
     import tkinter.ttk as ttk
-    from tkFileBrowser import askopendirnames, asksaveasfilename
+    from tkfilebrowser import askopendirnames, asksaveasfilename
 
     root = tk.Tk()
+    style = ttk.Style(root)
+    style.theme_use("clam")
 
     def c_open():
         rep = askopendirnames(parent=root)

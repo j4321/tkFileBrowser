@@ -1,14 +1,14 @@
 # -*- coding: utf-8 -*-
 """
-tkFileBrowser - Alternative to filedialog for Tkinter
+tkfilebrowser - Alternative to filedialog for Tkinter
 Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 
-tkFileBrowser is free software: you can redistribute it and/or modify
+tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
 the Free Software Foundation, either version 3 of the License, or
 (at your option) any later version.
 
-tkFileBrowser is distributed in the hope that it will be useful,
+tkfilebrowser is distributed in the hope that it will be useful,
 but WITHOUT ANY WARRANTY; without even the implied warranty of
 MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 GNU General Public License for more details.
@@ -17,11 +17,17 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
-functions
+The icons are modified versions of icons from the elementary project
+(the xfce fork to be precise https://github.com/shimmerproject/elementary-xfce)
+Copyright 2007-2013 elementary LLC.
+
+
+Functions
 """
 
-from tkFileBrowser.constants import _
-from tkFileBrowser.filebrowser import FileBrowser
+
+from tkfilebrowser.constants import _
+from tkfilebrowser.filebrowser import FileBrowser
 
 
 def askopendirname(parent=None, title=_("Open"), **kwargs):
