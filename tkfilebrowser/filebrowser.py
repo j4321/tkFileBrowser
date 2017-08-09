@@ -42,7 +42,7 @@ class FileBrowser(tk.Toplevel):
     def __init__(self, parent, initialdir="", initialfile="", mode="openfile",
                  multiple_selection=False, defaultext="", title="Filebrowser",
                  filetypes=[], okbuttontext=None, cancelbuttontext=_("Cancel"),
-                 foldercreation=True):
+                 foldercreation=True, **kw):
         """
         Create a filebrowser dialog.
 
@@ -60,7 +60,12 @@ class FileBrowser(tk.Toplevel):
               selection.
             * foldercreation: enable the user to create new folders if True (default)
         """
-        tk.Toplevel.__init__(self, parent)
+        # compatibility with tkinter.filedialog arguments: the parent window is called 'master'
+        if 'master' in kw and parent is None:
+            parent = kw.pop('master')
+        if 'defaultextension' in kw and not defaultext:
+            defaultext = kw.pop('defaultextension')
+        tk.Toplevel.__init__(self, parent, **kw)
 
         # keep track of folders to be able to move backward/foreward in history
         if initialdir:
