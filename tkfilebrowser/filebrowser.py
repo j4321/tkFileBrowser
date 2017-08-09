@@ -179,6 +179,8 @@ class FileBrowser(tk.Toplevel):
                                       width=w)
             b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
             self.filetype.set(filetypes[0][0])
+            b_filetype.bind('<<ComboboxSelected>>',
+                            lambda e: self._change_filetype())
         else:
             self.filetypes[""] = [""]
 
@@ -391,8 +393,6 @@ class FileBrowser(tk.Toplevel):
         self.bind_class('TCombobox', '<<ComboboxSelected>>',
                         lambda e: e.widget.selection_clear(),
                         add=True)
-        b_filetype.bind('<<ComboboxSelected>>',
-                        lambda e: self._change_filetype())
         # left tree
         self.left_tree.bind("<<TreeviewSelect>>", self._shortcut_select)
         # right tree
@@ -920,7 +920,10 @@ class FileBrowser(tk.Toplevel):
             self.entry.insert(0, folder)
             self.entry.selection_clear()
             self.entry.icursor("end")
-        self.right_tree.delete(*self.right_tree.get_children(""))  # clear self.right_tree
+        # clear self.right_tree
+        self.right_tree.delete(*self.right_tree.get_children(""))
+        self.right_tree.delete(*self.hidden)
+        self.hidden = ()
         try:
             root, dirs, files = walk(folder).send(None)
             # display folders first
@@ -974,6 +977,9 @@ class FileBrowser(tk.Toplevel):
             if items:
                 self.right_tree.focus_set()
                 self.right_tree.focus(items[0])
+            if self.hide:
+                self.hidden = self.right_tree.tag_has("hidden")
+                self.right_tree.detach(*self.right_tree.tag_has("hidden"))
         except StopIteration:
             print("err")
 

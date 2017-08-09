@@ -5,6 +5,11 @@ Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 Changelog
 ---------
 
+- tkfilebrowser 2.0.1
+    * Add compatibility with tkinter.filedialog keywords 'master' and 'defaultextension'
+    * Change look of filetype selector
+    * Fix bugs when navigating without displaying hidden files
+
 - tkfilebrowser 2.0.0
     * Change package name to tkfilebrowser to respect PEP 8
     * Display error message when an issue occurs during folder creation
