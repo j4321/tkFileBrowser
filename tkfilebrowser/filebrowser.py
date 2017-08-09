@@ -128,10 +128,16 @@ class FileBrowser(tk.Toplevel):
                                      default='white')
         fg = style.lookup('TLabel', 'foreground', default='black')
         active_bg = style.lookup('TButton', 'background', ('active',))
-        active_fg = style.lookup('TButton', 'foreground', ('active',))
-        disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
+        # active_fg = style.lookup('TButton', 'foreground', ('active',))
+        # disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
         sel_bg = style.lookup('Treeview', 'background', ('selected',))
         sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
+        self.option_add('*TCombobox*Listbox.selectBackground', sel_bg)
+        self.option_add('*TCombobox*Listbox.selectForeground', sel_fg)
+        style.map('types.TCombobox', foreground=[], fieldbackground=[])
+        style.configure('types.TCombobox', lightcolor=bg,
+                        fieldbackground=bg)
+        style.configure('types.TCombobox.Item', background='red')
         style.configure("left.tkfilebrowser.Treeview", background=active_bg,
                         font="TkDefaultFont",
                         fieldbackground=active_bg)
@@ -160,25 +166,21 @@ class FileBrowser(tk.Toplevel):
         self.filetype = tk.StringVar(self)
         self.filetypes = {}
         if filetypes:
-            b_filetype = ttk.Menubutton(self, textvariable=self.filetype)
-            self.menu = tk.Menu(self, tearoff=False, foreground=fg, background=field_bg,
-                                disabledforeground=disabled_fg,
-                                activeforeground=active_fg,
-                                selectcolor=fg,
-                                activeborderwidth=0,
-                                borderwidth=0,
-                                activebackground=active_bg)
             for name, exts in filetypes:
-                self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
-                self.menu.add_radiobutton(label=name, value=name,
-                                          command=self._change_filetype,
-                                          variable=self.filetype)
-            b_filetype.configure(menu=self.menu)
+                if name not in self.filetypes:
+                    self.filetypes[name] = []
+                self.filetypes[name].extend([ext.split("*")[-1].strip() for ext in exts.split("|")])
+            values = list(self.filetypes.keys())
+            w = max([len(f) for f in values] + [5])
+            b_filetype = ttk.Combobox(self, textvariable=self.filetype,
+                                      state='readonly',
+                                      style='types.TCombobox',
+                                      values=values,
+                                      width=w)
             b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
             self.filetype.set(filetypes[0][0])
         else:
             self.filetypes[""] = [""]
-            self.menu = None
 
         # ---  recent files
         self._recent_files = RecentFiles(cst.RECENT_FILES, 30)
@@ -385,6 +387,12 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.selection_add(initialpath)
 
         # ---  bindings
+        # filetype combobox
+        self.bind_class('TCombobox', '<<ComboboxSelected>>',
+                        lambda e: e.widget.selection_clear(),
+                        add=True)
+        b_filetype.bind('<<ComboboxSelected>>',
+                        lambda e: self._change_filetype())
         # left tree
         self.left_tree.bind("<<TreeviewSelect>>", self._shortcut_select)
         # right tree
@@ -698,13 +706,7 @@ class FileBrowser(tk.Toplevel):
             self.validate(event)
 
     def _unpost(self, event):
-        """Unpost the filetype selection menu on click and hide self.key_browse_entry."""
-        if self.menu:
-            w, h = self.menu.winfo_width(), self.menu.winfo_height()
-            dx = event.x_root - self.menu.winfo_x()
-            dy = event.y_root - self.menu.winfo_y()
-            if dx < 0 or dx > w or dy < 0 or dy > h:
-                self.menu.unpost()
+        """Hide self.key_browse_entry."""
         if event.widget != self.key_browse_entry:
             self._key_browse_hide(event)
 
