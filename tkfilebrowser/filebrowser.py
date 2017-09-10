@@ -177,7 +177,7 @@ class FileBrowser(tk.Toplevel):
                                       style='types.TCombobox',
                                       values=values,
                                       width=w)
-            b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
+            b_filetype.grid(row=3, sticky="e", padx=10, pady=(4, 0))
             self.filetype.set(filetypes[0][0])
             b_filetype.bind('<<ComboboxSelected>>',
                             lambda e: self._change_filetype())
@@ -929,30 +929,40 @@ class FileBrowser(tk.Toplevel):
             # display folders first
             dirs.sort(key=lambda n: n.lower())
             i = 0
-            for i, d in enumerate(dirs):
+            for d in dirs:
                 p = join(root, d)
                 if islink(p):
-                    tags = ("folder_link", str(i % 2))
+                    tags = ("folder_link",)
                 else:
-                    tags = ("folder", str(i % 2))
+                    tags = ("folder",)
                 if d[0] == ".":
                     tags = tags + ("hidden",)
-
+                    if not self.hide:
+                        tags = tags + (str(i % 2),)
+                        i += 1
+                else:
+                    tags = tags + (str(i % 2),)
+                    i += 1
                 self.right_tree.insert("", "end", p, text=d, tags=tags,
                                        values=("", "", cst.get_modification_date(p)))
             # display files
-            i += 1
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
             if extension == [""]:
-                for j, f in enumerate(files):
+                for f in files:
                     p = join(root, f)
                     if islink(p):
-                        tags = ("file_link", str((i + j) % 2))
+                        tags = ("file_link",)
                     else:
-                        tags = ("file", str((i + j) % 2))
+                        tags = ("file",)
                     if f[0] == ".":
                         tags = tags + ("hidden",)
+                        if not self.hide:
+                            tags = tags + (str(i % 2),)
+                            i += 1
+                    else:
+                        tags = tags + (str(i % 2),)
+                        i += 1
 
                     self.right_tree.insert("", "end", p, text=f, tags=tags,
                                            values=("", cst.get_size(p),
@@ -963,12 +973,17 @@ class FileBrowser(tk.Toplevel):
                     if ext in extension:
                         p = join(root, f)
                         if islink(p):
-                            tags = ("file_link", str(i % 2))
+                            tags = ("file_link",)
                         else:
-                            tags = ("file", str(i % 2))
+                            tags = ("file",)
                         if f[0] == ".":
                             tags = tags + ("hidden",)
-                        i += 1
+                            if not self.hide:
+                                tags = tags + (str(i % 2),)
+                                i += 1
+                        else:
+                            tags = tags + (str(i % 2),)
+                            i += 1
 
                         self.right_tree.insert("", "end", p, text=f, tags=tags,
                                                values=("", cst.get_size(p),
@@ -1045,6 +1060,12 @@ class FileBrowser(tk.Toplevel):
             self.hide = True
             self.hidden = self.right_tree.tag_has("hidden")
             self.right_tree.detach(*self.right_tree.tag_has("hidden"))
+        # restore color alternance
+        for i, item in enumerate(self.right_tree.get_children("")):
+            tags = [t for t in self.right_tree.item(item, 'tags')
+                    if t not in ['1', '0']]
+            tags.append(str(i % 2))
+            self.right_tree.item(item, tags=tags)
 
     def get_result(self):
         """Return selection."""
