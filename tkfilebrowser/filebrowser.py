@@ -418,6 +418,7 @@ class FileBrowser(tk.Toplevel):
                         lambda e: self.listbox_frame.place_forget())
         self.entry.bind("<Down>", self._down)
         self.entry.bind("<Return>", self.validate)
+        self.entry.bind("<Right>", self._tab)
         self.entry.bind("<Tab>", self._tab)
         self.entry.bind("<Control-a>", self._select_all)
 
@@ -583,11 +584,14 @@ class FileBrowser(tk.Toplevel):
                 else:
                     # recently used files
                     self.entry.insert(0, sel)
+                self.entry.selection_clear()
+                self.entry.icursor("end")
 
     def _file_selection_openfile(self, event):
         """Put selected file name in path_entry if visible."""
         sel = self.right_tree.selection()
         if sel and self.entry.winfo_ismapped():
+            self.entry.delete(0, 'end')
             self.entry.insert("end", self.right_tree.item(sel[0], "text"))
             self.entry.selection_clear()
             self.entry.icursor("end")
@@ -605,6 +609,7 @@ class FileBrowser(tk.Toplevel):
                     self.right_tree.selection_remove(s)
             sel = self.right_tree.selection()
             if len(sel) == 1 and self.entry.winfo_ismapped():
+                self.entry.delete(0, 'end')
                 self.entry.insert("end", self.right_tree.item(sel[0], "text"))
                 self.entry.selection_clear()
                 self.entry.icursor("end")
@@ -761,49 +766,34 @@ class FileBrowser(tk.Toplevel):
         if action == "0":
             self.listbox_frame.place_forget()
             txt = txt[:int(pos)] + txt[int(pos) + 1:]
-        else:
+        elif isabs(txt) or self.path_bar.winfo_ismapped():
             txt = txt[:int(pos)] + modif + txt[int(pos):]
             d, f = split(txt)
-            if f:
-                if not isabs(txt) and self.mode == "save":
-                    try:
-                        d2 = join(self.history[self._hist_index], d)
-                        root, dirs, files = walk(d2).send(None)
+            if f and not (f[0] is "." and self.hide):
+                if not isabs(txt):
+                    d2 = join(self.history[self._hist_index], d)
+                else:
+                    d2 = d
+
+                try:
+                    root, dirs, files = walk(d2).send(None)
+                    dirs.sort(key=lambda n: n.lower())
+                    l2 = []
+                    if self.mode is not "opendir":
                         files.sort(key=lambda n: n.lower())
                         extension = self.filetypes[self.filetype.get()]
-                        l2 = []
                         if extension == [""]:
-                            l2.extend([i for i in files if i[:len(f)] == f])
+                            l2.extend([i.replace(" ", "\ ") for i in files if i[:len(f)] == f])
                         else:
                             for i in files:
                                 ext = splitext(i)[-1]
                                 if ext in extension and i[:len(f)] == f:
-                                    l2.append(i)
-                        l2.extend([i + "/" for i in dirs if i[:len(f)] == f])
-                    except StopIteration:
-                        # invalid content
-                        l2 = []
-                else:
-                    try:
-                        root, dirs, files = walk(d).send(None)
-                        dirs.sort(key=lambda n: n.lower())
-                        if self.mode is "opendir":
-                            files = []
-                        else:
-                            files.sort(key=lambda n: n.lower())
-                        l2 = [i + "/" for i in dirs if i[:len(f)] == f]
-                        extension = self.filetypes[self.filetype.get()]
-                        if extension == [""]:
-                            l2.extend([i for i in files if i[:len(f)] == f])
-                        else:
-                            for i in files:
-                                ext = splitext(i)[-1]
-                                if ext in extension and i[:len(f)] == f:
-                                    l2.append(i)
+                                    l2.append(i.replace(" ", "\ "))
+                    l2.extend([i.replace(" ", "\ ") + "/" for i in dirs if i[:len(f)] == f])
 
-                    except StopIteration:
-                        # invalid content
-                        l2 = []
+                except StopIteration:
+                    # invalid content
+                    l2 = []
 
                 if len(l2) == 1:
                     self.listbox_frame.place_forget()
@@ -915,11 +905,8 @@ class FileBrowser(tk.Toplevel):
         if update_bar:  # update path bar
             self._update_path_bar(folder)
         self.path_var.set(folder)
-        if self.mode != "save" and self.entry.winfo_ismapped():
-            self.entry.delete(0, "end")
-            self.entry.insert(0, folder)
-            self.entry.selection_clear()
-            self.entry.icursor("end")
+#        if self.mode != "save":
+#            self.entry.delete(0, "end")
         # clear self.right_tree
         self.right_tree.delete(*self.right_tree.get_children(""))
         self.right_tree.delete(*self.hidden)
@@ -1044,9 +1031,6 @@ class FileBrowser(tk.Toplevel):
             self.entry.delete(0, "end")
         else:
             self.entry.grid()
-            self.entry.insert(0, self.history[self._hist_index])
-            self.entry.selection_clear()
-            self.entry.icursor("end")
             self.entry.focus_set()
 
     def toggle_hidden(self, event=None):
@@ -1158,6 +1142,9 @@ class FileBrowser(tk.Toplevel):
         """
         name = self.entry.get()
         if name:  # get file/folder from entry
+            if not isabs(name) and self.path_bar.winfo_ismapped():
+                # we are not in the "recent files"
+                name = join(self.history[self._hist_index], name)
             if not exists(name):
                 self.entry.delete(0, "end")
             elif self.mode is "openfile":
