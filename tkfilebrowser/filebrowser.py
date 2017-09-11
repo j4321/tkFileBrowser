@@ -128,10 +128,16 @@ class FileBrowser(tk.Toplevel):
                                      default='white')
         fg = style.lookup('TLabel', 'foreground', default='black')
         active_bg = style.lookup('TButton', 'background', ('active',))
-        active_fg = style.lookup('TButton', 'foreground', ('active',))
-        disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
+        # active_fg = style.lookup('TButton', 'foreground', ('active',))
+        # disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
         sel_bg = style.lookup('Treeview', 'background', ('selected',))
         sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
+        self.option_add('*TCombobox*Listbox.selectBackground', sel_bg)
+        self.option_add('*TCombobox*Listbox.selectForeground', sel_fg)
+        style.map('types.TCombobox', foreground=[], fieldbackground=[])
+        style.configure('types.TCombobox', lightcolor=bg,
+                        fieldbackground=bg)
+        style.configure('types.TCombobox.Item', background='red')
         style.configure("left.tkfilebrowser.Treeview", background=active_bg,
                         font="TkDefaultFont",
                         fieldbackground=active_bg)
@@ -160,25 +166,23 @@ class FileBrowser(tk.Toplevel):
         self.filetype = tk.StringVar(self)
         self.filetypes = {}
         if filetypes:
-            b_filetype = ttk.Menubutton(self, textvariable=self.filetype)
-            self.menu = tk.Menu(self, tearoff=False, foreground=fg, background=field_bg,
-                                disabledforeground=disabled_fg,
-                                activeforeground=active_fg,
-                                selectcolor=fg,
-                                activeborderwidth=0,
-                                borderwidth=0,
-                                activebackground=active_bg)
             for name, exts in filetypes:
-                self.filetypes[name] = [ext.split("*")[-1].strip() for ext in exts.split("|")]
-                self.menu.add_radiobutton(label=name, value=name,
-                                          command=self._change_filetype,
-                                          variable=self.filetype)
-            b_filetype.configure(menu=self.menu)
-            b_filetype.grid(row=3, sticky="e", padx=10, pady=4)
+                if name not in self.filetypes:
+                    self.filetypes[name] = []
+                self.filetypes[name].extend([ext.split("*")[-1].strip() for ext in exts.split("|")])
+            values = list(self.filetypes.keys())
+            w = max([len(f) for f in values] + [5])
+            b_filetype = ttk.Combobox(self, textvariable=self.filetype,
+                                      state='readonly',
+                                      style='types.TCombobox',
+                                      values=values,
+                                      width=w)
+            b_filetype.grid(row=3, sticky="e", padx=10, pady=(4, 0))
             self.filetype.set(filetypes[0][0])
+            b_filetype.bind('<<ComboboxSelected>>',
+                            lambda e: self._change_filetype())
         else:
             self.filetypes[""] = [""]
-            self.menu = None
 
         # ---  recent files
         self._recent_files = RecentFiles(cst.RECENT_FILES, 30)
@@ -385,6 +389,10 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.selection_add(initialpath)
 
         # ---  bindings
+        # filetype combobox
+        self.bind_class('TCombobox', '<<ComboboxSelected>>',
+                        lambda e: e.widget.selection_clear(),
+                        add=True)
         # left tree
         self.left_tree.bind("<<TreeviewSelect>>", self._shortcut_select)
         # right tree
@@ -698,13 +706,7 @@ class FileBrowser(tk.Toplevel):
             self.validate(event)
 
     def _unpost(self, event):
-        """Unpost the filetype selection menu on click and hide self.key_browse_entry."""
-        if self.menu:
-            w, h = self.menu.winfo_width(), self.menu.winfo_height()
-            dx = event.x_root - self.menu.winfo_x()
-            dy = event.y_root - self.menu.winfo_y()
-            if dx < 0 or dx > w or dy < 0 or dy > h:
-                self.menu.unpost()
+        """Hide self.key_browse_entry."""
         if event.widget != self.key_browse_entry:
             self._key_browse_hide(event)
 
@@ -918,36 +920,49 @@ class FileBrowser(tk.Toplevel):
             self.entry.insert(0, folder)
             self.entry.selection_clear()
             self.entry.icursor("end")
-        self.right_tree.delete(*self.right_tree.get_children(""))  # clear self.right_tree
+        # clear self.right_tree
+        self.right_tree.delete(*self.right_tree.get_children(""))
+        self.right_tree.delete(*self.hidden)
+        self.hidden = ()
         try:
             root, dirs, files = walk(folder).send(None)
             # display folders first
             dirs.sort(key=lambda n: n.lower())
             i = 0
-            for i, d in enumerate(dirs):
+            for d in dirs:
                 p = join(root, d)
                 if islink(p):
-                    tags = ("folder_link", str(i % 2))
+                    tags = ("folder_link",)
                 else:
-                    tags = ("folder", str(i % 2))
+                    tags = ("folder",)
                 if d[0] == ".":
                     tags = tags + ("hidden",)
-
+                    if not self.hide:
+                        tags = tags + (str(i % 2),)
+                        i += 1
+                else:
+                    tags = tags + (str(i % 2),)
+                    i += 1
                 self.right_tree.insert("", "end", p, text=d, tags=tags,
                                        values=("", "", cst.get_modification_date(p)))
             # display files
-            i += 1
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
             if extension == [""]:
-                for j, f in enumerate(files):
+                for f in files:
                     p = join(root, f)
                     if islink(p):
-                        tags = ("file_link", str((i + j) % 2))
+                        tags = ("file_link",)
                     else:
-                        tags = ("file", str((i + j) % 2))
+                        tags = ("file",)
                     if f[0] == ".":
                         tags = tags + ("hidden",)
+                        if not self.hide:
+                            tags = tags + (str(i % 2),)
+                            i += 1
+                    else:
+                        tags = tags + (str(i % 2),)
+                        i += 1
 
                     self.right_tree.insert("", "end", p, text=f, tags=tags,
                                            values=("", cst.get_size(p),
@@ -958,12 +973,17 @@ class FileBrowser(tk.Toplevel):
                     if ext in extension:
                         p = join(root, f)
                         if islink(p):
-                            tags = ("file_link", str(i % 2))
+                            tags = ("file_link",)
                         else:
-                            tags = ("file", str(i % 2))
+                            tags = ("file",)
                         if f[0] == ".":
                             tags = tags + ("hidden",)
-                        i += 1
+                            if not self.hide:
+                                tags = tags + (str(i % 2),)
+                                i += 1
+                        else:
+                            tags = tags + (str(i % 2),)
+                            i += 1
 
                         self.right_tree.insert("", "end", p, text=f, tags=tags,
                                                values=("", cst.get_size(p),
@@ -972,6 +992,9 @@ class FileBrowser(tk.Toplevel):
             if items:
                 self.right_tree.focus_set()
                 self.right_tree.focus(items[0])
+            if self.hide:
+                self.hidden = self.right_tree.tag_has("hidden")
+                self.right_tree.detach(*self.right_tree.tag_has("hidden"))
         except StopIteration:
             print("err")
 
@@ -1037,6 +1060,12 @@ class FileBrowser(tk.Toplevel):
             self.hide = True
             self.hidden = self.right_tree.tag_has("hidden")
             self.right_tree.detach(*self.right_tree.tag_has("hidden"))
+        # restore color alternance
+        for i, item in enumerate(self.right_tree.get_children("")):
+            tags = [t for t in self.right_tree.item(item, 'tags')
+                    if t not in ['1', '0']]
+            tags.append(str(i % 2))
+            self.right_tree.item(item, tags=tags)
 
     def get_result(self):
         """Return selection."""
