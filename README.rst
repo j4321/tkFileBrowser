@@ -24,13 +24,27 @@ Requirements
 ------------
 
 - Linux
-- Python 2.7 or 3.x with tkinter + ttk
+- Python 2.7 or 3.x with tkinter + ttk and python-psutil
 
 
 Installation
 ------------
 
-With pip:
+- Ubuntu: use the PPA `ppa:j-4321-i/ppa`
+
+    ::
+
+        $ sudo add-apt-repository ppa:j-4321-i/ppa
+        $ sudo apt-get update
+        $ sudo apt-get install python(3)-tkfilebrowser
+
+
+- Archlinux:
+
+    the package is available on `AUR <https://aur.archlinux.org/packages/python-tkfilebrowser>`__
+
+
+- With pip:
 
 ::
 
@@ -101,10 +115,13 @@ Documentation
 Changelog
 ---------
 
-- tkfilebrowser 2.0.1
+- tkfilebrowser 2.1.0
     * Add compatibility with tkinter.filedialog keywords 'master' and 'defaultextension'
     * Change look of filetype selector
     * Fix bugs when navigating without displaying hidden files
+    * Fix color alternance bug when hiding hidden files
+    * Fix setup.py
+    * Hide suggestion drop-down when nothing matches anymore
 
 - tkfilebrowser 2.0.0
     * Change package name to tkfilebrowser to respect PEP 8
@@ -134,8 +151,7 @@ Changelog
     * Add column sorting (by name, size, modification date)
 
 - tkFileBrowser 1.0.1
-    * Set default filebrowser parent to None as for the usual filedialogs
-      and messageboxes.
+    * Set default filebrowser parent to None as for the usual filedialogs and messageboxes.
 
 - tkFileBrowser 1.0.0
     * Initial version

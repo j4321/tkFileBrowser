@@ -811,6 +811,8 @@ class FileBrowser(tk.Toplevel):
                     self.listbox.configure(height=len(l2))
                     self.listbox_frame.place(in_=self.entry, relx=0, rely=1,
                                              anchor="nw", relwidth=1)
+                else:
+                    self.listbox_frame.place_forget()
         return True
 
     def _go_left(self, event):
