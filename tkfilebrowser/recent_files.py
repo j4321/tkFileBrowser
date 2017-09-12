@@ -58,5 +58,9 @@ class RecentFiles:
         else:
             self._files.remove(file)
             self._files.insert(0, file)
-        with open(self._filename, 'w') as file:
-            file.write('\n'.join(self._files))
+        try:
+            with open(self._filename, 'w') as file:
+                file.write('\n'.join(self._files))
+        except Exception:
+            # avoid raising errors if location is read-only or invalid path
+            pass

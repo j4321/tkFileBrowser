@@ -50,7 +50,13 @@ PATH = os.path.dirname(__file__)
 LOCAL_PATH = os.path.join(os.path.expanduser('~'), '.config', 'tkfilebrowser')
 
 if not os.path.exists(LOCAL_PATH):
-    os.mkdir(LOCAL_PATH)
+    try:
+        if not os.path.exists(os.path.join(os.path.expanduser('~'), '.config')):
+            os.mkdir(os.path.join(os.path.expanduser('~'), '.config'))
+        os.mkdir(LOCAL_PATH)
+    except Exception:
+        # avoid raising error if the path is not writtable
+        pass
 
 RECENT_FILES = os.path.join(LOCAL_PATH, 'recent_files')
 

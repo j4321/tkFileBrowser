@@ -115,6 +115,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.1.1
+    * Fix error if LOCAL_PATH does not exists or is not writtable
+
 - tkfilebrowser 2.1.0
     * Add compatibility with tkinter.filedialog keywords 'master' and 'defaultextension'
     * Change look of filetype selector
