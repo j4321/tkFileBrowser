@@ -29,7 +29,7 @@ Constants and functions
 import locale
 import time
 import os
-from math import log10
+from math import log, floor
 
 try:
     import tkinter as tk
@@ -97,7 +97,7 @@ def _(text):
     return TR.get(text, text)
 
 
-SIZES = [(_("B"), 1), (_("kB"), 1e3), (_("MB"), 1e6), (_("GB"), 1e9), (_("TB"), 1e12)]
+SIZES = [_("B"), _("kB"), _("MB"), _("GB"), _("TB")]
 
 # ---  locale settings for dates
 locale.setlocale(locale.LC_ALL, "")
@@ -150,12 +150,14 @@ def get_size(file):
     """Return the size of file."""
     size_o = os.path.getsize(file)
     if size_o > 0:
-        m = int(log10(size_o) // 3)
+        m = int(floor(log(size_o) / log(1024)))
         if m < len(SIZES):
-            unit, div = SIZES[m]
+            unit = SIZES[m]
+            s = size_o / (1024 ** m)
         else:
-            unit, div = SIZES[-1]
-        size = "%s %s" % (locale.format("%.1f", size_o / div), unit)
+            unit = SIZES[-1]
+            s = size_o / (1024**(len(SIZES) - 1))
+        size = "%s %s" % (locale.format("%.1f", s), unit)
     else:
         size = "0 " + _("B")
     return size
