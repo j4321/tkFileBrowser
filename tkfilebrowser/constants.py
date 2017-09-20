@@ -97,7 +97,7 @@ def _(text):
     return TR.get(text, text)
 
 
-SIZES = [(_("B"), 1), ("kB", 1e3), ("MB", 1e6), ("GB", 1e9), ("TB", 1e12)]
+SIZES = [(_("B"), 1), (_("kB"), 1e3), (_("MB"), 1e6), (_("GB"), 1e9), (_("TB"), 1e12)]
 
 # ---  locale settings for dates
 locale.setlocale(locale.LC_ALL, "")
