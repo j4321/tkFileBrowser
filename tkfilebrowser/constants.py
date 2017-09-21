@@ -190,5 +190,9 @@ def display_size(size_o):
     return size
 
 
-def key_sort_files(file):
+def key_sort_dir_first(file):
     return file.is_file(), file.name.lower()
+
+
+def key_sort_file_first(file):
+    return file.is_dir(), file.name.lower()
