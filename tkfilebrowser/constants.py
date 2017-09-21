@@ -161,3 +161,34 @@ def get_size(file):
     else:
         size = "0 " + _("B")
     return size
+
+
+def display_modification_date(mtime):
+    """Return the modification date of file."""
+    tps = time.localtime(mtime)
+    date = time.strftime("%x", tps)
+    if date == TODAY:
+        date = _("Today") + time.strftime(" %H:%M", tps)
+    elif time.strftime("%Y", tps) == YEAR and (DAY - int(time.strftime("%j", tps))) < 7:
+        date = time.strftime("%A %H:%M", tps)
+    return date
+
+
+def display_size(size_o):
+    """Return the size of file."""
+    if size_o > 0:
+        m = int(floor(log(size_o) / log(1024)))
+        if m < len(SIZES):
+            unit = SIZES[m]
+            s = size_o / (1024 ** m)
+        else:
+            unit = SIZES[-1]
+            s = size_o / (1024**(len(SIZES) - 1))
+        size = "%s %s" % (locale.format("%.1f", s), unit)
+    else:
+        size = "0 " + _("B")
+    return size
+
+
+def key_sort_files(file):
+    return file.is_file(), file.name.lower()
