@@ -22,9 +22,14 @@ Main class
 
 
 import psutil
-from os import walk, mkdir, scandir
+from os import walk, mkdir
 from os.path import exists, join, getmtime, realpath, split, expanduser, abspath
 from os.path import isabs, splitext, dirname, getsize, isdir, isfile, islink
+try:
+    from os import scandir
+    SCANDIR = True
+except ImportError:
+    SCANDIR = False
 import traceback
 import tkfilebrowser.constants as cst
 from tkfilebrowser.autoscrollbar import AutoScrollbar
@@ -68,6 +73,12 @@ class FileBrowser(tk.Toplevel):
         if 'defaultextension' in kw and not defaultext:
             defaultext = kw.pop('defaultextension')
         tk.Toplevel.__init__(self, parent, **kw)
+
+        # python version compatibility
+        if SCANDIR:
+            self.display_folder = self.display_folder_scandir
+        else:
+            self.display_folder = self.display_folder_walk
 
         # keep track of folders to be able to move backward/foreward in history
         if initialdir:
@@ -881,7 +892,112 @@ class FileBrowser(tk.Toplevel):
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns")
 
-    def display_folder(self, folder, reset=True, update_bar=True):
+    def display_folder_walk(self, folder, reset=True, update_bar=True):
+        """
+        Display the content of folder in self.right_tree.
+        Arguments:
+            * reset (boolean): forget all the part of the history right of self._hist_index
+            * update_bar (boolean): update the buttons in path bar
+        """
+        folder = abspath(folder)  # remove trailing / if any
+        if not self.path_bar.winfo_ismapped():
+            self.path_bar.grid()
+            self.right_tree.configure(displaycolumns=("size", "date"))
+            w = self.right_tree.winfo_width() - 205
+            if w < 0:
+                w = 250
+            self.right_tree.column("#0", width=w)
+            self.right_tree.column("size", stretch=False, width=85)
+            self.right_tree.column("date", width=120)
+            if self.foldercreation:
+                self.b_new_folder.grid()
+        if reset:  # reset history
+            if not self._hist_index == -1:
+                self.history = self.history[:self._hist_index + 1]
+                self._hist_index = -1
+            self.history.append(folder)
+        if update_bar:  # update path bar
+            self._update_path_bar(folder)
+        self.path_var.set(folder)
+        # clear self.right_tree
+        self.right_tree.delete(*self.right_tree.get_children(""))
+        self.right_tree.delete(*self.hidden)
+        self.hidden = ()
+        try:
+            root, dirs, files = walk(folder).send(None)
+            # display folders first
+            dirs.sort(key=lambda n: n.lower())
+            i = 0
+            for d in dirs:
+                p = join(root, d)
+                if islink(p):
+                    tags = ("folder_link",)
+                else:
+                    tags = ("folder",)
+                if d[0] == ".":
+                    tags = tags + ("hidden",)
+                    if not self.hide:
+                        tags = tags + (str(i % 2),)
+                        i += 1
+                else:
+                    tags = tags + (str(i % 2),)
+                    i += 1
+                self.right_tree.insert("", "end", p, text=d, tags=tags,
+                                       values=("", "", cst.get_modification_date(p)))
+            # display files
+            files.sort(key=lambda n: n.lower())
+            extension = self.filetypes[self.filetype.get()]
+            if extension == [""]:
+                for f in files:
+                    p = join(root, f)
+                    if islink(p):
+                        tags = ("file_link",)
+                    else:
+                        tags = ("file",)
+                    if f[0] == ".":
+                        tags = tags + ("hidden",)
+                        if not self.hide:
+                            tags = tags + (str(i % 2),)
+                            i += 1
+                    else:
+                        tags = tags + (str(i % 2),)
+                        i += 1
+
+                    self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                           values=("", cst.get_size(p),
+                                                   cst.get_modification_date(p)))
+            else:
+                for f in files:
+                    ext = splitext(f)[-1]
+                    if ext in extension:
+                        p = join(root, f)
+                        if islink(p):
+                            tags = ("file_link",)
+                        else:
+                            tags = ("file",)
+                        if f[0] == ".":
+                            tags = tags + ("hidden",)
+                            if not self.hide:
+                                tags = tags + (str(i % 2),)
+                                i += 1
+                        else:
+                            tags = tags + (str(i % 2),)
+                            i += 1
+
+                        self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                               values=("", cst.get_size(p),
+                                                       cst.get_modification_date(p)))
+            items = self.right_tree.get_children("")
+            if items:
+                self.right_tree.focus_set()
+                self.right_tree.focus(items[0])
+            if self.hide:
+                self.hidden = self.right_tree.tag_has("hidden")
+                self.right_tree.detach(*self.right_tree.tag_has("hidden"))
+        except StopIteration:
+            print("err")
+
+    def display_folder_scandir(self, folder, reset=True, update_bar=True):
         """
         Display the content of folder in self.right_tree.
 
@@ -909,8 +1025,6 @@ class FileBrowser(tk.Toplevel):
         if update_bar:  # update path bar
             self._update_path_bar(folder)
         self.path_var.set(folder)
-#        if self.mode != "save":
-#            self.entry.delete(0, "end")
         # clear self.right_tree
         self.right_tree.delete(*self.right_tree.get_children(""))
         self.right_tree.delete(*self.hidden)

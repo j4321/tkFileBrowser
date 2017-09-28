@@ -24,7 +24,6 @@ Copyright 2007-2013 elementary LLC.
 
 Constants and functions
 """
-print('ok')
 
 
 import locale
