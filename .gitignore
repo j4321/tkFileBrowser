@@ -5,3 +5,5 @@ AUR
 .spyproject
 *.egg-info
 *.pyc
+.coverage
+htmlcov

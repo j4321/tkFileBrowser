@@ -435,8 +435,8 @@ class FileBrowser(tk.Toplevel):
         self.bind("<Alt-Right>", self._hist_forward)
         self.bind("<Alt-Up>", self._go_to_parent)
         self.bind("<Alt-Down>", self._go_to_child)
-        self.bind_all("<Button-1>", self._unpost, add=True)
-        self.bind_all("<FocusIn>", self._hide_listbox)
+        self.bind("<Button-1>", self._unpost, add=True)
+        self.bind("<FocusIn>", self._hide_listbox)
 
         if mode != "save":
             self.bind("<Control-l>", self.toggle_path_entry)
@@ -1023,8 +1023,6 @@ class FileBrowser(tk.Toplevel):
 
     def quit(self):
         """Destroy dialog."""
-        self.unbind_all("<FocusIn>")
-        self.unbind_all("<Button-1>")
         self.destroy()
         if self.result:
             if isinstance(self.result, tuple):

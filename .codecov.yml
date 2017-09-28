@@ -1,0 +1,10 @@
+coverage:
+  ci:
+    - travis
+  status:
+    patch: false
+    changes: false
+    project:
+      default:
+        target: '80'
+comment: false
