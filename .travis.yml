@@ -9,9 +9,10 @@ before_install:
   - "export DISPLAY=:99.0"
   - "sh -e /etc/init.d/xvfb start"
   - sleep 3
+  - "dpkg-query -W python3-xlib"
 install:
   - sudo apt-get install python-tk python3-tk
-  - python -m pip install nose coverage codecov psutil pynput
+  - python -m pip install nose coverage codecov psutil pynput xlib
 script:
   - python -m pip install .
   - python -m nose --with-coverage
