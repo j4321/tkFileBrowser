@@ -24,6 +24,7 @@ Copyright 2007-2013 elementary LLC.
 
 Constants and functions
 """
+print('ok')
 
 
 import locale
@@ -190,9 +191,6 @@ def display_size(size_o):
     return size
 
 
-def key_sort_dir_first(file):
+def key_sort_files(file):
     return file.is_file(), file.name.lower()
 
-
-def key_sort_file_first(file):
-    return file.is_dir(), file.name.lower()
