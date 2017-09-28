@@ -1,0 +1,20 @@
+language: python
+required: sudo
+python:
+  - "2.7"
+  - "3.3"
+  - "3.4"
+  - "3.5"
+before_install:
+  - "export DISPLAY=:99.0"
+  - "sh -e /etc/init.d/xvfb start"
+  - sleep 3
+install:
+  - sudo apt-get install python-tk python3-tk 
+  - python -m pip install coverage codecov pillow psutil
+script:
+  - python -m pip install .
+  - python -m nose
+after_success:
+  - coverage run nosetests
+  - codecov
