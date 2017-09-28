@@ -115,6 +115,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.1.2
+    * Speed up (a little) folder content display
+
 - tkfilebrowser 2.1.1
     * Fix error if LOCAL_PATH does not exists or is not writtable
 
