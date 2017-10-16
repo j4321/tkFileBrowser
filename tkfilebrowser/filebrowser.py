@@ -214,23 +214,6 @@ class FileBrowser(tk.Toplevel):
                                   selectbackground=sel_bg)
         self.listbox.pack(expand=True, fill="x")
 
-        # ---  file name
-        if mode == "save":
-            self.defaultext = defaultext
-
-            frame_name = ttk.Frame(self)
-            frame_name.grid(row=0, pady=(10, 0), padx=10, sticky="ew")
-            ttk.Label(frame_name, text=_("Name: ")).pack(side="left")
-            self.entry = ttk.Entry(frame_name, validate="key",
-                                   validatecommand=(self.complete, "%d", "%S",
-                                                    "%i", "%s"))
-            self.entry.pack(side="left", fill="x", expand=True)
-
-            if initialfile:
-                self.entry.insert(0, initialfile)
-        else:
-            self.multiple_selection = multiple_selection
-
         # ---  path bar
         self.path_var = tk.StringVar(self)
         frame_bar = ttk.Frame(self)
@@ -250,7 +233,20 @@ class FileBrowser(tk.Toplevel):
             self.b_new_folder.grid(row=0, column=1, sticky="e")
         if mode == "save":
             ttk.Label(self.path_bar, text=_("Folder: ")).grid(row=0, column=0)
+            self.defaultext = defaultext
+
+            frame_name = ttk.Frame(self)
+            frame_name.grid(row=0, pady=(10, 0), padx=10, sticky="ew")
+            ttk.Label(frame_name, text=_("Name: ")).pack(side="left")
+            self.entry = ttk.Entry(frame_name, validate="key",
+                                   validatecommand=(self.complete, "%d", "%S",
+                                                    "%i", "%s"))
+            self.entry.pack(side="left", fill="x", expand=True)
+
+            if initialfile:
+                self.entry.insert(0, initialfile)
         else:
+            self.multiple_selection = multiple_selection
             self.entry = ttk.Entry(frame_bar, validate="key",
                                    validatecommand=(self.complete, "%d", "%S",
                                                     "%i", "%s"))
@@ -399,6 +395,7 @@ class FileBrowser(tk.Toplevel):
         self.display_folder(initialdir)
         initialpath = join(initialdir, initialfile)
         if initialpath in self.right_tree.get_children(""):
+            self.right_tree.see(initialpath)
             self.right_tree.selection_add(initialpath)
 
         # ---  bindings

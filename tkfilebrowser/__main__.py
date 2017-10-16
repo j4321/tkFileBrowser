@@ -30,12 +30,12 @@ style.theme_use("clam")
 
 
 def c_open():
-    rep = askopendirnames(parent=root)
+    rep = askopendirnames(parent=root, initialdir='/', initialfile='tmp')
     print(rep)
 
 
 def c_save():
-    rep = asksaveasfilename(parent=root, defaultext=".png",
+    rep = asksaveasfilename(parent=root, defaultext=".png", initialdir='/tmp', initialfile='image.png',
                             filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
     print(rep)
 
