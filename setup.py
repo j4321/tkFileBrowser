@@ -42,4 +42,4 @@ setup(name='tkfilebrowser',
       keywords=['tkinter', 'filedialog', 'filebrowser'],
       packages=["tkfilebrowser"],
       package_data={"tkfilebrowser": ["images/*"]},
-      requires=["os", "locale", "time", "psutil", "tkinter", "math", "urllib"])
+      requires=["os", "locale", "time", "psutil", "tkinter", "math", "urllib", "babel"])

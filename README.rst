@@ -116,6 +116,7 @@ Changelog
 ---------
 
 - tkfilebrowser 2.1.2
+    * Use babel instead of locale in order not to change the locale globally
     * Speed up (a little) folder content display
 
 - tkfilebrowser 2.1.1
