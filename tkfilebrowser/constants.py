@@ -25,7 +25,6 @@ Copyright 2007-2013 elementary LLC.
 Constants and functions
 """
 
-print('ok')
 import locale
 from babel.numbers import format_number
 from babel.dates import format_date, format_datetime
