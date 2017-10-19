@@ -23,8 +23,8 @@ Main class
 
 import psutil
 from os import walk, mkdir
-from os.path import exists, join, getmtime, realpath, split, expanduser, abspath
-from os.path import isabs, splitext, dirname, getsize, isdir, isfile, islink
+from os.path import exists, join, getmtime, realpath, split, expanduser, \
+    abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
 try:
     from os import scandir
     SCANDIR = True
@@ -32,16 +32,14 @@ except ImportError:
     SCANDIR = False
 import traceback
 import tkfilebrowser.constants as cst
+from tkfilebrowser.constants import unquote, tk, ttk, key_sort_files, \
+    get_modification_date, get_size
 from tkfilebrowser.autoscrollbar import AutoScrollbar
 from tkfilebrowser.path_button import PathButton
 from tkfilebrowser.tooltip import TooltipTreeWrapper
 from tkfilebrowser.recent_files import RecentFiles
 
 _ = cst._
-unquote = cst.unquote
-tk = cst.tk
-ttk = cst.ttk
-key_sort_files = cst.key_sort_files
 
 
 class FileBrowser(tk.Toplevel):
@@ -669,7 +667,7 @@ class FileBrowser(tk.Toplevel):
                         tags.append("folder_link")
                     else:
                         tags.append("folder")
-                    vals = (p, "", cst.get_modification_date(p))
+                    vals = (p, "", get_modification_date(p))
                 if vals and p not in paths:
                     i += 1
                     paths.append(p)
@@ -690,18 +688,18 @@ class FileBrowser(tk.Toplevel):
                         ext = splitext(f)[-1]
                         if extension == [""] or ext in extension:
                             tags.append("file_link")
-                            vals = (p, cst.get_size(p), cst.get_modification_date(p))
+                            vals = (p, get_size(p), get_modification_date(p))
                     elif isdir(p):
                         tags.append("folder_link")
-                        vals = (p, "", cst.get_modification_date(p))
+                        vals = (p, "", get_modification_date(p))
                 elif isfile(p):
                     ext = splitext(f)[-1]
                     if extension == [""] or ext in extension:
                         tags.append("file")
-                        vals = (p, cst.get_size(p), cst.get_modification_date(p))
+                        vals = (p, get_size(p), get_modification_date(p))
                 elif isdir(p):
                     tags.append("folder")
-                    vals = (p, "", cst.get_modification_date(p))
+                    vals = (p, "", get_modification_date(p))
                 if vals:
                     i += 1
                     self.right_tree.insert("", "end", p, text=f, tags=tags,
@@ -940,7 +938,7 @@ class FileBrowser(tk.Toplevel):
                     tags = tags + (str(i % 2),)
                     i += 1
                 self.right_tree.insert("", "end", p, text=d, tags=tags,
-                                       values=("", "", cst.get_modification_date(p)))
+                                       values=("", "", get_modification_date(p)))
             # display files
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
@@ -961,8 +959,8 @@ class FileBrowser(tk.Toplevel):
                         i += 1
 
                     self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                           values=("", cst.get_size(p),
-                                                   cst.get_modification_date(p)))
+                                           values=("", get_size(p),
+                                                   get_modification_date(p)))
             else:
                 for f in files:
                     ext = splitext(f)[-1]
@@ -982,8 +980,8 @@ class FileBrowser(tk.Toplevel):
                             i += 1
 
                         self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                               values=("", cst.get_size(p),
-                                                       cst.get_modification_date(p)))
+                                               values=("", get_size(p),
+                                                       get_modification_date(p)))
             items = self.right_tree.get_children("")
             if items:
                 self.right_tree.focus_set()

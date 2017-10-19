@@ -25,9 +25,10 @@ Copyright 2007-2013 elementary LLC.
 Constants and functions
 """
 
-
 import locale
-import time
+from babel.numbers import format_number
+from babel.dates import format_date, format_datetime
+from datetime import datetime
 import os
 from math import log, floor
 
@@ -73,7 +74,7 @@ IM_RECENT_24 = os.path.join(PATH, "images", "recent_24.png")
 
 
 # ---  translation
-lang = locale.getdefaultlocale()[0][:2]
+LANG = locale.getdefaultlocale()[0]
 
 EN = {}
 FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
@@ -86,7 +87,7 @@ FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
       "Shortcuts": "Raccourcis", "Save As": "Enregistrer sous",
       "Recent": "Récents", "Recently used": "Récemment utilisés"}
 LANGUAGES = {"fr": FR, "en": EN}
-if lang == "fr":
+if LANG[:2] == "fr":
     TR = LANGUAGES["fr"]
 else:
     TR = LANGUAGES["en"]
@@ -97,13 +98,27 @@ def _(text):
     return TR.get(text, text)
 
 
+fromtimestamp = datetime.fromtimestamp
+
+
+def locale_date(date=None):
+    return format_date(date, 'short', locale=LANG)
+
+
+def locale_datetime(date=None):
+    return format_datetime(date, 'EEEE HH:mm', locale=LANG)
+
+
+def locale_number(nb):
+    return format_number(nb, locale=LANG)
+
+
 SIZES = [_("B"), _("kB"), _("MB"), _("GB"), _("TB")]
 
 # ---  locale settings for dates
-locale.setlocale(locale.LC_ALL, "")
-TODAY = time.strftime("%x")
-YEAR = time.strftime("%Y")
-DAY = int(time.strftime("%j"))
+TODAY = locale_date()
+YEAR = datetime.now().year
+DAY = int(format_date(None, 'D', locale=LANG))
 
 
 # ---  functions
@@ -137,12 +152,12 @@ def remove_trace(variable, mode, cbname):
 
 def get_modification_date(file):
     """Return the modification date of file."""
-    tps = time.localtime(os.path.getmtime(file))
-    date = time.strftime("%x", tps)
+    tps = fromtimestamp(os.path.getmtime(file))
+    date = locale_date(tps)
     if date == TODAY:
-        date = _("Today") + time.strftime(" %H:%M", tps)
-    elif time.strftime("%Y", tps) == YEAR and (DAY - int(time.strftime("%j", tps))) < 7:
-        date = time.strftime("%A %H:%M", tps)
+        date = _("Today") + tps.strftime(" %H:%M")
+    elif tps.year == YEAR and (DAY - int(tps.strftime("%j"))) < 7:
+        date = locale_datetime(tps)
     return date
 
 
@@ -157,20 +172,20 @@ def get_size(file):
         else:
             unit = SIZES[-1]
             s = size_o / (1024**(len(SIZES) - 1))
-        size = "%s %s" % (locale.format("%.1f", s), unit)
+        size = "%s %s" % (locale_number("%.1f" % s), unit)
     else:
         size = "0 " + _("B")
     return size
 
 
 def display_modification_date(mtime):
-    """Return the modification date of file."""
-    tps = time.localtime(mtime)
-    date = time.strftime("%x", tps)
+    """Return the modDification date of file."""
+    tps = fromtimestamp(mtime)
+    date = locale_date(tps)
     if date == TODAY:
-        date = _("Today") + time.strftime(" %H:%M", tps)
-    elif time.strftime("%Y", tps) == YEAR and (DAY - int(time.strftime("%j", tps))) < 7:
-        date = time.strftime("%A %H:%M", tps)
+        date = _("Today") + tps.strftime(" %H:%M")
+    elif tps.year == YEAR and (DAY - int(tps.strftime("%j"))) < 7:
+        date = locale_datetime(tps)
     return date
 
 
@@ -184,7 +199,7 @@ def display_size(size_o):
         else:
             unit = SIZES[-1]
             s = size_o / (1024**(len(SIZES) - 1))
-        size = "%s %s" % (locale.format("%.1f", s), unit)
+        size = "%s %s" % (locale_number("%.1f" % s), unit)
     else:
         size = "0 " + _("B")
     return size
@@ -192,4 +207,3 @@ def display_size(size_o):
 
 def key_sort_files(file):
     return file.is_file(), file.name.lower()
-
