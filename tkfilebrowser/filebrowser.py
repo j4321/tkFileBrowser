@@ -1024,6 +1024,7 @@ class FileBrowser(tk.Toplevel):
         self.right_tree.delete(*self.right_tree.get_children(""))
         self.right_tree.delete(*self.hidden)
         self.hidden = ()
+        extension = self.filetypes[self.filetype.get()]
         try:
             content = sorted(scandir(folder), key=key_sort_files)
             i = 0
@@ -1042,10 +1043,11 @@ class FileBrowser(tk.Toplevel):
                     i += 1
                 stat = f.stat()
                 if b_file:
-                    self.right_tree.insert("", "end", f.path, text=name, tags=tags,
-                                           values=("",
-                                                   cst.display_size(stat.st_size),
-                                                   cst.display_modification_date(stat.st_mtime)))
+                    if (extension == [""] or splitext(name)[-1] in extension):
+                        self.right_tree.insert("", "end", f.path, text=name, tags=tags,
+                                               values=("",
+                                                       cst.display_size(stat.st_size),
+                                                       cst.display_modification_date(stat.st_mtime)))
                 else:
                     self.right_tree.insert("", "end", f.path, text=name, tags=tags,
                                            values=("", "",
