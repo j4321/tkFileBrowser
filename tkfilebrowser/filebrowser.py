@@ -1231,6 +1231,8 @@ class FileBrowser(tk.Toplevel):
                     self.quit()
                 else:
                     self.display_folder(name)
+                    self.entry.grid_remove()
+                    self.entry.delete(0, "end")
             else:
                 if self.multiple_selection:
                     self.result = (realpath(name),)
