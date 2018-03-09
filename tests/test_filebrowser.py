@@ -25,10 +25,9 @@ class TestFileBrowser(BaseWidgetTest):
         fb.validate()
         walk = os.walk(path)
         root, dirs, _ = walk.send(None)
-#        res = list(fb.right_tree.selection())
         res = list(fb.get_result())
         res.sort()
-        dirs = [os.path.join(root, d) for d in dirs]
+        dirs = [os.path.realpath(os.path.join(root, d)) for d in dirs]
         dirs.sort()
         self.assertEqual(res, dirs)
         # --- single selection
@@ -43,20 +42,24 @@ class TestFileBrowser(BaseWidgetTest):
 
     def test_filebrowser_openfile(self):
         # --- multiple selection
-        fb = FileBrowser(self.window, initialdir=".", initialfile="test", mode="openfile",
+        path = os.path.expanduser('~')
+        fb = FileBrowser(self.window, initialdir=path, initialfile="test", mode="openfile",
                          multiple_selection=True, defaultext=".png",
                          title="Test", filetypes=[],
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
+        fb.right_tree.focus_force()
+        self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
+        self.window.update_idletasks()
         fb.validate()
-        walk = os.walk(os.path.abspath("."))
+        walk = os.walk(path)
         root, _, files = walk.send(None)
         res = list(fb.get_result())
         res.sort()
-        files = [os.path.join(root, d) for d in files]
+        files = [os.path.realpath(os.path.join(root, f)) for f in files]
         files.sort()
         self.assertEqual(res, files)
         # --- single selection

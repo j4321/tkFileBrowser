@@ -459,10 +459,9 @@ class FileBrowser(tk.Toplevel):
             tags = ['folder', 'folder_link']
         else:
             tags = ['file', 'file_link']
-        items = list(self.right_tree.tag_has(tags[0]))
-        items.extend(self.right_tree.tag_has(tags[1]))
+        items = self.right_tree.tag_has(tags[0]) + self.right_tree.tag_has(tags[1])
         self.right_tree.selection_clear()
-        self.right_tree.selection_set(*items)
+        self.right_tree.selection_set(items)
 
     def _select_all(self, event):
         """Select all entry content."""
