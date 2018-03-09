@@ -115,9 +115,11 @@ Documentation
 Changelog
 ---------
 
-- tkfilebrowser 2.1.2
+- tkfilebrowser 2.2.0
     * Use babel instead of locale in order not to change the locale globally
-    * Speed up (a little) folder content display
+    * Speed up (a little) folder content display (only python >= 3.5)
+    * Improve example: add comparison with default dialogs
+    * Add select all on Ctrl+A if multiple selection is enabled
 
 - tkfilebrowser 2.1.1
     * Fix error if LOCAL_PATH does not exists or is not writtable
