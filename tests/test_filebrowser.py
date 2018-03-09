@@ -10,7 +10,8 @@ import os
 class TestFileBrowser(BaseWidgetTest):
     def test_filebrowser_opendir(self):
         # --- multiple selection
-        fb = FileBrowser(self.window, initialdir=".", initialfile="test", mode="opendir",
+        path = os.path.expanduser('~')
+        fb = FileBrowser(self.window, initialdir=path, initialfile="test", mode="opendir",
                          multiple_selection=True, defaultext=".png",
                          title="Test", filetypes=[],
                          okbuttontext=None, cancelbuttontext="Cancel",
@@ -19,7 +20,7 @@ class TestFileBrowser(BaseWidgetTest):
         fb.event_generate('<Control-a>')
         self.window.update()
         fb.validate()
-        walk = os.walk(os.path.abspath("."))
+        walk = os.walk(path)
         root, dirs, _ = walk.send(None)
         res = list(fb.get_result())
         res.sort()
