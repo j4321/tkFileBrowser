@@ -17,7 +17,8 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
-        fb.right_tree.focus_set()
+        fb.right_tree.focus_force()
+        self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
         self.window.update_idletasks()
