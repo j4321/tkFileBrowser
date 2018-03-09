@@ -407,6 +407,8 @@ class FileBrowser(tk.Toplevel):
         self.right_tree.bind("<Double-1>", self._select)
         self.right_tree.bind("<Return>", self._select)
         self.right_tree.bind("<Left>", self._go_left)
+        if multiple_selection:
+            self.right_tree.bind("<Control-a>", self._right_tree_select_all)
 
         if mode == "opendir":
             self.right_tree.bind("<<TreeviewSelect>>",
@@ -451,6 +453,16 @@ class FileBrowser(tk.Toplevel):
 
         self.update_idletasks()
         self.lift()
+
+    def _right_tree_select_all(self, event):
+        if self.mode == 'opendir':
+            tags = ['folder', 'folder_link']
+        else:
+            tags = ['file', 'file_link']
+        items = list(self.right_tree.tag_has(tags[0]))
+        items.extend(self.right_tree.tag_has(tags[1]))
+        self.right_tree.selection_clear()
+        self.right_tree.selection_set(*items)
 
     def _select_all(self, event):
         """Select all entry content."""
