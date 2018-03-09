@@ -19,10 +19,11 @@ class TestFileBrowser(BaseWidgetTest):
         self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
-        fb.validate()
+#        fb.validate()
         walk = os.walk(path)
         root, dirs, _ = walk.send(None)
-        res = list(fb.get_result())
+        res = list(fb.right_tree.selection_get())
+#        res = list(fb.get_result())
         res.sort()
         dirs = [os.path.join(root, d) for d in dirs]
         dirs.sort()
