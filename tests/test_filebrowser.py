@@ -17,13 +17,15 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
+        fb.right_tree.focus_set()
         fb.event_generate('<Control-a>')
         self.window.update()
-#        fb.validate()
+        self.window.update_idletasks()
+        fb.validate()
         walk = os.walk(path)
         root, dirs, _ = walk.send(None)
-        res = list(fb.right_tree.selection())
-#        res = list(fb.get_result())
+#        res = list(fb.right_tree.selection())
+        res = list(fb.get_result())
         res.sort()
         dirs = [os.path.join(root, d) for d in dirs]
         dirs.sort()
