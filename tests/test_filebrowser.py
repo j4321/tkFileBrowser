@@ -22,7 +22,7 @@ class TestFileBrowser(BaseWidgetTest):
 #        fb.validate()
         walk = os.walk(path)
         root, dirs, _ = walk.send(None)
-        res = list(fb.right_tree.selection_get())
+        res = list(fb.right_tree.selection())
 #        res = list(fb.get_result())
         res.sort()
         dirs = [os.path.join(root, d) for d in dirs]
