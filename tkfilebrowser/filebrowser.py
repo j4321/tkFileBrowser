@@ -22,7 +22,7 @@ Main class
 
 
 import psutil
-from os import walk, mkdir
+from os import walk, mkdir, stat
 from os.path import exists, join, getmtime, realpath, split, expanduser, \
     abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
 try:
@@ -33,7 +33,7 @@ except ImportError:
 import traceback
 import tkfilebrowser.constants as cst
 from tkfilebrowser.constants import unquote, tk, ttk, key_sort_files, \
-    get_modification_date, get_size
+    get_modification_date, display_modification_date, display_size
 from tkfilebrowser.autoscrollbar import AutoScrollbar
 from tkfilebrowser.path_button import PathButton
 from tkfilebrowser.tooltip import TooltipTreeWrapper
@@ -699,7 +699,9 @@ class FileBrowser(tk.Toplevel):
                         ext = splitext(f)[-1]
                         if extension == [""] or ext in extension:
                             tags.append("file_link")
-                            vals = (p, get_size(p), get_modification_date(p))
+                            stats = stat(p)
+                            vals = (p, display_size(stats.st_size),
+                                    display_modification_date(stats.st_mtime))
                     elif isdir(p):
                         tags.append("folder_link")
                         vals = (p, "", get_modification_date(p))
@@ -707,7 +709,9 @@ class FileBrowser(tk.Toplevel):
                     ext = splitext(f)[-1]
                     if extension == [""] or ext in extension:
                         tags.append("file")
-                        vals = (p, get_size(p), get_modification_date(p))
+                        stats = stat(p)
+                        vals = (p, display_size(stats.st_size),
+                                display_modification_date(stats.st_mtime))
                 elif isdir(p):
                     tags.append("folder")
                     vals = (p, "", get_modification_date(p))
@@ -969,9 +973,18 @@ class FileBrowser(tk.Toplevel):
                         tags = tags + (str(i % 2),)
                         i += 1
 
-                    self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                           values=("", get_size(p),
-                                                   get_modification_date(p)))
+                    try:
+                        stats = stat(p)
+                    except OSError:
+                        self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                               values=("",
+                                                       display_size(0),
+                                                       display_modification_date(cst.TODAY)))
+                    else:
+                        self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                               values=("",
+                                                       display_size(stats.st_size),
+                                                       display_modification_date(stats.st_mtime)))
             else:
                 for f in files:
                     ext = splitext(f)[-1]
@@ -990,9 +1003,18 @@ class FileBrowser(tk.Toplevel):
                             tags = tags + (str(i % 2),)
                             i += 1
 
-                        self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                               values=("", get_size(p),
-                                                       get_modification_date(p)))
+                        try:
+                            stats = stat(p)
+                        except OSError:
+                            self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                                   values=("",
+                                                           display_size(0),
+                                                           display_modification_date(cst.TODAY)))
+                        else:
+                            self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                                   values=("",
+                                                           display_size(stats.st_size),
+                                                           display_modification_date(stats.st_mtime)))
             items = self.right_tree.get_children("")
             if items:
                 self.right_tree.focus_set()
@@ -1052,17 +1074,17 @@ class FileBrowser(tk.Toplevel):
                 else:
                     tags = tags + (str(i % 2),)
                     i += 1
-                stat = f.stat()
+                stats = f.stat()
                 if b_file:
                     if (extension == [""] or splitext(name)[-1] in extension):
                         self.right_tree.insert("", "end", f.path, text=name, tags=tags,
                                                values=("",
-                                                       cst.display_size(stat.st_size),
-                                                       cst.display_modification_date(stat.st_mtime)))
+                                                       display_size(stats.st_size),
+                                                       display_modification_date(stats.st_mtime)))
                 else:
                     self.right_tree.insert("", "end", f.path, text=name, tags=tags,
                                            values=("", "",
-                                                   cst.display_modification_date(stat.st_mtime)))
+                                                   display_modification_date(stats.st_mtime)))
             items = self.right_tree.get_children("")
             if items:
                 self.right_tree.focus_set()
