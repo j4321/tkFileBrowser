@@ -17,7 +17,7 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
-        fb.right_tree.focus_force()
+        fb.focus_force()
         self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
@@ -49,7 +49,7 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
-        fb.right_tree.focus_force()
+        fb.focus_force()
         self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
@@ -286,6 +286,7 @@ class TestFileBrowser(BaseWidgetTest):
     def test_filebrowser_on_selection(self):
         path = os.path.expanduser('~')
         fb = FileBrowser(self.window, initialdir=path, mode="opendir")
+        fb.focus_force()
         fb.event_generate("<Control-l>")
         self.window.update()
         self.assertTrue(fb.entry.winfo_ismapped())
@@ -297,9 +298,11 @@ class TestFileBrowser(BaseWidgetTest):
             self.window.update()
             self.assertEqual(fb.entry.get(),
                              os.path.join(fb.right_tree.item(ch[0], 'text'), ''))
+        fb.focus_force()
         fb.event_generate("<Control-l>")
         self.window.update()
         self.assertFalse(fb.entry.winfo_ismapped())
+        fb.focus_force()
         fb.event_generate("<Control-l>")
         self.window.update()
         ch = fb.right_tree.tag_has('file')
@@ -310,6 +313,7 @@ class TestFileBrowser(BaseWidgetTest):
             self.assertEqual(fb.entry.get(),
                              '')
         fb = FileBrowser(self.window, initialdir=path, mode="openfile")
+        fb.focus_force()
         fb.event_generate("<Control-l>")
         self.window.update()
         self.assertTrue(fb.entry.winfo_ismapped())
