@@ -284,7 +284,8 @@ class TestFileBrowser(BaseWidgetTest):
         self.assertEqual(ch, tuple(locations))
 
     def test_filebrowser_on_selection(self):
-        fb = FileBrowser(self.window, initialdir="/etc", mode="opendir")
+        path = os.path.expanduser('~')
+        fb = FileBrowser(self.window, initialdir=path, mode="opendir")
         fb.event_generate("<Control-l>")
         self.window.update()
         self.assertTrue(fb.entry.winfo_ismapped())
@@ -308,7 +309,7 @@ class TestFileBrowser(BaseWidgetTest):
             self.window.update()
             self.assertEqual(fb.entry.get(),
                              '')
-        fb = FileBrowser(self.window, initialdir="/etc", mode="openfile")
+        fb = FileBrowser(self.window, initialdir=path, mode="openfile")
         fb.event_generate("<Control-l>")
         self.window.update()
         self.assertTrue(fb.entry.winfo_ismapped())
@@ -327,7 +328,7 @@ class TestFileBrowser(BaseWidgetTest):
             self.window.update()
             self.assertEqual(fb.entry.get(),
                              fb.right_tree.item(ch[0], 'text'))
-        fb = FileBrowser(self.window, initialdir="/etc", mode="save")
+        fb = FileBrowser(self.window, initialdir=path, mode="save")
         self.assertTrue(fb.entry.winfo_ismapped())
         self.assertEqual(fb.entry.get(), '')
         ch = fb.right_tree.tag_has('folder')
