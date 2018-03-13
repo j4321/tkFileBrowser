@@ -152,7 +152,10 @@ def remove_trace(variable, mode, cbname):
 
 def get_modification_date(file):
     """Return the modification date of file."""
-    tps = fromtimestamp(os.path.getmtime(file))
+    try:
+        tps = fromtimestamp(os.path.getmtime(file))
+    except OSError:
+        tps = TODAY
     date = locale_date(tps)
     if date == TODAY:
         date = _("Today") + tps.strftime(" %H:%M")
@@ -163,7 +166,10 @@ def get_modification_date(file):
 
 def get_size(file):
     """Return the size of file."""
-    size_o = os.path.getsize(file)
+    try:
+        size_o = os.path.getsize(file)
+    except OSError:
+        size_o = 0
     if size_o > 0:
         m = int(floor(log(size_o) / log(1024)))
         if m < len(SIZES):

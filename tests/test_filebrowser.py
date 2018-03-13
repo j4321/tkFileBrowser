@@ -110,6 +110,8 @@ class TestFileBrowser(BaseWidgetTest):
         # --- openfile
         fb = FileBrowser(self.window, initialdir="/", mode="openfile",
                          multiple_selection=True)
+        if not fb.hide:
+            fb.toggle_hidden()
         self.window.update()
         fb.right_tree.focus_force()
         self.window.update()
