@@ -17,7 +17,7 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
-        fb.focus_force()
+        fb.right_tree.focus_force()
         self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
@@ -49,7 +49,7 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
-        fb.focus_force()
+        fb.right_tree.focus_force()
         self.window.update()
         fb.event_generate('<Control-a>')
         self.window.update()
