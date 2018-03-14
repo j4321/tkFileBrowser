@@ -11,6 +11,8 @@ Changelog
     * Speed up (a little) folder content display
     * Improve example: add comparison with default dialogs
     * Add select all on Ctrl+A if multiple selection is enabled
+    * Disable folder creation button if the user does not have write access
+    * Improve extension management in save mode
 
 - tkfilebrowser 2.1.1
     * Fix error if LOCAL_PATH does not exists or is not writtable

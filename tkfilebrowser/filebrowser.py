@@ -190,8 +190,12 @@ class FileBrowser(tk.Toplevel):
                                       width=w)
             b_filetype.grid(row=3, sticky="e", padx=10, pady=(4, 0))
             self.filetype.set(filetypes[0][0])
-            b_filetype.bind('<<ComboboxSelected>>',
-                            lambda e: self._change_filetype())
+            try:
+                self.filetype.trace_add('write', lambda *args: self._change_filetype())
+            except AttributeError:
+                self.filetype.trace('w', lambda *args: self._change_filetype())
+#            b_filetype.bind('<<ComboboxSelected>>',
+#                            lambda e: self._change_filetype())
         else:
             self.filetypes[""] = [""]
 
@@ -749,6 +753,12 @@ class FileBrowser(tk.Toplevel):
             self.display_folder(self.history[self._hist_index])
         else:
             self._display_recents()
+        if self.mode == 'save':
+            name, ext = splitext(self.entry.get())
+            new_ext = self.filetypes[self.filetype.get()][0]
+            if new_ext and ext not in self.filetypes[self.filetype.get()]:
+                self.entry.delete(len(name), 'end')
+                self.entry.insert('end', new_ext)
 
     # ---  path completion in entries: key bindings
     def _down(self, event):

@@ -105,6 +105,25 @@ class TestFileBrowser(BaseWidgetTest):
         self.window.update()
         fb.validate()
         self.assertEqual(fb.get_result(), '/test.png')
+        fb = FileBrowser(self.window, initialdir="/", initialfile="test.png", mode="save",
+                         filetypes=[("PNG", '*.png|*.PNG'), ("JPG", '*.jpg|*.JPG'),
+                                    ('ALL', '*')])
+        self.window.update()
+        self.assertEqual(fb.entry.get(), "test.png")
+        fb.filetype.set('JPG')
+        self.window.update()
+        self.assertEqual(fb.entry.get(), "test.jpg")
+        fb.filetype.set('ALL')
+        self.window.update()
+        self.assertEqual(fb.entry.get(), "test.jpg")
+        fb.filetype.set('PNG')
+        self.window.update()
+        self.assertEqual(fb.entry.get(), "test.png")
+        fb.entry.delete(0, 'end')
+        fb.entry.insert(0, "test.JPG")
+        fb.filetype.set('JPG')
+        self.window.update()
+        self.assertEqual(fb.entry.get(), "test.JPG")
 
     def test_filebrowser_keybrowse(self):
         # --- openfile
@@ -245,6 +264,21 @@ class TestFileBrowser(BaseWidgetTest):
         fb.right_tree.focus_force()
         fb.event_generate('<Alt-Down>')
         self.window.update()
+
+    def test_filebowser_foldercreation(self):
+        fb = FileBrowser(self.window, initialdir="/",
+                         foldercreation=True)
+        self.window.update()
+        self.assertTrue(fb.b_new_folder.winfo_ismapped())
+        self.assertTrue('disabled' in fb.b_new_folder.state())
+        fb.display_folder(os.path.expanduser('~'))
+        self.window.update()
+        self.assertTrue(fb.b_new_folder.winfo_ismapped())
+        self.assertFalse('disabled' in fb.b_new_folder.state())
+        fb.left_tree.selection_clear()
+        fb.left_tree.selection_set('recent')
+        self.window.update()
+        self.assertFalse(fb.b_new_folder.winfo_ismapped())
 
     def test_filebrowser_sorting(self):
         fb = FileBrowser(self.window, initialdir="/",
