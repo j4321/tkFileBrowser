@@ -7,3 +7,5 @@ AUR
 *.pyc
 .coverage
 htmlcov
+benchmark.py
+stats.txt

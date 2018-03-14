@@ -213,6 +213,39 @@ class TestFileBrowser(BaseWidgetTest):
             self.window.update()
             self.assertEqual(fb.get_result(), (l[0],))
 
+        # --- arrow nav
+        fb = FileBrowser(self.window, initialdir="/", mode="opendir",
+                         multiple_selection=True)
+        self.window.update()
+        fb.right_tree.focus_force()
+        self.window.update()
+        fb.event_generate('<Left>')
+        self.window.update()
+        fb.left_tree.focus_force()
+        fb.event_generate('<Up>')
+        self.window.update()
+        fb.right_tree.focus_force()
+        fb.event_generate('<Left>')
+        self.window.update()
+        fb.left_tree.focus_force()
+        fb.event_generate('<Down>')
+        self.window.update()
+        fb.right_tree.focus_force()
+        fb.event_generate('<Down>')
+        self.window.update()
+        fb.right_tree.focus_force()
+        fb.event_generate('<Alt-Left>')
+        self.window.update()
+        fb.right_tree.focus_force()
+        fb.event_generate('<Alt-Right>')
+        self.window.update()
+        fb.right_tree.focus_force()
+        fb.event_generate('<Alt-Up>')
+        self.window.update()
+        fb.right_tree.focus_force()
+        fb.event_generate('<Alt-Down>')
+        self.window.update()
+
     def test_filebrowser_sorting(self):
         fb = FileBrowser(self.window, initialdir="/",
                          multiple_selection=True, defaultext=".png",
