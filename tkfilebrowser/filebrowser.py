@@ -22,7 +22,7 @@ Main class
 
 
 import psutil
-from os import walk, mkdir, stat
+from os import walk, mkdir, stat, access, W_OK
 from os.path import exists, join, getmtime, realpath, split, expanduser, \
     abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
 try:
@@ -909,7 +909,9 @@ class FileBrowser(tk.Toplevel):
             * reset (boolean): forget all the part of the history right of self._hist_index
             * update_bar (boolean): update the buttons in path bar
         """
-        folder = abspath(folder)  # remove trailing / if any
+        # remove trailing / if any
+        folder = abspath(folder)
+        # reorganize display if previous was 'recent'
         if not self.path_bar.winfo_ismapped():
             self.path_bar.grid()
             self.right_tree.configure(displaycolumns=("size", "date"))
@@ -921,14 +923,22 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.column("date", width=120)
             if self.foldercreation:
                 self.b_new_folder.grid()
-        if reset:  # reset history
+        # reset history
+        if reset:
             if not self._hist_index == -1:
                 self.history = self.history[:self._hist_index + 1]
                 self._hist_index = -1
             self.history.append(folder)
-        if update_bar:  # update path bar
+        # update path bar
+        if update_bar:
             self._update_path_bar(folder)
         self.path_var.set(folder)
+        # disable new folder creation if no write access
+        if self.foldercreation:
+            if access(folder, W_OK):
+                self.b_new_folder.state(('!disabled',))
+            else:
+                self.b_new_folder.state(('disabled',))
         # clear self.right_tree
         self.right_tree.delete(*self.right_tree.get_children(""))
         self.right_tree.delete(*self.hidden)
@@ -1033,7 +1043,9 @@ class FileBrowser(tk.Toplevel):
             * reset (boolean): forget all the part of the history right of self._hist_index
             * update_bar (boolean): update the buttons in path bar
         """
-        folder = abspath(folder)  # remove trailing / if any
+        # remove trailing / if any
+        folder = abspath(folder)
+        # reorganize display if previous was 'recent'
         if not self.path_bar.winfo_ismapped():
             self.path_bar.grid()
             self.right_tree.configure(displaycolumns=("size", "date"))
@@ -1045,14 +1057,22 @@ class FileBrowser(tk.Toplevel):
             self.right_tree.column("date", width=120)
             if self.foldercreation:
                 self.b_new_folder.grid()
-        if reset:  # reset history
+        # reset history
+        if reset:
             if not self._hist_index == -1:
                 self.history = self.history[:self._hist_index + 1]
                 self._hist_index = -1
             self.history.append(folder)
-        if update_bar:  # update path bar
+        # update path bar
+        if update_bar:
             self._update_path_bar(folder)
         self.path_var.set(folder)
+        # disable new folder creation if no write access
+        if self.foldercreation:
+            if access(folder, W_OK):
+                self.b_new_folder.state(('!disabled',))
+            else:
+                self.b_new_folder.state(('disabled',))
         # clear self.right_tree
         self.right_tree.delete(*self.right_tree.get_children(""))
         self.right_tree.delete(*self.hidden)
@@ -1101,7 +1121,6 @@ class FileBrowser(tk.Toplevel):
             name = e.get()
             e.destroy()
             if name:
-                path = self.history[self._hist_index]
                 folder = join(path, name)
                 try:
                     mkdir(folder)
@@ -1114,7 +1133,9 @@ class FileBrowser(tk.Toplevel):
             e.destroy()
             self.right_tree.delete("tmp")
 
-        if self.path_bar.winfo_ismapped():
+        path = self.path_var.get()
+
+        if self.path_bar.winfo_ismapped() and access(path, W_OK):
             self.right_tree.insert("", 0, "tmp", tags=("folder", "1"))
             self.right_tree.see("tmp")
             e = ttk.Entry(self)
