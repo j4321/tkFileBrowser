@@ -164,26 +164,6 @@ def get_modification_date(file):
     return date
 
 
-def get_size(file):
-    """Return the size of file."""
-    try:
-        size_o = os.path.getsize(file)
-    except OSError:
-        size_o = 0
-    if size_o > 0:
-        m = int(floor(log(size_o) / log(1024)))
-        if m < len(SIZES):
-            unit = SIZES[m]
-            s = size_o / (1024 ** m)
-        else:
-            unit = SIZES[-1]
-            s = size_o / (1024**(len(SIZES) - 1))
-        size = "%s %s" % (locale_number("%.1f" % s), unit)
-    else:
-        size = "0 " + _("B")
-    return size
-
-
 def display_modification_date(mtime):
     """Return the modDification date of file."""
     tps = fromtimestamp(mtime)
