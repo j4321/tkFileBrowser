@@ -74,9 +74,9 @@ class FileBrowser(tk.Toplevel):
 
         # python version compatibility
         if SCANDIR:
-            self.display_folder = self.display_folder_scandir
+            self.display_folder = self._display_folder_scandir
         else:
-            self.display_folder = self.display_folder_walk
+            self.display_folder = self._display_folder_walk
 
         # keep track of folders to be able to move backward/foreward in history
         if initialdir:
@@ -902,7 +902,7 @@ class FileBrowser(tk.Toplevel):
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns")
 
-    def display_folder_walk(self, folder, reset=True, update_bar=True):
+    def _display_folder_walk(self, folder, reset=True, update_bar=True):
         """
         Display the content of folder in self.right_tree.
         Arguments:
@@ -1025,7 +1025,7 @@ class FileBrowser(tk.Toplevel):
         except StopIteration:
             print("err")
 
-    def display_folder_scandir(self, folder, reset=True, update_bar=True):
+    def _display_folder_scandir(self, folder, reset=True, update_bar=True):
         """
         Display the content of folder in self.right_tree.
 
