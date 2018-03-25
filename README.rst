@@ -115,6 +115,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.2.1
+    * Fix __main__.py for python 2
+
 - tkfilebrowser 2.2.0
     * Use babel instead of locale in order not to change the locale globally
     * Speed up (a little) folder content display
