@@ -24,7 +24,7 @@ Requirements
 ------------
 
 - Linux
-- Python 2.7 or 3.x with tkinter + ttk and python-psutil
+- Python 2.7 or 3.x with tkinter + ttk, python-psutil and python-babel
 
 
 Installation
