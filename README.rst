@@ -115,6 +115,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.2.1
+    * Fix ValueError in after_cancel with Python 3.6.5
+
 - tkfilebrowser 2.2.0
     * Use babel instead of locale in order not to change the locale globally
     * Speed up (a little) folder content display
