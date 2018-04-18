@@ -115,6 +115,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.2.2
+    * Fix ValueError in after_cancel with Python 3.6.5
+
 - tkfilebrowser 2.2.1
     * Fix __main__.py for python 2
 
