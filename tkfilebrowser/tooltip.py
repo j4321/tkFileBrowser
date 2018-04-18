@@ -101,7 +101,14 @@ class TooltipTreeWrapper:
         self.current_item = None
 
         self.tree.bind('<Motion>', self._on_motion)
-        self.tree.bind('<Leave>', lambda e: self.tree.after_cancel(self._timer_id))
+        self.tree.bind('<Leave>', self._on_leave)
+
+    def _on_leave(self, event):
+        try:
+            self.tree.after_cancel(self._timer_id)
+        except ValueError:
+            # nothing to cancel
+            pass
 
     def add_tooltip(self, item, text):
         """Add a tooltip with given text to the item."""
@@ -116,7 +123,11 @@ class TooltipTreeWrapper:
                     self.tooltip.withdraw()
                     self.current_item = None
         else:
-            self.tree.after_cancel(self._timer_id)
+            try:
+                self.tree.after_cancel(self._timer_id)
+            except ValueError:
+                # nothing to cancel
+                pass
             self._timer_id = self.tree.after(self.delay, self.display_tooltip)
 
     def display_tooltip(self):
