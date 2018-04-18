@@ -24,7 +24,7 @@ Requirements
 ------------
 
 - Linux
-- Python 2.7 or 3.x with tkinter + ttk and python-psutil
+- Python 2.7 or 3.x with tkinter + ttk, python-psutil and python-babel
 
 
 Installation
@@ -115,8 +115,11 @@ Documentation
 Changelog
 ---------
 
-- tkfilebrowser 2.2.1
+- tkfilebrowser 2.2.2
     * Fix ValueError in after_cancel with Python 3.6.5
+
+- tkfilebrowser 2.2.1
+    * Fix __main__.py for python 2
 
 - tkfilebrowser 2.2.0
     * Use babel instead of locale in order not to change the locale globally

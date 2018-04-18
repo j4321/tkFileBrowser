@@ -20,9 +20,15 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 Example
 """
 
-from tkfilebrowser.constants import tk, ttk
 from tkfilebrowser import askopendirname, askopenfilenames, asksaveasfilename
-from tkinter import filedialog
+try:
+    import tkinter as tk
+    from tkinter import ttk
+    from tkinter import filedialog
+except ImportError:
+    import Tkinter as tk
+    import ttk
+    import tkFileDialog as filedialog
 
 root = tk.Tk()
 
