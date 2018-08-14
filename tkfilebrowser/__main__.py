@@ -55,7 +55,8 @@ def c_save_old():
 
 def c_open_file():
     rep = askopenfilenames(parent=root, initialdir='/', initialfile='tmp',
-                           filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+#                           filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+                           filetypes=[("archive", "*.tar.*"), ("archive gzip", "*.tar.gz"), ("All files", "*")])
     print(rep)
 
 
@@ -66,7 +67,11 @@ def c_open_dir():
 
 def c_save():
     rep = asksaveasfilename(parent=root, defaultext=".png", initialdir='/tmp', initialfile='image.png',
-                            filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+                            filetypes=[("Pictures", "*.png|*.jpg|*.JPG"),
+                                       ("PNG", "*.png"),
+                                       ("archive", "*.tar.*"),
+                                       ("archive gzip", "*.tar.gz"),
+                                       ("All files", "*")])
     print(rep)
 
 
