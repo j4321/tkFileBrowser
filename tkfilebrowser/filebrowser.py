@@ -197,7 +197,7 @@ class FileBrowser(tk.Toplevel):
             except AttributeError:
                 self.filetype.trace('w', lambda *args: self._change_filetype())
         else:
-            self.filetypes[""] = ".*"
+            self.filetypes[""] = r".*$"
 
         # ---  recent files
         self._recent_files = RecentFiles(cst.RECENT_FILES, 30)
@@ -717,7 +717,7 @@ class FileBrowser(tk.Toplevel):
                     f = "/"
                 if islink(p):
                     if isfile(p):
-                        if search(extension, f):
+                        if extension == r".*$" or search(extension, f):
                             tags.append("file_link")
                             stats = stat(p)
                             vals = (p, display_size(stats.st_size),
@@ -726,7 +726,7 @@ class FileBrowser(tk.Toplevel):
                         tags.append("folder_link")
                         vals = (p, "", get_modification_date(p))
                 elif isfile(p):
-                    if search(extension, f):
+                    if extension == r".*$" or search(extension, f):
                         tags.append("file")
                         stats = stat(p)
                         vals = (p, display_size(stats.st_size),
@@ -835,7 +835,7 @@ class FileBrowser(tk.Toplevel):
                     if self.mode is not "opendir":
                         files.sort(key=lambda n: n.lower())
                         extension = self.filetypes[self.filetype.get()]
-                        if extension == ".*":
+                        if extension == r".*$":
                             l2.extend([i.replace(" ", "\ ") for i in files if i[:len(f)] == f])
                         else:
                             for i in files:
@@ -1026,7 +1026,7 @@ class FileBrowser(tk.Toplevel):
                                                        display_modification_date(stats.st_mtime)))
             else:
                 for f in files:
-                    if search(extension, f):
+                    if extension == r".*$" or search(extension, f):
                         p = join(root, f)
                         if islink(p):
                             tags = ("file_link",)
@@ -1124,7 +1124,7 @@ class FileBrowser(tk.Toplevel):
                     i += 1
                 stats = f.stat()
                 if b_file:
-                    if search(extension, name):
+                    if extension == r".*$" or search(extension, name):
                         self.right_tree.insert("", "end", f.path, text=name, tags=tags,
                                                values=("",
                                                        display_size(stats.st_size),
