@@ -302,7 +302,7 @@ class FileBrowser(tk.Toplevel):
 
         # -------- desktop
         try:
-            desktop = check_output(['xdg-users-dir', 'DESKTOP']).decode().strip()
+            desktop = check_output(['xdg-user-dir', 'DESKTOP']).decode().strip()
         except Exception:
             # FileNotFoundError in python3 if xdg-users-dir is not installed,
             # but OSError in python2
