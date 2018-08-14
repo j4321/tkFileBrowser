@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 tkfilebrowser - Alternative to filedialog for Tkinter
-Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
+Copyright 2017-2018 Juliette Monsel <j_4321@protonmail.com>
 
 tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -141,8 +141,6 @@ class FileBrowser(tk.Toplevel):
                                      default='white')
         fg = style.lookup('TLabel', 'foreground', default='black')
         active_bg = style.lookup('TButton', 'background', ('active',))
-        # active_fg = style.lookup('TButton', 'foreground', ('active',))
-        # disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
         sel_bg = style.lookup('Treeview', 'background', ('selected',))
         sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
         self.option_add('*TCombobox*Listbox.selectBackground', sel_bg)
@@ -277,13 +275,13 @@ class FileBrowser(tk.Toplevel):
         scroll_left.grid(row=0, column=1, sticky="ns")
         self.left_tree.configure(yscrollcommand=scroll_left.set)
 
-        # ---  list devices and bookmarked locations
-        # recent
+        # list devices and bookmarked locations
+        # -------- recent
         self.left_tree.insert("", "end", iid="recent", text=_("Recent"),
                               image=self.im_recent)
         wrapper.add_tooltip("recent", _("Recently used"))
 
-        # devices
+        # -------- devices
         devices = psutil.disk_partitions()
 
         for d in devices:
@@ -296,13 +294,13 @@ class FileBrowser(tk.Toplevel):
                                   image=self.im_drive)
             wrapper.add_tooltip(m, m)
 
-        # home
+        # -------- home
         home = expanduser("~")
         self.left_tree.insert("", "end", iid=home, image=self.im_home,
                               text=split(home)[-1])
         wrapper.add_tooltip(home, home)
 
-        # desktop
+        # -------- desktop
         try:
             desktop = check_output(['xdg-users-dir', 'DESKTOP']).decode().strip()
         except Exception:
@@ -314,7 +312,7 @@ class FileBrowser(tk.Toplevel):
                                   text=split(desktop)[-1])
             wrapper.add_tooltip(desktop, desktop)
 
-        # bookmarks
+        # -------- bookmarks
         path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
         path_bm2 = join(home, ".gtk-bookmarks")  # old location
         if exists(path_bm):
