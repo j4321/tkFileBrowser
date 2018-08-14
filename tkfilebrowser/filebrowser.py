@@ -21,9 +21,10 @@ Main class
 """
 # TODO: fix filetype display for extensions like .tar.xz
 # TODO: improve extension change
-# TODO: show desktop in shortcuts
+
 
 import psutil
+from subprocess import check_output
 from os import walk, mkdir, stat, access, W_OK
 from os.path import exists, join, getmtime, realpath, split, expanduser, \
     abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
@@ -280,10 +281,12 @@ class FileBrowser(tk.Toplevel):
         self.left_tree.configure(yscrollcommand=scroll_left.set)
 
         # ---  list devices and bookmarked locations
+        # recent
         self.left_tree.insert("", "end", iid="recent", text=_("Recent"),
                               image=self.im_recent)
         wrapper.add_tooltip("recent", _("Recently used"))
 
+        # devices
         devices = psutil.disk_partitions()
 
         for d in devices:
@@ -295,10 +298,25 @@ class FileBrowser(tk.Toplevel):
             self.left_tree.insert("", "end", iid=m, text=txt,
                                   image=self.im_drive)
             wrapper.add_tooltip(m, m)
+
+        # home
         home = expanduser("~")
         self.left_tree.insert("", "end", iid=home, image=self.im_home,
                               text=split(home)[-1])
         wrapper.add_tooltip(home, home)
+
+        # desktop
+        try:
+            desktop = check_output(['xdg-users-dir', 'DESKTOP']).decode().strip()
+        except FileNotFoundError:
+            # xdg-users-dir' not installed
+            desktop = join(home, 'Desktop')
+        if exists(desktop):
+            self.left_tree.insert("", "end", iid=desktop, image=self.im_folder,
+                                  text=split(desktop)[-1])
+            wrapper.add_tooltip(desktop, desktop)
+
+        # bookmarks
         path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
         path_bm2 = join(home, ".gtk-bookmarks")  # old location
         if exists(path_bm):
