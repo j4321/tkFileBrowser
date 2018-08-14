@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 tkfilebrowser - Alternative to filedialog for Tkinter
-Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
+Copyright 2017-2018 Juliette Monsel <j_4321@protonmail.com>
 
 tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -15,11 +15,6 @@ GNU General Public License for more details.
 
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
-
-The icons are modified versions of icons from the elementary project
-(the xfce fork to be precise https://github.com/shimmerproject/elementary-xfce)
-Copyright 2007-2013 elementary LLC.
 
 
 Functions
@@ -127,7 +122,7 @@ def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
     Options:
         * initialdir: initial folder whose content is displayed
         * initialfile: initial selected item (just the name, not the full path)
-        * defaultext (save mode only): extension added to filename if none is given
+        * defaultext: extension added to filename if none is given
         * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
           show only files of given filetype ("*" for all files)
         * okbuttontext: text displayed on the validate button, if None, the

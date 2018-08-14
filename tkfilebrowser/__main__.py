@@ -38,7 +38,9 @@ style.theme_use("clam")
 
 def c_open_file_old():
     rep = filedialog.askopenfilenames(parent=root, initialdir='/', initialfile='tmp',
-                                      filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg"), ("All files", "*")])
+                                      filetypes=[("PNG", "*.png"),
+                                                 ("JPEG", "*.jpg"),
+                                                 ("All files", "*")])
     print(rep)
 
 
@@ -48,14 +50,19 @@ def c_open_dir_old():
 
 
 def c_save_old():
-    rep = filedialog.asksaveasfilename(parent=root, defaultextension=".png", initialdir='/tmp', initialfile='image.png',
-                                       filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg"), ("All files", "*")])
+    rep = filedialog.asksaveasfilename(parent=root, defaultextension=".png",
+                                       initialdir='/tmp', initialfile='image.png',
+                                       filetypes=[("PNG", "*.png"),
+                                                  ("JPEG", "*.jpg"),
+                                                  ("Text files", "*.txt"),
+                                                  ("All files", "*")])
     print(rep)
 
 
 def c_open_file():
     rep = askopenfilenames(parent=root, initialdir='/', initialfile='tmp',
-                           filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+                           filetypes=[("Pictures", "*.png|*.jpg|*.JPG"),
+                                      ("All files", "*")])
     print(rep)
 
 
@@ -66,7 +73,9 @@ def c_open_dir():
 
 def c_save():
     rep = asksaveasfilename(parent=root, defaultext=".png", initialdir='/tmp', initialfile='image.png',
-                            filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+                            filetypes=[("Pictures", "*.png|*.jpg|*.JPG"),
+                                       ("Text files", "*.txt"),
+                                       ("All files", "*")])
     print(rep)
 
 

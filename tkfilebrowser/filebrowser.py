@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 tkfilebrowser - Alternative to filedialog for Tkinter
-Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
+Copyright 2017-2018 Juliette Monsel <j_4321@protonmail.com>
 
 tkfilebrowser is free software: you can redistribute it and/or modify
 it under the terms of the GNU General Public License as published by
@@ -19,11 +19,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Main class
 """
-# TODO: fix filetype display for extensions like .tar.xz
-# TODO: improve extension change
-# TODO: show desktop in shortcuts
+
 
 import psutil
+from re import search
+from subprocess import check_output
 from os import walk, mkdir, stat, access, W_OK
 from os.path import exists, join, getmtime, realpath, split, expanduser, \
     abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
@@ -141,8 +141,6 @@ class FileBrowser(tk.Toplevel):
                                      default='white')
         fg = style.lookup('TLabel', 'foreground', default='black')
         active_bg = style.lookup('TButton', 'background', ('active',))
-        # active_fg = style.lookup('TButton', 'foreground', ('active',))
-        # disabled_fg = style.lookup('TButton', 'foreground', ('disabled',))
         sel_bg = style.lookup('Treeview', 'background', ('selected',))
         sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
         self.option_add('*TCombobox*Listbox.selectBackground', sel_bg)
@@ -182,7 +180,7 @@ class FileBrowser(tk.Toplevel):
             for name, exts in filetypes:
                 if name not in self.filetypes:
                     self.filetypes[name] = []
-                self.filetypes[name].extend([ext.split("*")[-1].strip() for ext in exts.split("|")])
+                self.filetypes[name] = r'%s$' % exts.strip().replace('.', '\.').replace('*', '.*')
             values = list(self.filetypes.keys())
             w = max([len(f) for f in values] + [5])
             b_filetype = ttk.Combobox(self, textvariable=self.filetype,
@@ -196,10 +194,8 @@ class FileBrowser(tk.Toplevel):
                 self.filetype.trace_add('write', lambda *args: self._change_filetype())
             except AttributeError:
                 self.filetype.trace('w', lambda *args: self._change_filetype())
-#            b_filetype.bind('<<ComboboxSelected>>',
-#                            lambda e: self._change_filetype())
         else:
-            self.filetypes[""] = [""]
+            self.filetypes[""] = r".*$"
 
         # ---  recent files
         self._recent_files = RecentFiles(cst.RECENT_FILES, 30)
@@ -279,11 +275,13 @@ class FileBrowser(tk.Toplevel):
         scroll_left.grid(row=0, column=1, sticky="ns")
         self.left_tree.configure(yscrollcommand=scroll_left.set)
 
-        # ---  list devices and bookmarked locations
+        # list devices and bookmarked locations
+        # -------- recent
         self.left_tree.insert("", "end", iid="recent", text=_("Recent"),
                               image=self.im_recent)
         wrapper.add_tooltip("recent", _("Recently used"))
 
+        # -------- devices
         devices = psutil.disk_partitions()
 
         for d in devices:
@@ -295,10 +293,26 @@ class FileBrowser(tk.Toplevel):
             self.left_tree.insert("", "end", iid=m, text=txt,
                                   image=self.im_drive)
             wrapper.add_tooltip(m, m)
+
+        # -------- home
         home = expanduser("~")
         self.left_tree.insert("", "end", iid=home, image=self.im_home,
                               text=split(home)[-1])
         wrapper.add_tooltip(home, home)
+
+        # -------- desktop
+        try:
+            desktop = check_output(['xdg-users-dir', 'DESKTOP']).decode().strip()
+        except Exception:
+            # FileNotFoundError in python3 if xdg-users-dir is not installed,
+            # but OSError in python2
+            desktop = join(home, 'Desktop')
+        if exists(desktop):
+            self.left_tree.insert("", "end", iid=desktop, image=self.im_folder,
+                                  text=split(desktop)[-1])
+            wrapper.add_tooltip(desktop, desktop)
+
+        # -------- bookmarks
         path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
         path_bm2 = join(home, ".gtk-bookmarks")  # old location
         if exists(path_bm):
@@ -702,8 +716,7 @@ class FileBrowser(tk.Toplevel):
                     f = "/"
                 if islink(p):
                     if isfile(p):
-                        ext = splitext(f)[-1]
-                        if extension == [""] or ext in extension:
+                        if extension == r".*$" or search(extension, f):
                             tags.append("file_link")
                             stats = stat(p)
                             vals = (p, display_size(stats.st_size),
@@ -712,8 +725,7 @@ class FileBrowser(tk.Toplevel):
                         tags.append("folder_link")
                         vals = (p, "", get_modification_date(p))
                 elif isfile(p):
-                    ext = splitext(f)[-1]
-                    if extension == [""] or ext in extension:
+                    if extension == r".*$" or search(extension, f):
                         tags.append("file")
                         stats = stat(p)
                         vals = (p, display_size(stats.st_size),
@@ -756,11 +768,16 @@ class FileBrowser(tk.Toplevel):
         else:
             self._display_recents()
         if self.mode == 'save':
-            name, ext = splitext(self.entry.get())
-            new_ext = self.filetypes[self.filetype.get()][0]
-            if new_ext and ext not in self.filetypes[self.filetype.get()]:
-                self.entry.delete(len(name), 'end')
-                self.entry.insert('end', new_ext)
+            filename = self.entry.get()
+            new_ext = self.filetypes[self.filetype.get()]
+            if filename and not search(new_ext, filename):
+                old_ext = search(r'\..+$', filename).group()
+                exts = [e[2:].replace('\.', '.') for e in new_ext[:-1].split('|')]
+                exts = [e for e in exts if search(r'\.[^\*]+$', e)]
+                if exts:
+                    filename = filename.replace(old_ext, exts[0])
+                self.entry.delete(0, 'end')
+                self.entry.insert(0, filename)
 
     # ---  path completion in entries: key bindings
     def _down(self, event):
@@ -817,12 +834,11 @@ class FileBrowser(tk.Toplevel):
                     if self.mode is not "opendir":
                         files.sort(key=lambda n: n.lower())
                         extension = self.filetypes[self.filetype.get()]
-                        if extension == [""]:
+                        if extension == r".*$":
                             l2.extend([i.replace(" ", "\ ") for i in files if i[:len(f)] == f])
                         else:
                             for i in files:
-                                ext = splitext(i)[-1]
-                                if ext in extension and i[:len(f)] == f:
+                                if search(extension, i) and i[:len(f)] == f:
                                     l2.append(i.replace(" ", "\ "))
                     l2.extend([i.replace(" ", "\ ") + "/" for i in dirs if i[:len(f)] == f])
 
@@ -979,7 +995,7 @@ class FileBrowser(tk.Toplevel):
             # display files
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
-            if extension == [""]:
+            if extension == ".*":
                 for f in files:
                     p = join(root, f)
                     if islink(p):
@@ -1009,8 +1025,7 @@ class FileBrowser(tk.Toplevel):
                                                        display_modification_date(stats.st_mtime)))
             else:
                 for f in files:
-                    ext = splitext(f)[-1]
-                    if ext in extension:
+                    if extension == r".*$" or search(extension, f):
                         p = join(root, f)
                         if islink(p):
                             tags = ("file_link",)
@@ -1108,7 +1123,7 @@ class FileBrowser(tk.Toplevel):
                     i += 1
                 stats = f.stat()
                 if b_file:
-                    if (extension == [""] or splitext(name)[-1] in extension):
+                    if extension == r".*$" or search(extension, name):
                         self.right_tree.insert("", "end", f.path, text=name, tags=tags,
                                                values=("",
                                                        display_size(stats.st_size),
