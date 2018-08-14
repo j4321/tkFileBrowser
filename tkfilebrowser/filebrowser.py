@@ -305,8 +305,9 @@ class FileBrowser(tk.Toplevel):
         # desktop
         try:
             desktop = check_output(['xdg-users-dir', 'DESKTOP']).decode().strip()
-        except FileNotFoundError:
-            # xdg-users-dir' not installed
+        except Exception:
+            # FileNotFoundError in python3 if xdg-users-dir is not installed,
+            # but OSError in python2
             desktop = join(home, 'Desktop')
         if exists(desktop):
             self.left_tree.insert("", "end", iid=desktop, image=self.im_folder,
