@@ -114,6 +114,8 @@ Documentation
 
 Changelog
 ---------
+- tkfilebrowser 2.2.4
+    * Fix bug in desktop folder identification
 
 - tkfilebrowser 2.2.3
     * Fix FileNotFoundError if initialdir does not exist

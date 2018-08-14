@@ -6,6 +6,9 @@ Copyright 2017 Juliette Monsel <j_4321@protonmail.com>
 Changelog
 ---------
 
+- tkfilebrowser 2.2.4
+    * Fix bug in desktop folder identification
+
 - tkfilebrowser 2.2.3
     * Fix FileNotFoundError if initialdir does not exist
     * Add Desktop in shortcuts (if found)
