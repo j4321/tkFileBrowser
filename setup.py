@@ -12,7 +12,7 @@ with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
 
 setup(name='tkfilebrowser',
-      version='2.2.2',
+      version='2.2.3',
       description='File browser for Tkinter, alternative to tkinter.filedialog in linux with GTK bookmarks support.',
       long_description=long_description,
       url='https://github.com/j4321/tkFileBrowser',
@@ -29,6 +29,7 @@ setup(name='tkfilebrowser',
                    'Programming Language :: Python :: 3.4',
                    'Programming Language :: Python :: 3.5',
                    'Programming Language :: Python :: 3.6',
+                   'Programming Language :: Python :: 3.7',
                    'Natural Language :: English',
                    'Natural Language :: French',
                    'Operating System :: POSIX :: Linux'],

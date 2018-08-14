@@ -115,6 +115,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.2.3
+    * Fix FileNotFoundError if initialdir does not exist
+
 - tkfilebrowser 2.2.2
     * Fix ValueError in after_cancel with Python 3.6.5
 

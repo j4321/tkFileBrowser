@@ -19,7 +19,9 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 Main class
 """
-
+# TODO: fix filetype display for extensions like .tar.xz
+# TODO: improve extension change
+# TODO: show desktop in shortcuts
 
 import psutil
 from os import walk, mkdir, stat, access, W_OK
@@ -1043,7 +1045,7 @@ class FileBrowser(tk.Toplevel):
                 self.hidden = self.right_tree.tag_has("hidden")
                 self.right_tree.detach(*self.right_tree.tag_has("hidden"))
         except StopIteration:
-            print("err")
+            self._display_folder_walk(expanduser('~'), reset, update_bar)
 
     def _display_folder_scandir(self, folder, reset=True, update_bar=True):
         """
@@ -1122,8 +1124,8 @@ class FileBrowser(tk.Toplevel):
             if self.hide:
                 self.hidden = self.right_tree.tag_has("hidden")
                 self.right_tree.detach(*self.right_tree.tag_has("hidden"))
-        except StopIteration:
-            print("err")
+        except FileNotFoundError:
+            self._display_folder_scandir(expanduser('~'), reset=True, update_bar=True)
 
     def create_folder(self, event=None):
         """Create new folder in current location."""
