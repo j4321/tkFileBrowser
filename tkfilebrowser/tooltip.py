@@ -33,8 +33,6 @@ class Tooltip(tk.Toplevel):
 
         Options:
             * parent: parent window
-            * background: background color
-            * foreground: foreground color
             * image: PhotoImage/BitmapImage to display in the tooltip
             * text: text (str) to display in the tooltip
             * compound: relative orientation of the graphic relative to the text
@@ -46,21 +44,16 @@ class Tooltip(tk.Toplevel):
         self.attributes('-type', 'tooltip')
         self.attributes('-alpha', kwargs.get('alpha', 0.8))
         self.overrideredirect(True)
-        self.configure(padx=kwargs.get('padx', 4))
-        self.configure(pady=kwargs.get('pady', 4))
+        style = kwargs.get('style', 'tooltip.tkfilebrowser.TLabel')
+        print(style)
 
-        self.style = ttk.Style(self)
-        if 'background' in kwargs:
-            bg = kwargs['background']
-            self.configure(background=bg)
-            self.style.configure('tooltip.TLabel', background=bg)
-        if 'foreground' in kwargs:
-            self.style.configure('tooltip.TLabel', foreground=kwargs['foreground'])
+        bg = ttk.Style(self).lookup(style, 'background')
+        self.configure(background=bg)
 
         self.im = kwargs.get('image', None)
         self.label = ttk.Label(self, text=kwargs.get('text', ''), image=self.im,
-                               style='tooltip.TLabel',
-                               compound=kwargs.get('compound', 'left'))
+                               style=style, compound=kwargs.get('compound', 'left'),
+                               padding=kwargs.get('padding', 4))
         self.label.pack()
 
     def configure(self, **kwargs):
@@ -68,11 +61,6 @@ class Tooltip(tk.Toplevel):
             self.label.configure(text=kwargs.pop('text'))
         if 'image' in kwargs:
             self.label.configure(image=kwargs.pop('image'))
-        if 'background' in kwargs:
-            self.style.configure('tooltip.TLabel', background=kwargs['background'])
-        if 'foreground' in kwargs:
-            fg = kwargs.pop('foreground')
-            self.style.configure('tooltip.TLabel', foreground=fg)
         if 'alpha' in kwargs:
             self.attributes('-alpha', kwargs.pop('alpha'))
         tk.Toplevel.configure(self, **kwargs)

@@ -135,7 +135,7 @@ class FileBrowser(tk.Toplevel):
         style.configure("left.tkfilebrowser.Treeview.Heading",
                         font="TkDefaultFont")
         style.configure("left.tkfilebrowser.Treeview.Item", padding=2)
-        style.configure("listbox.TFrame", background="white", relief="sunken")
+        style.configure("listbox.tkfilebrowser.TFrame", background="white", relief="sunken")
         field_bg = style.lookup("TEntry", "fieldbackground", default='white')
         tree_field_bg = style.lookup("ttk.Treeview", "fieldbackground",
                                      default='white')
@@ -145,22 +145,25 @@ class FileBrowser(tk.Toplevel):
         sel_fg = style.lookup('Treeview', 'foreground', ('selected',))
         self.option_add('*TCombobox*Listbox.selectBackground', sel_bg)
         self.option_add('*TCombobox*Listbox.selectForeground', sel_fg)
-        style.map('types.TCombobox', foreground=[], fieldbackground=[])
-        style.configure('types.TCombobox', lightcolor=bg,
+        style.map('types.tkfilebrowser.TCombobox', foreground=[], fieldbackground=[])
+        style.configure('types.tkfilebrowser.TCombobox', lightcolor=bg,
                         fieldbackground=bg)
-        style.configure('types.TCombobox.Item', background='red')
+        style.configure('types.tkfilebrowser.TCombobox.Item', background='red')
         style.configure("left.tkfilebrowser.Treeview", background=active_bg,
                         font="TkDefaultFont",
                         fieldbackground=active_bg)
         self.configure(background=bg)
         # path button style
-        style.configure("path.TButton", padding=2)
+        style.configure("path.tkfilebrowser.TButton", padding=2)
         selected_bg = style.lookup("TButton", "background", ("pressed",))
         map_bg = style.map("TButton", "background")
         map_bg.append(("selected", selected_bg))
-        style.map("path.TButton",
+        style.map("path.tkfilebrowser.TButton",
                   background=map_bg,
                   font=[("selected", "TkDefaultFont 9 bold")])
+        # tooltip style
+        style.configure('tooltip.tkfilebrowser.TLabel', background='black',
+                        foreground='white')
 
         # ---  images
         self.im_file = tk.PhotoImage(file=cst.IM_FILE, master=self)
@@ -185,7 +188,7 @@ class FileBrowser(tk.Toplevel):
             w = max([len(f) for f in values] + [5])
             b_filetype = ttk.Combobox(self, textvariable=self.filetype,
                                       state='readonly',
-                                      style='types.TCombobox',
+                                      style='types.tkfilebrowser.TCombobox',
                                       values=values,
                                       width=w)
             b_filetype.grid(row=3, sticky="e", padx=10, pady=(4, 0))
@@ -203,7 +206,7 @@ class FileBrowser(tk.Toplevel):
         # ---  path completion
         self.complete = self.register(self._completion)
         self.listbox_var = tk.StringVar(self)
-        self.listbox_frame = ttk.Frame(self, style="listbox.TFrame", borderwidth=1)
+        self.listbox_frame = ttk.Frame(self, style="listbox.tkfilebrowser.TFrame", borderwidth=1)
         self.listbox = tk.Listbox(self.listbox_frame,
                                   listvariable=self.listbox_var,
                                   highlightthickness=0,
@@ -265,8 +268,7 @@ class FileBrowser(tk.Toplevel):
         paned.add(left_pane, weight=0)
         self.left_tree = ttk.Treeview(left_pane, selectmode="browse",
                                       style="left.tkfilebrowser.Treeview")
-        wrapper = TooltipTreeWrapper(self.left_tree, background='black',
-                                     foreground='white')
+        wrapper = TooltipTreeWrapper(self.left_tree)
         self.left_tree.column("#0", width=150)
         self.left_tree.heading("#0", text=_("Shortcuts"), anchor="w")
         self.left_tree.grid(row=0, column=0, sticky="sewn")
@@ -926,7 +928,7 @@ class FileBrowser(tk.Toplevel):
             b = PathButton(self.path_bar, self.path_var, p, text=folder,
                            width=len(folder) + 1,
                            command=lambda f=p: self.display_folder(f),
-                           style="path.TButton")
+                           style="path.tkfilebrowser.TButton")
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns")
 
