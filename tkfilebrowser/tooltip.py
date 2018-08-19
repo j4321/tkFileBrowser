@@ -45,7 +45,6 @@ class Tooltip(tk.Toplevel):
         self.attributes('-alpha', kwargs.get('alpha', 0.8))
         self.overrideredirect(True)
         style = kwargs.get('style', 'tooltip.tkfilebrowser.TLabel')
-        print(style)
 
         bg = ttk.Style(self).lookup(style, 'background')
         self.configure(background=bg)
