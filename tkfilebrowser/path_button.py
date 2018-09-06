@@ -42,7 +42,7 @@ class PathButton(ttk.Button):
                      to value
             * all ttk.Button options
         """
-        kwargs["style"] = "path.TButton"
+        kwargs["style"] = "path.tkfilebrowser.TButton"
         ttk.Button.__init__(self, parent, **kwargs)
         self.variable = variable
         self.value = value

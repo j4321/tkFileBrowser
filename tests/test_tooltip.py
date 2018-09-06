@@ -9,10 +9,9 @@ except ImportError:
 
 class TestTooltip(BaseWidgetTest):
     def test_tooltip(self):
-        t = Tooltip(self.window, background='white', foreground='black')
+        t = Tooltip(self.window)
         self.window.update()
-        t.configure(text='Hello', background='black', foreground='white',
-                    image=None, alpha=0.75)
+        t.configure(text='Hello', image=None, alpha=0.75)
 
 
 class TestTooltipTreeWrapper(BaseWidgetTest):
@@ -22,7 +21,7 @@ class TestTooltipTreeWrapper(BaseWidgetTest):
         tree.insert("", "end", "1", text="item 1")
         tree.insert("", "end", "2", text="item 2")
         self.window.update()
-        tw = TooltipTreeWrapper(tree, background='white', foreground='black')
+        tw = TooltipTreeWrapper(tree)
         tw.add_tooltip("1", "tooltip 1")
         tw.add_tooltip("2", "tooltip 2")
         self.window.update()
