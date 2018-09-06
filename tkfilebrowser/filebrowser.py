@@ -317,13 +317,17 @@ class FileBrowser(tk.Toplevel):
         path_bm2 = join(home, ".gtk-bookmarks")  # old location
         if exists(path_bm):
             with open(path_bm) as f:
-                bm = f.readlines()
+                bms = f.read().splitlines()
         elif exists(path_bm2):
             with open(path_bm) as f:
-                bm = f.readlines()
+                bms = f.read().splitlines()
         else:
-            bm = []
-        bm = [unquote(ch).replace("file://", "").split() for ch in bm]
+            bms = []
+        bms = [ch.split() for ch in bms]
+        bm = []
+        for ch in bms:
+            ch[0] = unquote(ch[0]).replace("file://", "")
+            bm.append(ch)
         for l in bm:
             if len(l) == 1:
                 txt = split(l[0])[-1]
