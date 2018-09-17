@@ -33,7 +33,6 @@ class Tooltip(tk.Toplevel):
 
         Options:
             * parent: parent window
-            * image: PhotoImage/BitmapImage to display in the tooltip
             * text: text (str) to display in the tooltip
             * compound: relative orientation of the graphic relative to the text
             * alpha: opacity of the tooltip (0 for transparent, 1 for opaque),
@@ -49,8 +48,7 @@ class Tooltip(tk.Toplevel):
         bg = ttk.Style(self).lookup(style, 'background')
         self.configure(background=bg)
 
-        self.im = kwargs.get('image', None)
-        self.label = ttk.Label(self, text=kwargs.get('text', ''), image=self.im,
+        self.label = ttk.Label(self, text=kwargs.get('text', ''),
                                style=style, compound=kwargs.get('compound', 'left'),
                                padding=kwargs.get('padding', 4))
         self.label.pack()
