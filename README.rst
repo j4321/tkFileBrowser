@@ -255,12 +255,12 @@ Example
 .. _Release:  https://pypi.org/project/tkfilebrowser/
 .. |Linux| image:: https://img.shields.io/badge/platform-Linux-blue.svg
     :alt: Platform
-.. |Travis| image:: https://travis-ci.org/j4321/tkfilebrowser.svg?branch=master
+.. |Travis| image:: https://travis-ci.org/j4321/tkFileBrowser.svg?branch=master
     :target: https://travis-ci.org/j4321/tkfilebrowser
     :alt: Travis CI Build Status
-.. |Codecov| image:: https://codecov.io/gh/j4321/tkfilebrowser/branch/master/graph/badge.svg
+.. |Codecov| image:: https://codecov.io/gh/j4321/tkFileBrowser/branch/master/graph/badge.svg
     :target: https://codecov.io/gh/j4321/tkfilebrowser
     :alt: Code coverage
-.. |License| image:: https://img.shields.io/github/license/j4321/BraceletGenerator.svg
+.. |License| image:: https://img.shields.io/github/license/j4321/tkFileBrowser.svg
     :target: https://www.gnu.org/licenses/gpl-3.0.en.html
     :alt: License
