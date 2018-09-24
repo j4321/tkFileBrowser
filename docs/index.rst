@@ -6,7 +6,7 @@
 tkfilebrowser
 =============
 
-|Release|_ |Linux| |Travis| |Codecov| |License|
+|Release|_ |Linux| |Travis| |Codecov| |License| |Doc|
 
 tkfilebrowser is an alternative to tkinter.filedialog that allows the
 user to select files or directories. The GUI is written with tkinter but
@@ -14,18 +14,18 @@ the look is closer to GTK and the application uses GTK bookmarks (the
 one displayed in nautilus or thunar for instance). This filebrowser
 supports new directory creation and filtype filtering.
 
-This module contains a general `FileBrowser` class which implements the
+This module contains a general ``FileBrowser`` class which implements the
 filebrowser and the following functions, similar to the one in filedialog:
 
-    * `askopenfilename` that allow the selection of a single file
+    * ``askopenfilename`` that allow the selection of a single file
 
-    * `askopenfilenames` that allow the selection of multiple files
+    * ``askopenfilenames`` that allow the selection of multiple files
 
-    * `askopendirname` that allow the selection a single folder
+    * ``askopendirname`` that allow the selection a single folder
 
-    * `askopendirnames` that allow the selection of multiple folders
+    * ``askopendirnames`` that allow the selection of multiple folders
 
-    * `asksaveasfilename` that returns a single filename and give a warning if the file already exists
+    * ``asksaveasfilename`` that returns a single filename and give a warning if the file already exists
     
 Project page: https://github.com/j4321/tkFileBrowser
 
@@ -54,3 +54,6 @@ Project page: https://github.com/j4321/tkFileBrowser
 .. |License| image:: https://img.shields.io/github/license/j4321/tkFileBrowser.svg
     :target: https://www.gnu.org/licenses/gpl-3.0.en.html
     :alt: License
+.. |Doc| image:: https://readthedocs.org/projects/tkfilebrowser/badge/?version=latest
+    :target: https://tkfilebrowser.readthedocs.io/en/latest/?badge=latest
+    :alt: Documentation Status
