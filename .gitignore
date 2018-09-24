@@ -9,3 +9,4 @@ AUR
 htmlcov
 benchmark.py
 stats.txt
+_build

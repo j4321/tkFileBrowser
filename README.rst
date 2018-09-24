@@ -21,6 +21,12 @@ filebrowser and the following functions, similar to the one in filedialog:
     * `askopendirnames` that allow the selection of multiple folders
 
     * `asksaveasfilename` that returns a single filename and give a warning if the file already exists
+    
+
+The documentation is also available here: https://tkfilebrowser.readthedocs.io
+
+.. contents:: Table of Contents
+
 
 Requirements
 ------------
@@ -48,9 +54,9 @@ Installation
 
 - With pip:
 
-::
+    ::
 
-    $ pip install tkfilebrowser
+        $ pip install tkfilebrowser
 
 
 Documentation
