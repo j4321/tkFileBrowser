@@ -67,6 +67,7 @@ else:
     PhotoImage = tk.PhotoImage
 
 IM_HOME = os.path.join(PATH, "images", "home.png")
+IM_DESKTOP = os.path.join(PATH, "images", "desktop.png")
 IM_FOLDER = os.path.join(PATH, "images", "dossier.png")
 IM_FOLDER_LINK = os.path.join(PATH, "images", "dossier_link.png")
 IM_NEW = os.path.join(PATH, "images", "new_folder.png")

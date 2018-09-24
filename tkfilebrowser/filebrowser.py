@@ -168,6 +168,7 @@ class FileBrowser(tk.Toplevel):
         # ---  images
         self.im_file = cst.PhotoImage(file=cst.IM_FILE, master=self)
         self.im_folder = cst.PhotoImage(file=cst.IM_FOLDER, master=self)
+        self.im_desktop = cst.PhotoImage(file=cst.IM_DESKTOP, master=self)
         self.im_file_link = cst.PhotoImage(file=cst.IM_FILE_LINK, master=self)
         self.im_folder_link = cst.PhotoImage(file=cst.IM_FOLDER_LINK, master=self)
         self.im_new = cst.PhotoImage(file=cst.IM_NEW, master=self)
@@ -310,7 +311,7 @@ class FileBrowser(tk.Toplevel):
             # but OSError in python2
             desktop = join(home, 'Desktop')
         if exists(desktop):
-            self.left_tree.insert("", "end", iid=desktop, image=self.im_folder,
+            self.left_tree.insert("", "end", iid=desktop, image=self.im_desktop,
                                   text=split(desktop)[-1])
             wrapper.add_tooltip(desktop, desktop)
 
