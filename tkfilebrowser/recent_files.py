@@ -41,7 +41,7 @@ class RecentFiles:
         self._files = []  # most recent files first
         try:
             with open(filename) as file:
-                self._files = file.read().split()
+                self._files = file.read().splitlines()
         except Exception:
             pass
 

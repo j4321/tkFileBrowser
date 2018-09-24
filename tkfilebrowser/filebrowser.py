@@ -166,15 +166,16 @@ class FileBrowser(tk.Toplevel):
                         foreground='white')
 
         # ---  images
-        self.im_file = tk.PhotoImage(file=cst.IM_FILE, master=self)
-        self.im_folder = tk.PhotoImage(file=cst.IM_FOLDER, master=self)
-        self.im_file_link = tk.PhotoImage(file=cst.IM_FILE_LINK, master=self)
-        self.im_folder_link = tk.PhotoImage(file=cst.IM_FOLDER_LINK, master=self)
-        self.im_new = tk.PhotoImage(file=cst.IM_NEW, master=self)
-        self.im_drive = tk.PhotoImage(file=cst.IM_DRIVE, master=self)
-        self.im_home = tk.PhotoImage(file=cst.IM_HOME, master=self)
-        self.im_recent = tk.PhotoImage(file=cst.IM_RECENT, master=self)
-        self.im_recent_24 = tk.PhotoImage(file=cst.IM_RECENT_24, master=self)
+        self.im_file = cst.PhotoImage(file=cst.IM_FILE, master=self)
+        self.im_folder = cst.PhotoImage(file=cst.IM_FOLDER, master=self)
+        self.im_desktop = cst.PhotoImage(file=cst.IM_DESKTOP, master=self)
+        self.im_file_link = cst.PhotoImage(file=cst.IM_FILE_LINK, master=self)
+        self.im_folder_link = cst.PhotoImage(file=cst.IM_FOLDER_LINK, master=self)
+        self.im_new = cst.PhotoImage(file=cst.IM_NEW, master=self)
+        self.im_drive = cst.PhotoImage(file=cst.IM_DRIVE, master=self)
+        self.im_home = cst.PhotoImage(file=cst.IM_HOME, master=self)
+        self.im_recent = cst.PhotoImage(file=cst.IM_RECENT, master=self)
+        self.im_recent_24 = cst.PhotoImage(file=cst.IM_RECENT_24, master=self)
 
         # ---  filetypes
         self.filetype = tk.StringVar(self)
@@ -310,7 +311,7 @@ class FileBrowser(tk.Toplevel):
             # but OSError in python2
             desktop = join(home, 'Desktop')
         if exists(desktop):
-            self.left_tree.insert("", "end", iid=desktop, image=self.im_folder,
+            self.left_tree.insert("", "end", iid=desktop, image=self.im_desktop,
                                   text=split(desktop)[-1])
             wrapper.add_tooltip(desktop, desktop)
 

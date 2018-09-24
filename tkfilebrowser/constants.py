@@ -61,7 +61,13 @@ if not os.path.exists(LOCAL_PATH):
 RECENT_FILES = os.path.join(LOCAL_PATH, 'recent_files')
 
 # ---  images
+if tk.TkVersion < 8.6:
+    from PIL.ImageTk import PhotoImage
+else:
+    PhotoImage = tk.PhotoImage
+
 IM_HOME = os.path.join(PATH, "images", "home.png")
+IM_DESKTOP = os.path.join(PATH, "images", "desktop.png")
 IM_FOLDER = os.path.join(PATH, "images", "dossier.png")
 IM_FOLDER_LINK = os.path.join(PATH, "images", "dossier_link.png")
 IM_NEW = os.path.join(PATH, "images", "new_folder.png")
@@ -73,7 +79,10 @@ IM_RECENT_24 = os.path.join(PATH, "images", "recent_24.png")
 
 
 # ---  translation
-LANG = locale.getdefaultlocale()[0]
+try:
+    LANG = locale.getdefaultlocale()[0]
+except ValueError:
+    LANG = 'en'
 
 EN = {}
 FR = {"B": "octets", "MB": "Mo", "kB": "ko", "GB": "Go", "TB": "To",
