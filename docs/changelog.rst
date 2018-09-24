@@ -6,6 +6,8 @@ tkfilebrowser 2.2.5
 
 * Add compatibility with Tk < 8.6.0 (requires PIL.ImageTk)
 * Add desktop icon in shortcuts
+* Fix handling of spaces in bookmarks 
+* Fix bug due to spaces in recent file names
     
 tkfilebrowser 2.2.4
 -------------------
