@@ -43,6 +43,5 @@ setup(name='tkfilebrowser',
       keywords=['tkinter', 'filedialog', 'filebrowser'],
       packages=["tkfilebrowser"],
       package_data={"tkfilebrowser": ["images/*"]},
-      install_requires=["os", "locale", "time", "psutil", "tkinter", "math", "urllib", "babel",
-                        "re", "subprocess"],
+      install_requires=["psutil", "babel"],
       extras_require={'tk<8.6.0': 'Pillow'})
