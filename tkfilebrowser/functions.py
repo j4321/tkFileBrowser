@@ -27,18 +27,36 @@ from tkfilebrowser.filebrowser import FileBrowser
 
 def askopendirname(parent=None, title=_("Open"), **kwargs):
     """
-    Return '' or the absolute path of the chosen directory.
+    Return ``''`` or the absolute path of the chosen directory.
 
-    Options:
-        * initialdir: initial folder whose content is displayed
-        * initialfile: initial selected item (just the name, not the full path)
-        * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
-          show only files of given filetype ("*" for all files)
-        * okbuttontext: text displayed on the validate button, if None, the
-          default text corresponding to the mode is used (either Open or Save)
-        * cancelbuttontext: text displayed on the button that cancels the
-          selection.
-        * foldercreation: enable the user to create new folders if True (default)
+    Arguments:
+    
+        parent : Tk or Toplevel instance
+            parent window
+
+        title : str
+            the title of the filebrowser window
+
+        initialdir : str
+            directory whose content is initially displayed
+
+        initialfile : str
+            initially selected item (just the name, not the full path)
+
+        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+          only the files of given filetype will be displayed,
+          e.g. to allow the user to switch between displaying only PNG or JPG
+          pictures or dispalying all files:
+          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+
+        okbuttontext : str
+            text displayed on the validate button, default is "Open".
+
+        cancelbuttontext : str
+            text displayed on the button that cancels the selection, default is "Cancel".
+
+        foldercreation : bool
+            enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="opendir", multiple_selection=False,
                          title=title, **kwargs)
@@ -48,18 +66,36 @@ def askopendirname(parent=None, title=_("Open"), **kwargs):
 
 def askopendirnames(parent=None, title=_("Open"), **kwargs):
     """
-    Return () or the tuple of the absolute paths of the chosen directories
+    Return ``()`` or the tuple of the absolute paths of the chosen directories
 
-    Options:
-        * initialdir: initial folder whose content is displayed
-        * initialfile: initial selected item (just the name, not the full path)
-        * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
-          show only files of given filetype ("*" for all files)
-        * okbuttontext: text displayed on the validate button, if None, the
-          default text corresponding to the mode is used (either Open or Save)
-        * cancelbuttontext: text displayed on the button that cancels the
-          selection.
-        * foldercreation: enable the user to create new folders if True (default)
+    Arguments:
+    
+        parent : Tk or Toplevel instance
+            parent window
+
+        title : str
+            the title of the filebrowser window
+
+        initialdir : str
+            directory whose content is initially displayed
+
+        initialfile : str
+            initially selected item (just the name, not the full path)
+
+        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+          only the files of given filetype will be displayed,
+          e.g. to allow the user to switch between displaying only PNG or JPG
+          pictures or dispalying all files:
+          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+
+        okbuttontext : str
+            text displayed on the validate button, default is "Open".
+
+        cancelbuttontext : str
+            text displayed on the button that cancels the selection, default is "Cancel".
+
+        foldercreation : bool
+            enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="opendir", multiple_selection=True,
                          title=title, **kwargs)
@@ -72,18 +108,36 @@ def askopendirnames(parent=None, title=_("Open"), **kwargs):
 
 def askopenfilename(parent=None, title=_("Open"), **kwargs):
     """
-    Return '' or the absolute path of the chosen file
+    Return ``''`` or the absolute path of the chosen file
 
-    Options:
-        * initialdir: initial folder whose content is displayed
-        * initialfile: initial selected item (just the name, not the full path)
-        * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
-          show only files of given filetype ("*" for all files)
-        * okbuttontext: text displayed on the validate button, if None, the
-          default text corresponding to the mode is used (either Open or Save)
-        * cancelbuttontext: text displayed on the button that cancels the
-          selection.
-        * foldercreation: enable the user to create new folders if True (default)
+    Arguments:
+    
+        parent : Tk or Toplevel instance
+            parent window
+
+        title : str
+            the title of the filebrowser window
+
+        initialdir : str
+            directory whose content is initially displayed
+
+        initialfile : str
+            initially selected item (just the name, not the full path)
+
+        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+          only the files of given filetype will be displayed,
+          e.g. to allow the user to switch between displaying only PNG or JPG
+          pictures or dispalying all files:
+          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+
+        okbuttontext : str
+            text displayed on the validate button, default is "Open".
+
+        cancelbuttontext : str
+            text displayed on the button that cancels the selection, default is "Cancel".
+
+        foldercreation : bool
+            enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="openfile", multiple_selection=False,
                          title=title, **kwargs)
@@ -93,18 +147,36 @@ def askopenfilename(parent=None, title=_("Open"), **kwargs):
 
 def askopenfilenames(parent=None, title=_("Open"), **kwargs):
     """
-    Return () or the tuple of the absolute paths of the chosen files
+    Return ``()`` or the tuple of the absolute paths of the chosen files
 
-    Options:
-        * initialdir: initial folder whose content is displayed
-        * initialfile: initial selected item (just the name, not the full path)
-        * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
-          show only files of given filetype ("*" for all files)
-        * okbuttontext: text displayed on the validate button, if None, the
-          default text corresponding to the mode is used (either Open or Save)
-        * cancelbuttontext: text displayed on the button that cancels the
-          selection.
-        * foldercreation: enable the user to create new folders if True (default)
+    Arguments:
+    
+        parent : Tk or Toplevel instance
+            parent window
+
+        title : str
+            the title of the filebrowser window
+
+        initialdir : str
+            directory whose content is initially displayed
+
+        initialfile : str
+            initially selected item (just the name, not the full path)
+
+        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+          only the files of given filetype will be displayed,
+          e.g. to allow the user to switch between displaying only PNG or JPG
+          pictures or dispalying all files:
+          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+
+        okbuttontext : str
+            text displayed on the validate button, default is "Open".
+
+        cancelbuttontext : str
+            text displayed on the button that cancels the selection, default is "Cancel".
+
+        foldercreation : bool
+            enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="openfile", multiple_selection=True,
                          title=title, **kwargs)
@@ -117,19 +189,39 @@ def askopenfilenames(parent=None, title=_("Open"), **kwargs):
 
 def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
     """
-    Return '' or the chosen absolute path (the file might not exist)
+    Return ``''`` or the chosen absolute path (the file might not exist)
+    
+    Arguments:
+    
+        parent : Tk or Toplevel instance
+            parent window
 
-    Options:
-        * initialdir: initial folder whose content is displayed
-        * initialfile: initial selected item (just the name, not the full path)
-        * defaultext: extension added to filename if none is given
-        * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
-          show only files of given filetype ("*" for all files)
-        * okbuttontext: text displayed on the validate button, if None, the
-          default text corresponding to the mode is used (either Open or Save)
-        * cancelbuttontext: text displayed on the button that cancels the
-          selection.
-        * foldercreation: enable the user to create new folders if True (default)
+        title : str
+            the title of the filebrowser window
+
+        initialdir : str
+            directory whose content is initially displayed
+
+        initialfile : str
+            initially selected item (just the name, not the full path)
+            
+        defaultext : str (e.g. '.png')
+            extension added to filename if none is given (default is none)  
+
+        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+          only the files of given filetype will be displayed,
+          e.g. to allow the user to switch between displaying only PNG or JPG
+          pictures or dispalying all files:
+          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+
+        okbuttontext : str
+            text displayed on the validate button, default is "Open".
+
+        cancelbuttontext : str
+            text displayed on the button that cancels the selection, default is "Cancel".
+
+        foldercreation : bool
+            enable the user to create new folders if True (default)
     """
     dialog = FileBrowser(parent, mode="save", title=title, **kwargs)
     dialog.wait_window(dialog)
