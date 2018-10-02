@@ -80,7 +80,7 @@ class FileBrowser(tk.Toplevel):
           only the files of given filetype will be displayed,
           e.g. to allow the user to switch between displaying only PNG or JPG
           pictures or dispalying all files:
-          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+          ``filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]``
 
         okbuttontext : str
             text displayed on the validate button, default is "Open".
