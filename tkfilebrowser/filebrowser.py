@@ -52,20 +52,44 @@ class FileBrowser(tk.Toplevel):
                  foldercreation=True, **kw):
         """
         Create a filebrowser dialog.
-
+        
         Arguments:
-            * initialdir: initial folder whose content is displayed
-            * initialfile: initial selected item (just the name, not the full path)
-            * mode: openfile, opendir or save
-            * multiple_selection (open modes only): boolean, allow to select multiple files,
-            * defaultext (save mode only): extension added to filename if none is given
-            * filetypes: [('name', '*.ext1|*.ext2|..'), ...]
-              show only files of given filetype ("*" for all files)
-            * okbuttontext: text displayed on the validate button, if None, the
-              default text corresponding to the mode is used (either Open or Save)
-            * cancelbuttontext: text displayed on the button that cancels the
-              selection.
-            * foldercreation: enable the user to create new folders if True (default)
+    
+        parent : Tk or Toplevel instance
+            parent window
+
+        title : str
+            the title of the filebrowser window
+
+        initialdir : str
+            directory whose content is initially displayed
+
+        initialfile : str
+            initially selected item (just the name, not the full path)
+            
+        mode : str 
+            kind of dialog: "openfile", "opendir" or "save"
+        
+        multiple_selection : bool
+            whether to allow multiple items selection (open modes only)
+            
+        defaultext : str (e.g. '.png')
+            extension added to filename if none is given (default is none)  
+
+        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+          only the files of given filetype will be displayed,
+          e.g. to allow the user to switch between displaying only PNG or JPG
+          pictures or dispalying all files:
+          ``filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]``
+
+        okbuttontext : str
+            text displayed on the validate button, default is "Open".
+
+        cancelbuttontext : str
+            text displayed on the button that cancels the selection, default is "Cancel".
+
+        foldercreation : bool
+            enable the user to create new folders if True (default)
         """
         # compatibility with tkinter.filedialog arguments: the parent window is called 'master'
         if 'master' in kw and parent is None:
