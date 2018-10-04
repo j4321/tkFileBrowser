@@ -6,7 +6,7 @@
 tkfilebrowser
 =============
 
-|Release|_ |Linux| |Travis| |Codecov| |License| |Doc|
+|Release| |Linux| |Travis| |Codecov| |License| |Doc|
 
 tkfilebrowser is an alternative to tkinter.filedialog that allows the
 user to select files or directories. The GUI is written with tkinter but
@@ -37,12 +37,12 @@ Project page: https://github.com/j4321/tkFileBrowser
    example
    documentation
    changelog
-
+   genindex
 
 
 .. |Release| image:: https://badge.fury.io/py/tkfilebrowser.svg
     :alt: Latest Release
-.. _Release:  https://pypi.org/project/tkfilebrowser/
+    :target:  https://pypi.org/project/tkfilebrowser/
 .. |Linux| image:: https://img.shields.io/badge/platform-Linux-blue.svg
     :alt: Platform
 .. |Travis| image:: https://travis-ci.org/j4321/tkFileBrowser.svg?branch=master
