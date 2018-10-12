@@ -123,6 +123,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.2.6
+    * Fix bug caused by broken links
+
 - tkfilebrowser 2.2.5
     * Add compatibility with Tk < 8.6.0 (requires PIL.ImageTk)
     * Add desktop icon in shortcuts
