@@ -123,6 +123,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.2.6
+    * No longer reset path bar when clicking on a path button
+
 - tkfilebrowser 2.2.5
     * Add compatibility with Tk < 8.6.0 (requires PIL.ImageTk)
     * Add desktop icon in shortcuts

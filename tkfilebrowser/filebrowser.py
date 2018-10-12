@@ -962,7 +962,7 @@ class FileBrowser(tk.Toplevel):
         else:
             folders = path.split("/")
         b = PathButton(self.path_bar, self.path_var, "/", image=self.im_drive,
-                       command=lambda: self.display_folder("/"))
+                       command=lambda: self.display_folder("/", update_bar=False))
         self.path_bar_buttons.append(b)
         b.grid(row=0, column=1, sticky="ns")
         p = "/"
@@ -970,7 +970,7 @@ class FileBrowser(tk.Toplevel):
             p = join(p, folder)
             b = PathButton(self.path_bar, self.path_var, p, text=folder,
                            width=len(folder) + 1,
-                           command=lambda f=p: self.display_folder(f),
+                           command=lambda f=p: self.display_folder(f, update_bar=False),
                            style="path.tkfilebrowser.TButton")
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns")

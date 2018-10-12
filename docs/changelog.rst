@@ -1,6 +1,11 @@
 Changelog
 =========
 
+tkfilebrowser 2.2.6
+-------------------
+
+* No longer reset path bar when clicking on a path button
+
 tkfilebrowser 2.2.5
 -------------------
 
