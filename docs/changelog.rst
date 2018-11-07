@@ -1,6 +1,11 @@
 Changelog
 =========
 
+tkfilebrowser 2.2.6
+-------------------
+
+* Fix bug caused by broken links
+
 tkfilebrowser 2.2.5
 -------------------
 

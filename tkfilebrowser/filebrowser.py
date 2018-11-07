@@ -24,7 +24,7 @@ Main class
 import psutil
 from re import search
 from subprocess import check_output
-from os import walk, mkdir, stat, access, W_OK
+from os import walk, mkdir, stat, access, W_OK, listdir
 from os.path import exists, join, getmtime, realpath, split, expanduser, \
     abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
 try:
@@ -44,6 +44,18 @@ from tkfilebrowser.recent_files import RecentFiles
 _ = cst._
 
 
+class Stats:
+    """Fake stats class to create dummy stats for broken links."""
+    def __init__(self, **kwargs):
+        self._prop = kwargs
+
+    def __getattr__(self, attr):
+        if attr not in self._prop:
+            raise AttributeError("Stats has no attribute %s." % attr)
+        else:
+            return self._prop[attr]
+
+
 class FileBrowser(tk.Toplevel):
     """Filebrowser dialog class."""
     def __init__(self, parent, initialdir="", initialfile="", mode="openfile",
@@ -52,9 +64,9 @@ class FileBrowser(tk.Toplevel):
                  foldercreation=True, **kw):
         """
         Create a filebrowser dialog.
-        
+
         Arguments:
-    
+
         parent : Tk or Toplevel instance
             parent window
 
@@ -66,15 +78,15 @@ class FileBrowser(tk.Toplevel):
 
         initialfile : str
             initially selected item (just the name, not the full path)
-            
-        mode : str 
+
+        mode : str
             kind of dialog: "openfile", "opendir" or "save"
-        
+
         multiple_selection : bool
             whether to allow multiple items selection (open modes only)
-            
+
         defaultext : str (e.g. '.png')
-            extension added to filename if none is given (default is none)  
+            extension added to filename if none is given (default is none)
 
         filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
           only the files of given filetype will be displayed,
@@ -194,6 +206,7 @@ class FileBrowser(tk.Toplevel):
         self.im_folder = cst.PhotoImage(file=cst.IM_FOLDER, master=self)
         self.im_desktop = cst.PhotoImage(file=cst.IM_DESKTOP, master=self)
         self.im_file_link = cst.PhotoImage(file=cst.IM_FILE_LINK, master=self)
+        self.im_link_broken = cst.PhotoImage(file=cst.IM_LINK_BROKEN, master=self)
         self.im_folder_link = cst.PhotoImage(file=cst.IM_FOLDER_LINK, master=self)
         self.im_new = cst.PhotoImage(file=cst.IM_NEW, master=self)
         self.im_drive = cst.PhotoImage(file=cst.IM_DRIVE, master=self)
@@ -401,6 +414,7 @@ class FileBrowser(tk.Toplevel):
         self.right_tree.tag_configure("file", image=self.im_file)
         self.right_tree.tag_configure("folder_link", image=self.im_folder_link)
         self.right_tree.tag_configure("file_link", image=self.im_file_link)
+        self.right_tree.tag_configure("link_broken", image=self.im_link_broken)
         if mode == "opendir":
             self.right_tree.tag_configure("file", foreground="gray")
             self.right_tree.tag_configure("file_link", foreground="gray")
@@ -961,6 +975,100 @@ class FileBrowser(tk.Toplevel):
             self.path_bar_buttons.append(b)
             b.grid(row=0, column=i + 2, sticky="ns")
 
+    def _display_folder_listdir(self, folder, reset=True, update_bar=True):
+        """
+        Display the content of folder in self.right_tree.
+        Arguments:
+            * reset (boolean): forget all the part of the history right of self._hist_index
+            * update_bar (boolean): update the buttons in path bar
+        """
+        print('listdir')
+        # remove trailing / if any
+        folder = abspath(folder)
+        # reorganize display if previous was 'recent'
+        if not self.path_bar.winfo_ismapped():
+            self.path_bar.grid()
+            self.right_tree.configure(displaycolumns=("size", "date"))
+            w = self.right_tree.winfo_width() - 205
+            if w < 0:
+                w = 250
+            self.right_tree.column("#0", width=w)
+            self.right_tree.column("size", stretch=False, width=85)
+            self.right_tree.column("date", width=120)
+            if self.foldercreation:
+                self.b_new_folder.grid()
+        # reset history
+        if reset:
+            if not self._hist_index == -1:
+                self.history = self.history[:self._hist_index + 1]
+                self._hist_index = -1
+            self.history.append(folder)
+        # update path bar
+        if update_bar:
+            self._update_path_bar(folder)
+        self.path_var.set(folder)
+        # disable new folder creation if no write access
+        if self.foldercreation:
+            if access(folder, W_OK):
+                self.b_new_folder.state(('!disabled',))
+            else:
+                self.b_new_folder.state(('disabled',))
+        # clear self.right_tree
+        self.right_tree.delete(*self.right_tree.get_children(""))
+        self.right_tree.delete(*self.hidden)
+        self.hidden = ()
+        root = folder
+        extension = self.filetypes[self.filetype.get()]
+        content = listdir(folder)
+        i = 0
+        for f in content:
+            p = join(root, f)
+            if f[0] == ".":
+                tags = ("hidden",)
+                if not self.hide:
+                    tags = (str(i % 2),)
+                    i += 1
+            else:
+                tags = (str(i % 2),)
+                i += 1
+            if isfile(p):
+                if extension == r".*$" or search(extension, f):
+                    if islink(p):
+                        tags = tags + ("file_link",)
+                    else:
+                        tags = tags + ("file",)
+                    try:
+                        stats = stat(p)
+                    except OSError:
+                        self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                               values=("", "??", "??"))
+                    else:
+                        self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                               values=("",
+                                                       display_size(stats.st_size),
+                                                       display_modification_date(stats.st_mtime)))
+            elif isdir(p):
+                if islink(p):
+                    tags = tags + ("folder_link",)
+                else:
+                    tags = tags + ("folder",)
+
+                self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                       values=("", "", get_modification_date(p)))
+            else:  # broken link
+                tags = tags + ("link_broken",)
+                self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                       values=("", "??", "??"))
+
+        items = self.right_tree.get_children("")
+        if items:
+            self.right_tree.focus_set()
+            self.right_tree.focus(items[0])
+        if self.hide:
+            self.hidden = self.right_tree.tag_has("hidden")
+            self.right_tree.detach(*self.right_tree.tag_has("hidden"))
+        self._sort_files_by_name(False)
+
     def _display_folder_walk(self, folder, reset=True, update_bar=True):
         """
         Display the content of folder in self.right_tree.
@@ -1026,13 +1134,18 @@ class FileBrowser(tk.Toplevel):
             # display files
             files.sort(key=lambda n: n.lower())
             extension = self.filetypes[self.filetype.get()]
-            if extension == ".*":
-                for f in files:
+            for f in files:
+                if extension == r".*$" or search(extension, f):
                     p = join(root, f)
                     if islink(p):
                         tags = ("file_link",)
                     else:
                         tags = ("file",)
+                    try:
+                        stats = stat(p)
+                    except FileNotFoundError:
+                        stats = Stats(st_size="??", st_mtime="??")
+                        tags = ("link_broken",)
                     if f[0] == ".":
                         tags = tags + ("hidden",)
                         if not self.hide:
@@ -1042,47 +1155,10 @@ class FileBrowser(tk.Toplevel):
                         tags = tags + (str(i % 2),)
                         i += 1
 
-                    try:
-                        stats = stat(p)
-                    except OSError:
-                        self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                               values=("",
-                                                       display_size(0),
-                                                       display_modification_date(cst.TODAY)))
-                    else:
-                        self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                               values=("",
-                                                       display_size(stats.st_size),
-                                                       display_modification_date(stats.st_mtime)))
-            else:
-                for f in files:
-                    if extension == r".*$" or search(extension, f):
-                        p = join(root, f)
-                        if islink(p):
-                            tags = ("file_link",)
-                        else:
-                            tags = ("file",)
-                        if f[0] == ".":
-                            tags = tags + ("hidden",)
-                            if not self.hide:
-                                tags = tags + (str(i % 2),)
-                                i += 1
-                        else:
-                            tags = tags + (str(i % 2),)
-                            i += 1
-
-                        try:
-                            stats = stat(p)
-                        except OSError:
-                            self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                                   values=("",
-                                                           display_size(0),
-                                                           display_modification_date(cst.TODAY)))
-                        else:
-                            self.right_tree.insert("", "end", p, text=f, tags=tags,
-                                                   values=("",
-                                                           display_size(stats.st_size),
-                                                           display_modification_date(stats.st_mtime)))
+                    self.right_tree.insert("", "end", p, text=f, tags=tags,
+                                           values=("",
+                                                   display_size(stats.st_size),
+                                                   display_modification_date(stats.st_mtime)))
             items = self.right_tree.get_children("")
             if items:
                 self.right_tree.focus_set()
@@ -1091,7 +1167,7 @@ class FileBrowser(tk.Toplevel):
                 self.hidden = self.right_tree.tag_has("hidden")
                 self.right_tree.detach(*self.right_tree.tag_has("hidden"))
         except StopIteration:
-            self._display_folder_walk(expanduser('~'), reset, update_bar)
+            self._display_folder_listdir(folder, reset, update_bar)
 
     def _display_folder_scandir(self, folder, reset=True, update_bar=True):
         """
@@ -1139,11 +1215,17 @@ class FileBrowser(tk.Toplevel):
         try:
             content = sorted(scandir(folder), key=key_sort_files)
             i = 0
-            tags_array = [["folder", "folder_link"], ["file", "file_link"]]
+            tags_array = [["folder", "folder_link"],
+                          ["file", "file_link"]]
             for f in content:
                 b_file = f.is_file()
                 name = f.name
-                tags = (tags_array[b_file][f.is_symlink()],)
+                try:
+                    stats = f.stat()
+                    tags = (tags_array[b_file][f.is_symlink()],)
+                except FileNotFoundError:
+                    stats = Stats(st_size="??", st_mtime="??")
+                    tags = ("link_broken",)
                 if name[0] == '.':
                     tags = tags + ("hidden",)
                     if not self.hide:
@@ -1152,7 +1234,6 @@ class FileBrowser(tk.Toplevel):
                 else:
                     tags = tags + (str(i % 2),)
                     i += 1
-                stats = f.stat()
                 if b_file:
                     if extension == r".*$" or search(extension, name):
                         self.right_tree.insert("", "end", f.path, text=name, tags=tags,

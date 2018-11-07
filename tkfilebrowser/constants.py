@@ -68,11 +68,12 @@ else:
 
 IM_HOME = os.path.join(PATH, "images", "home.png")
 IM_DESKTOP = os.path.join(PATH, "images", "desktop.png")
-IM_FOLDER = os.path.join(PATH, "images", "dossier.png")
-IM_FOLDER_LINK = os.path.join(PATH, "images", "dossier_link.png")
+IM_FOLDER = os.path.join(PATH, "images", "folder.png")
+IM_FOLDER_LINK = os.path.join(PATH, "images", "folder_link.png")
 IM_NEW = os.path.join(PATH, "images", "new_folder.png")
 IM_FILE = os.path.join(PATH, "images", "file.png")
 IM_FILE_LINK = os.path.join(PATH, "images", "file_link.png")
+IM_LINK_BROKEN = os.path.join(PATH, "images", "link_broken.png")
 IM_DRIVE = os.path.join(PATH, "images", "drive.png")
 IM_RECENT = os.path.join(PATH, "images", "recent.png")
 IM_RECENT_24 = os.path.join(PATH, "images", "recent_24.png")
@@ -174,6 +175,8 @@ def get_modification_date(file):
 
 def display_modification_date(mtime):
     """Return the modDification date of file."""
+    if isinstance(mtime, str):
+        return mtime
     tps = fromtimestamp(mtime)
     date = locale_date(tps)
     if date == TODAY:
@@ -185,6 +188,8 @@ def display_modification_date(mtime):
 
 def display_size(size_o):
     """Return the size of file."""
+    if isinstance(size_o, str):
+        return size_o
     if size_o > 0:
         m = int(floor(log(size_o) / log(1024)))
         if m < len(SIZES):
