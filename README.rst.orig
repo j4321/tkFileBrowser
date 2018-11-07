@@ -124,8 +124,11 @@ Changelog
 ---------
 
 - tkfilebrowser 2.2.6
+<<<<<<< HEAD
     * No longer reset path bar when clicking on a path button
+=======
     * Fix bug caused by broken links
+>>>>>>> master
 
 - tkfilebrowser 2.2.5
     * Add compatibility with Tk < 8.6.0 (requires PIL.ImageTk)
