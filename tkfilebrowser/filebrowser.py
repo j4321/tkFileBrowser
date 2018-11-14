@@ -518,6 +518,9 @@ class FileBrowser(tk.Toplevel):
 
         self.update_idletasks()
         self.lift()
+        if mode == 'save':
+            self.entry.selection_range(0, 'end')
+            self.entry.focus_set()
 
     def _right_tree_select_all(self, event):
         if self.mode == 'opendir':
