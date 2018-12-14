@@ -23,6 +23,7 @@ when the mouse stays over long enough
 
 
 from tkfilebrowser.constants import tk, ttk
+from sys import platform
 
 
 class Tooltip(tk.Toplevel):
@@ -40,7 +41,8 @@ class Tooltip(tk.Toplevel):
         """
         tk.Toplevel.__init__(self, parent)
         self.transient(parent)
-        self.attributes('-type', 'tooltip')
+        if sys.platform.startswith('linux'):
+            self.attributes('-type', 'tooltip')
         self.attributes('-alpha', kwargs.get('alpha', 0.8))
         self.overrideredirect(True)
         style = kwargs.get('style', 'tooltip.tkfilebrowser.TLabel')
