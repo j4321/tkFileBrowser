@@ -41,7 +41,7 @@ class Tooltip(tk.Toplevel):
         """
         tk.Toplevel.__init__(self, parent)
         self.transient(parent)
-        if sys.platform.startswith('linux'):
+        if platform.startswith('linux'):
             self.attributes('-type', 'tooltip')
         self.attributes('-alpha', kwargs.get('alpha', 0.8))
         self.overrideredirect(True)
