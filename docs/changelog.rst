@@ -28,7 +28,7 @@ tkfilebrowser 2.2.4
 tkfilebrowser 2.2.3
 -------------------
 
-* Fix FileNotFoundError if initialdir does not exist
+* Fix :obj:`FileNotFoundError` if initialdir does not exist
 * Add Desktop in shortcuts (if found)
 * Improve filetype filtering
 
@@ -60,7 +60,7 @@ tkfilebrowser 2.1.1
 tkfilebrowser 2.1.0
 -------------------
 
-* Add compatibility with tkinter.filedialog keywords 'master' and 'defaultextension'
+* Add compatibility with :mod:`tkinter.filedialog` keywords 'master' and 'defaultextension'
 * Change look of filetype selector
 * Fix bugs when navigating without displaying hidden files
 * Fix color alternance bug when hiding hidden files

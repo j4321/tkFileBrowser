@@ -14,23 +14,23 @@ the look is closer to GTK and the application uses GTK bookmarks (the
 one displayed in nautilus or thunar for instance). This filebrowser
 supports new directory creation and filtype filtering.
 
-This module contains a general ``FileBrowser`` class which implements the
+This module contains a general :class:`~tkfilebrowser.FileBrowser` class which implements the
 filebrowser and the following functions, similar to the one in filedialog:
 
-    * ``askopenfilename`` that allow the selection of a single file
+    * :func:`~tkfilebrowser.askopenfilename` that allow the selection of a single file
 
-    * ``askopenfilenames`` that allow the selection of multiple files
+    * :func:`~tkfilebrowser.askopenfilenames` that allow the selection of multiple files
 
-    * ``askopendirname`` that allow the selection a single folder
+    * :func:`~tkfilebrowser.askopendirname` that allow the selection a single folder
 
-    * ``askopendirnames`` that allow the selection of multiple folders
+    * :func:`~tkfilebrowser.askopendirnames` that allow the selection of multiple folders
 
-    * ``asksaveasfilename`` that returns a single filename and give a warning if the file already exists
+    * :func:`~tkfilebrowser.asksaveasfilename` that returns a single filename and give a warning if the file already exists
     
 Project page: https://github.com/j4321/tkFileBrowser
 
 .. toctree::
-   :maxdepth: 4
+   :maxdepth: 1
    :caption: Contents:
 
    installation
