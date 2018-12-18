@@ -4,9 +4,16 @@ Installation
 Requirements
 ------------
 
-- Linux
-- Python 2.7 or 3.x with tkinter + ttk (and PIL if tk < 8.6.0), python-psutil and python-babel
+- Linux or Windows
+- Python 2.7 or 3.x 
 
+And the python packages:
+
+- tkinter (included in the python distribution for Windows)
+- psutil
+- babel
+- pywin32 (Windows only)
+- pillow (only if tkinter.TkVersion < 8.6)
 
 Install
 -------

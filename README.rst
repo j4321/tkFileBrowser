@@ -32,9 +32,15 @@ Requirements
 ------------
 
 - Linux or Windows
-- Python 2.7 or 3.x with tkinter + ttk, psutil, babel and pypiwin32 (Windows only)
+- Python 2.7 or 3.x 
 
-If your tkinter version is older than 8.6.0, then you will also need pillow.
+And the python packages:
+
+- tkinter (included in the python distribution for Windows)
+- psutil
+- babel
+- pywin32 (Windows only)
+- pillow (only if tkinter.TkVersion < 8.6)
 
 
 Installation
@@ -119,6 +125,7 @@ Documentation
     is asked to confirm its replacement.
 
     Additional option:
+    
         - defaultext: extension added to filename if none is given (default is none)
 
 

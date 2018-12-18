@@ -1,6 +1,12 @@
 Changelog
 =========
 
+tkfilebrowser 2.3.0
+-------------------
+
+* Make package compatible with Windows
+* Set initial focus on entry in save mode 
+    
 tkfilebrowser 2.2.6
 -------------------
 
