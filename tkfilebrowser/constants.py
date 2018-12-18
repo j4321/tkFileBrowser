@@ -78,7 +78,6 @@ IM_DRIVE = os.path.join(PATH, "images", "drive.png")
 IM_RECENT = os.path.join(PATH, "images", "recent.png")
 IM_RECENT_24 = os.path.join(PATH, "images", "recent_24.png")
 
-
 # ---  translation
 try:
     LANG = locale.getdefaultlocale()[0]

@@ -27,7 +27,7 @@ from tkfilebrowser.filebrowser import FileBrowser
 
 def askopendirname(parent=None, title=_("Open"), **kwargs):
     """
-    Return ``''`` or the absolute path of the chosen directory.
+    Return :obj:`''` or the absolute path of the chosen directory.
 
     Arguments:
     
@@ -43,11 +43,11 @@ def askopendirname(parent=None, title=_("Open"), **kwargs):
         initialfile : str
             initially selected item (just the name, not the full path)
 
-        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+        filetypes : list :obj:`[("name", "*.ext1|*.ext2|.."), ...]`
           only the files of given filetype will be displayed,
           e.g. to allow the user to switch between displaying only PNG or JPG
           pictures or dispalying all files:
-          filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]
+          :obj:`filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]`
 
         okbuttontext : str
             text displayed on the validate button, default is "Open".
@@ -66,7 +66,7 @@ def askopendirname(parent=None, title=_("Open"), **kwargs):
 
 def askopendirnames(parent=None, title=_("Open"), **kwargs):
     """
-    Return ``()`` or the tuple of the absolute paths of the chosen directories
+    Return :obj:`()` or the tuple of the absolute paths of the chosen directories
 
     Arguments:
     
@@ -82,11 +82,11 @@ def askopendirnames(parent=None, title=_("Open"), **kwargs):
         initialfile : str
             initially selected item (just the name, not the full path)
 
-        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+        filetypes : list :obj:`[("name", "*.ext1|*.ext2|.."), ...]`
           only the files of given filetype will be displayed,
           e.g. to allow the user to switch between displaying only PNG or JPG
           pictures or dispalying all files:
-          ``filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]``
+          :obj:`filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]`
 
         okbuttontext : str
             text displayed on the validate button, default is "Open".
@@ -108,7 +108,7 @@ def askopendirnames(parent=None, title=_("Open"), **kwargs):
 
 def askopenfilename(parent=None, title=_("Open"), **kwargs):
     """
-    Return ``''`` or the absolute path of the chosen file
+    Return :obj:`''` or the absolute path of the chosen file
 
     Arguments:
     
@@ -124,11 +124,11 @@ def askopenfilename(parent=None, title=_("Open"), **kwargs):
         initialfile : str
             initially selected item (just the name, not the full path)
 
-        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+        filetypes : list :obj:`[("name", "*.ext1|*.ext2|.."), ...]`
           only the files of given filetype will be displayed,
           e.g. to allow the user to switch between displaying only PNG or JPG
           pictures or dispalying all files:
-          ``filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]``
+          :obj:`filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]`
 
         okbuttontext : str
             text displayed on the validate button, default is "Open".
@@ -147,7 +147,7 @@ def askopenfilename(parent=None, title=_("Open"), **kwargs):
 
 def askopenfilenames(parent=None, title=_("Open"), **kwargs):
     """
-    Return ``()`` or the tuple of the absolute paths of the chosen files
+    Return :obj:`()` or the tuple of the absolute paths of the chosen files
 
     Arguments:
     
@@ -163,11 +163,11 @@ def askopenfilenames(parent=None, title=_("Open"), **kwargs):
         initialfile : str
             initially selected item (just the name, not the full path)
 
-        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+        filetypes : list :obj:`[("name", "*.ext1|*.ext2|.."), ...]`
           only the files of given filetype will be displayed,
           e.g. to allow the user to switch between displaying only PNG or JPG
           pictures or dispalying all files:
-          ``filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]``
+          :obj:`filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]`
 
         okbuttontext : str
             text displayed on the validate button, default is "Open".
@@ -189,7 +189,7 @@ def askopenfilenames(parent=None, title=_("Open"), **kwargs):
 
 def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
     """
-    Return ``''`` or the chosen absolute path (the file might not exist)
+    Return :obj:`''` or the chosen absolute path (the file might not exist)
     
     Arguments:
     
@@ -208,11 +208,11 @@ def asksaveasfilename(parent=None, title=_("Save As"), **kwargs):
         defaultext : str (e.g. '.png')
             extension added to filename if none is given (default is none)  
 
-        filetypes : list ``[("name", "*.ext1|*.ext2|.."), ...]``
+        filetypes : list :obj:`[("name", "*.ext1|*.ext2|.."), ...]`
           only the files of given filetype will be displayed,
           e.g. to allow the user to switch between displaying only PNG or JPG
           pictures or dispalying all files:
-          ``filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]``
+          :obj:`filtypes=[("Pictures", "\*.png|\*.PNG|\*.jpg|\*.JPG'), ("All files", "\*")]`
 
         okbuttontext : str
             text displayed on the validate button, default is "Open".

@@ -1,6 +1,7 @@
 coverage:
   ci:
     - travis
+    - appveyor
   status:
     patch: false
     changes: false
