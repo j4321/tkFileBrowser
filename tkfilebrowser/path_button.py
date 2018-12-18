@@ -43,6 +43,9 @@ class PathButton(ttk.Button):
             * all ttk.Button options
         """
         kwargs["style"] = "path.tkfilebrowser.TButton"
+        kwargs.setdefault("text", "")
+        txt = kwargs['text']
+        kwargs.setdefault("width", len(txt) + 1 + txt.count('m') + txt.count('M'))
         ttk.Button.__init__(self, parent, **kwargs)
         self.variable = variable
         self.value = value

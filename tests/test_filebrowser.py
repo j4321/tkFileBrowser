@@ -5,6 +5,7 @@ try:
 except ImportError:
     from tkinter import ttk
 import os
+from pynput.keyboard import Key, Controller
 
 
 class TestFileBrowser(BaseWidgetTest):
@@ -104,7 +105,8 @@ class TestFileBrowser(BaseWidgetTest):
                          foldercreation=True)
         self.window.update()
         fb.validate()
-        self.assertEqual(fb.get_result(), '/test.png')
+        self.assertEqual(os.path.abspath(fb.get_result()),
+                         os.path.abspath('/test.png'))
         fb = FileBrowser(self.window, initialdir="/", initialfile="test.png", mode="save",
                          filetypes=[("PNG", '*.png|*.PNG'), ("JPG", '*.jpg|*.JPG'),
                                     ('ALL', '*')])
@@ -134,26 +136,31 @@ class TestFileBrowser(BaseWidgetTest):
         self.window.update()
         fb.right_tree.focus_force()
         self.window.update()
-        ch = fb.right_tree.tag_has('file')
-        letters = [fb.right_tree.item(c, 'text')[0] for c in ch]
+        ch = fb.right_tree.get_children('')
+        letters = [fb.right_tree.item(c, 'text')[0].lower() for c in ch]
         i = 65
-        while chr(i) in letters:
+        while chr(i).lower() in letters:
             i += 1
-        letter = chr(i)
+        letter = chr(i).lower()
+        keyboard = Controller()
         if letter.isalnum():
-            fb.right_tree.event_generate('<%s>' % letter)
+            fb.right_tree.focus_force()
+            keyboard.press(letter)
+            keyboard.release(letter)
             self.window.update()
             self.assertTrue(fb.key_browse_entry.winfo_ismapped())
-            self.assertEqual(fb.key_browse_entry.get(), letter)
-            fb.right_tree.event_generate('<Return>')
+            self.assertEqual(fb.key_browse_entry.get().lower(), letter)
+            fb.right_tree.event_generate('<Escape>')
             self.window.update()
             self.assertFalse(fb.key_browse_entry.winfo_ismapped())
         if ch:
+            fb.right_tree.focus_force()
             letter = fb.right_tree.item(ch[0], 'text')[0]
-            fb.right_tree.event_generate('<%s>' % letter)
+            keyboard.press(letter)
+            keyboard.release(letter)
             self.window.update()
             self.assertTrue(fb.key_browse_entry.winfo_ismapped())
-            self.assertEqual(fb.key_browse_entry.get(), letter)
+            self.assertEqual(fb.key_browse_entry.get().lower(), letter)
             self.assertEqual(fb.right_tree.selection(), (ch[0],))
             l = [c for c in ch if fb.right_tree.item(c, 'text')[0] == letter]
             fb.key_browse_entry.focus_force()
@@ -172,11 +179,16 @@ class TestFileBrowser(BaseWidgetTest):
             self.window.update()
             self.assertFalse(fb.key_browse_entry.winfo_ismapped())
             fb.right_tree.focus_force()
-            fb.right_tree.event_generate('<%s>' % letter)
+            keyboard.press(letter)
+            keyboard.release(letter)
             self.window.update()
             fb.right_tree.event_generate('<Return>')
             self.window.update()
-            self.assertEqual(fb.get_result(), (ch[0],))
+            item = os.path.realpath(ch[0])
+            if os.path.isdir(item):
+                self.assertEqual(fb.history[-1], ch[0])
+            else:
+                self.assertEqual(fb.get_result(), (item,))
 
         # --- opendir
         fb = FileBrowser(self.window, initialdir="/", mode="opendir",
@@ -185,27 +197,31 @@ class TestFileBrowser(BaseWidgetTest):
         fb.right_tree.focus_force()
         self.window.update()
         ch = fb.right_tree.tag_has('folder')
-        letters = [fb.right_tree.item(c, 'text')[0] for c in ch]
+        letters = [fb.right_tree.item(c, 'text')[0].lower() for c in ch]
         i = 65
-        while chr(i) in letters:
+        while chr(i).lower() in letters:
             i += 1
-        letter = chr(i)
+        letter = chr(i).lower()
         if letter.isalnum():
-            fb.right_tree.event_generate('<%s>' % letter)
+            fb.right_tree.focus_force()
+            keyboard.press(letter)
+            keyboard.release(letter)
             self.window.update()
             self.assertTrue(fb.key_browse_entry.winfo_ismapped())
             self.assertEqual(fb.key_browse_entry.get(), letter)
             fb.right_tree.event_generate('<Return>')
             self.window.update()
-            self.assertEqual(fb.get_result(), ('/',))
+            self.assertEqual(fb.get_result(), (os.path.abspath('/'),))
         fb = FileBrowser(self.window, initialdir="/", mode="opendir",
                          multiple_selection=True)
         self.window.update()
         fb.right_tree.focus_force()
         if ch:
-            letter = fb.right_tree.item(ch[-1], 'text')[0]
-            l = [c for c in ch if fb.right_tree.item(c, 'text')[0] == letter]
-            fb.right_tree.event_generate('<%s>' % letter)
+            letter = fb.right_tree.item(ch[-1], 'text')[0].lower()
+            l = [c for c in ch if fb.right_tree.item(c, 'text')[0].lower() == letter]
+            fb.right_tree.focus_force()
+            keyboard.press(letter)
+            keyboard.release(letter)
             self.window.update()
             self.assertTrue(fb.key_browse_entry.winfo_ismapped())
             self.assertEqual(fb.key_browse_entry.get(), letter)
@@ -226,7 +242,8 @@ class TestFileBrowser(BaseWidgetTest):
             self.window.update()
             self.assertFalse(fb.key_browse_entry.winfo_ismapped())
             fb.right_tree.focus_force()
-            fb.right_tree.event_generate('<%s>' % letter)
+            keyboard.press(letter)
+            keyboard.release(letter)
             self.window.update()
             fb.right_tree.event_generate('<Return>')
             self.window.update()
@@ -266,11 +283,12 @@ class TestFileBrowser(BaseWidgetTest):
         self.window.update()
 
     def test_filebowser_foldercreation(self):
-        fb = FileBrowser(self.window, initialdir="/",
+        initdir = os.path.abspath('/')
+        fb = FileBrowser(self.window, initialdir=initdir,
                          foldercreation=True)
         self.window.update()
         self.assertTrue(fb.b_new_folder.winfo_ismapped())
-        self.assertTrue('disabled' in fb.b_new_folder.state())
+        self.assertIs('disabled' not in fb.b_new_folder.state(), os.access(initdir, os.W_OK))
         fb.display_folder(os.path.expanduser('~'))
         self.window.update()
         self.assertTrue(fb.b_new_folder.winfo_ismapped())
@@ -287,7 +305,7 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=True)
         self.window.update()
-        walk = os.walk('/')
+        walk = os.walk(os.path.abspath('/'))
         root, dirs, files = walk.send(None)
         dirs = [os.path.join(root, d) for d in dirs]
         files = [os.path.join(root, f) for f in files]
@@ -363,8 +381,8 @@ class TestFileBrowser(BaseWidgetTest):
             fb.right_tree.selection_clear()
             fb.right_tree.selection_set(ch[0])
             self.window.update()
-            self.assertEqual(fb.entry.get(),
-                             os.path.join(fb.right_tree.item(ch[0], 'text'), ''))
+            self.assertEqual(os.path.abspath(fb.entry.get()),
+                             os.path.abspath(os.path.join(fb.right_tree.item(ch[0], 'text'), '')))
         fb.focus_force()
         fb.event_generate("<Control-l>")
         self.window.update()
@@ -390,8 +408,8 @@ class TestFileBrowser(BaseWidgetTest):
             fb.right_tree.selection_clear()
             fb.right_tree.selection_set(ch[0])
             self.window.update()
-            self.assertEqual(fb.entry.get(),
-                             os.path.join(fb.right_tree.item(ch[0], 'text'), ''))
+            self.assertEqual(os.path.abspath(fb.entry.get()),
+                             os.path.abspath(os.path.join(fb.right_tree.item(ch[0], 'text'), '')))
         ch = fb.right_tree.tag_has('file')
         if ch:
             fb.right_tree.selection_clear()

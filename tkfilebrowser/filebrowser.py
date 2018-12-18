@@ -25,6 +25,8 @@ import psutil
 from re import search
 from subprocess import check_output
 from os import walk, mkdir, stat, access, W_OK, listdir
+from os import name as OSNAME
+from os.path import sep as SEP
 from os.path import exists, join, getmtime, realpath, split, expanduser, \
     abspath, isabs, splitext, dirname, getsize, isdir, isfile, islink
 try:
@@ -40,6 +42,9 @@ from tkfilebrowser.autoscrollbar import AutoScrollbar
 from tkfilebrowser.path_button import PathButton
 from tkfilebrowser.tooltip import TooltipTreeWrapper
 from tkfilebrowser.recent_files import RecentFiles
+
+if OSNAME == 'nt':
+    from win32com.shell import shell, shellcon
 
 _ = cst._
 
@@ -329,7 +334,10 @@ class FileBrowser(tk.Toplevel):
             if m == "/":
                 txt = "/"
             else:
-                txt = split(m)[-1]
+                if OSNAME == 'nt':
+                    txt = m
+                else:
+                    txt = split(m)[-1]
             self.left_tree.insert("", "end", iid=m, text=txt,
                                   image=self.im_drive)
             wrapper.add_tooltip(m, m)
@@ -341,33 +349,45 @@ class FileBrowser(tk.Toplevel):
         wrapper.add_tooltip(home, home)
 
         # -------- desktop
-        try:
-            desktop = check_output(['xdg-user-dir', 'DESKTOP']).decode().strip()
-        except Exception:
-            # FileNotFoundError in python3 if xdg-users-dir is not installed,
-            # but OSError in python2
-            desktop = join(home, 'Desktop')
-        if exists(desktop):
-            self.left_tree.insert("", "end", iid=desktop, image=self.im_desktop,
-                                  text=split(desktop)[-1])
-            wrapper.add_tooltip(desktop, desktop)
+        if OSNAME == 'nt':
+            desktop = shell.SHGetFolderPath(0, shellcon.CSIDL_DESKTOP, None, 0)
+        else:
+            try:
+                desktop = check_output(['xdg-user-dir', 'DESKTOP']).decode().strip()
+            except Exception:
+                # FileNotFoundError in python3 if xdg-users-dir is not installed,
+                # but OSError in python2
+                desktop = join(home, 'Desktop')
+            if exists(desktop):
+                self.left_tree.insert("", "end", iid=desktop, image=self.im_desktop,
+                                      text=split(desktop)[-1])
+                wrapper.add_tooltip(desktop, desktop)
 
         # -------- bookmarks
-        path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
-        path_bm2 = join(home, ".gtk-bookmarks")  # old location
-        if exists(path_bm):
-            with open(path_bm) as f:
-                bms = f.read().splitlines()
-        elif exists(path_bm2):
-            with open(path_bm) as f:
-                bms = f.read().splitlines()
+        if OSNAME == 'nt':
+            bm = []
+            for folder in [shellcon.CSIDL_PERSONAL, shellcon.CSIDL_MYPICTURES,
+                           shellcon.CSIDL_MYMUSIC, shellcon.CSIDL_MYVIDEO]:
+               try:
+                   bm.append([shell.SHGetFolderPath(0, folder, None, 0)])
+               except Exception:
+                   pass
         else:
-            bms = []
-        bms = [ch.split() for ch in bms]
-        bm = []
-        for ch in bms:
-            ch[0] = unquote(ch[0]).replace("file://", "")
-            bm.append(ch)
+            path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
+            path_bm2 = join(home, ".gtk-bookmarks")  # old location
+            if exists(path_bm):
+                with open(path_bm) as f:
+                    bms = f.read().splitlines()
+            elif exists(path_bm2):
+                with open(path_bm) as f:
+                    bms = f.read().splitlines()
+            else:
+                bms = []
+            bms = [ch.split() for ch in bms]
+            bm = []
+            for ch in bms:
+                ch[0] = unquote(ch[0]).replace("file://", "")
+                bm.append(ch)
         for l in bm:
             if len(l) == 1:
                 txt = split(l[0])[-1]
@@ -545,7 +565,7 @@ class FileBrowser(tk.Toplevel):
 
     def _key_browse_show(self, event):
         """Show key browsing entry."""
-        if event.char.isalnum() or event.char in [".", "_", "(", "-", "*"]:
+        if event.char.isalnum() or event.char in [".", "_", "(", "-", "*", "$"]:
             self.key_browse_entry.place(in_=self.right_tree, relx=0, rely=1,
                                         y=4, x=1, anchor="nw")
             self.key_browse_entry.focus_set()
@@ -566,6 +586,7 @@ class FileBrowser(tk.Toplevel):
             if self.mode == 'opendir':
                 children = list(self.right_tree.tag_has("folder"))
                 children.extend(self.right_tree.tag_has("folder_link"))
+                children.sort()
             else:
                 children = self.right_tree.get_children("")
             self.paths_beginning_by = [i for i in children if split(i)[-1][:len(deb)].lower() == deb]
@@ -963,16 +984,22 @@ class FileBrowser(tk.Toplevel):
         if path == "/":
             folders = [""]
         else:
-            folders = path.split("/")
-        b = PathButton(self.path_bar, self.path_var, "/", image=self.im_drive,
-                       command=lambda: self.display_folder("/", update_bar=False))
+            folders = path.split(SEP)
+            while '' in folders:
+                folders.remove('')
+        if OSNAME == 'nt':
+            p = folders[0] + '\\'
+            b = PathButton(self.path_bar, self.path_var, p, text=p,
+                           command=lambda path=p: self.display_folder(path, update_bar=False))
+        else:
+            p = "/"
+            b = PathButton(self.path_bar, self.path_var, p, image=self.im_drive,
+                           command=lambda path=p: self.display_folder(p, update_bar=False))
         self.path_bar_buttons.append(b)
         b.grid(row=0, column=1, sticky="ns")
-        p = "/"
         for i, folder in enumerate(folders[1:]):
             p = join(p, folder)
             b = PathButton(self.path_bar, self.path_var, p, text=folder,
-                           width=len(folder) + 1,
                            command=lambda f=p: self.display_folder(f, update_bar=False),
                            style="path.tkfilebrowser.TButton")
             self.path_bar_buttons.append(b)
@@ -985,7 +1012,6 @@ class FileBrowser(tk.Toplevel):
             * reset (boolean): forget all the part of the history right of self._hist_index
             * update_bar (boolean): update the buttons in path bar
         """
-        print('listdir')
         # remove trailing / if any
         folder = abspath(folder)
         # reorganize display if previous was 'recent'
@@ -1171,6 +1197,8 @@ class FileBrowser(tk.Toplevel):
                 self.right_tree.detach(*self.right_tree.tag_has("hidden"))
         except StopIteration:
             self._display_folder_listdir(folder, reset, update_bar)
+        except PermissionError as e:
+            cst.showerror('PermissionError', str(e), master=self)
 
     def _display_folder_scandir(self, folder, reset=True, update_bar=True):
         """
@@ -1256,6 +1284,8 @@ class FileBrowser(tk.Toplevel):
                 self.right_tree.detach(*self.right_tree.tag_has("hidden"))
         except FileNotFoundError:
             self._display_folder_scandir(expanduser('~'), reset=True, update_bar=True)
+        except PermissionError as e:
+            cst.showerror('PermissionError', str(e), master=self)
 
     def create_folder(self, event=None):
         """Create new folder in current location."""
