@@ -4,12 +4,14 @@
 from setuptools import setup
 
 from codecs import open
-from os import path
+from os import path, name
 
 here = path.abspath(path.dirname(__file__))
 
 with open(path.join(here, 'README.rst'), encoding='utf-8') as f:
     long_description = f.read()
+
+
 
 setup(name='tkfilebrowser',
       version='2.3.0',
@@ -32,7 +34,8 @@ setup(name='tkfilebrowser',
                    'Programming Language :: Python :: 3.7',
                    'Natural Language :: English',
                    'Natural Language :: French',
-                   'Operating System :: OS Independent'],
+                   'Operating System :: POSIX :: Linux',
+                   'Operating System :: Microsoft :: Windows'],
       py_modules=["tkfilebrowser.autoscrollbar",
                   "tkfilebrowser.constants",
                   "tkfilebrowser.filebrowser",
@@ -43,5 +46,5 @@ setup(name='tkfilebrowser',
       keywords=['tkinter', 'filedialog', 'filebrowser'],
       packages=["tkfilebrowser"],
       package_data={"tkfilebrowser": ["images/*"]},
-      install_requires=["psutil", "babel"],
+      install_requires=["psutil", "babel"] + (['pypiwin32'] if name == 'nt' else []),
       extras_require={'tk<8.6.0': 'Pillow'})
