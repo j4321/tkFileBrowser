@@ -1,27 +1,18 @@
-os: linux
 language: python
-matrix:
-  include:
-  - os: osx
-    language: generic
-    env: INSTALL_TYPE=macpython VERSION=3.6 VENV=venv
 required: sudo
 python:
   - "2.7"
   - "3.4"
   - "3.5"
 before_install:
-  - if [ "$TRAVIS_OS_NAME" == "osx" ]; then git clone https://github.com/MacPython/terryfy.git; source terryfy/travis_tools.sh; get_python_environment $INSTALL_TYPE $VERSION $VENV; fi
   - "export DISPLAY=:99.0"
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sh -e /etc/init.d/xvfb start; fi
+  - "sh -e /etc/init.d/xvfb start"
   - sleep 3
 install:
-  - python -m pip install -U pip
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then sudo apt-get install python-tk python3-tk; fi
-  - python -m pip install -U nose coverage codecov psutil pynput babel pillow
+  - sudo apt-get install python-tk python3-tk
+  - python -m pip install nose coverage codecov psutil pynput babel
 script:
   - python -m pip install .
-  - python -m nose
+  - python -m nose --with-coverage
 after_success:
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then coverage run nosetests; fi
-  - if [ "$TRAVIS_OS_NAME" == "linux" ]; then codecov; fi
+- codecov
