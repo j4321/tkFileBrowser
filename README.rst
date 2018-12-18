@@ -31,8 +31,10 @@ The documentation is also available here: https://tkfilebrowser.readthedocs.io
 Requirements
 ------------
 
-- Linux
-- Python 2.7 or 3.x with tkinter + ttk, python-psutil and python-babel
+- Linux or Windows
+- Python 2.7 or 3.x with tkinter + ttk, psutil, babel and pypiwin32 (Windows only)
+
+If your tkinter version is older than 8.6.0, then you will also need pillow.
 
 
 Installation
@@ -123,8 +125,9 @@ Documentation
 Changelog
 ---------
 
-- tkfilebrowser 2.2.6
+- tkfilebrowser 2.3.0
     * Make package compatible with Windows
+    * Set initial focus on entry in save mode 
 
 - tkfilebrowser 2.2.6
     * No longer reset path bar when clicking on a path button
