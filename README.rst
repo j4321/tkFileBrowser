@@ -1,7 +1,7 @@
 tkfilebrowser
 =============
 
-|Release|_ |Linux| |Windows| |Travis| |Codecov| |License| |Doc|
+|Release| |Linux| |Windows| |Travis| |Codecov| |License| |Doc|
 
 tkfilebrowser is an alternative to tkinter.filedialog that allows the
 user to select files or directories. The GUI is written with tkinter but
@@ -132,6 +132,9 @@ Documentation
 Changelog
 ---------
 
+- tkfilebrowser 2.3.1
+    * Fix path bar navigation in Linux
+    
 - tkfilebrowser 2.3.0
     * Make package compatible with Windows
     * Set initial focus on entry in save mode 
@@ -282,7 +285,7 @@ Example
 
 .. |Release| image:: https://badge.fury.io/py/tkfilebrowser.svg
     :alt: Latest Release
-.. _Release:  https://pypi.org/project/tkfilebrowser/
+    :target: https://pypi.org/project/tkfilebrowser/
 .. |Linux| image:: https://img.shields.io/badge/platform-Linux-blue.svg
     :alt: Platform Linux
 .. |Windows| image:: https://img.shields.io/badge/platform-Windows-blue.svg

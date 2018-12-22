@@ -1,6 +1,11 @@
 Changelog
 =========
 
+tkfilebrowser 2.3.1
+-------------------
+
+* Fix path bar navigation in Linux
+
 tkfilebrowser 2.3.0
 -------------------
 
