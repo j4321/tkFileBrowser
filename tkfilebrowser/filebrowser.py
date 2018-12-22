@@ -994,7 +994,7 @@ class FileBrowser(tk.Toplevel):
         else:
             p = "/"
             b = PathButton(self.path_bar, self.path_var, p, image=self.im_drive,
-                           command=lambda path=p: self.display_folder(p, update_bar=False))
+                           command=lambda path=p: self.display_folder(path, update_bar=False))
         self.path_bar_buttons.append(b)
         b.grid(row=0, column=1, sticky="ns")
         for i, folder in enumerate(folders):
@@ -1210,6 +1210,7 @@ class FileBrowser(tk.Toplevel):
         """
         # remove trailing / if any
         folder = abspath(folder)
+        print(folder)
         # reorganize display if previous was 'recent'
         if not self.path_bar.winfo_ismapped():
             self.path_bar.grid()
