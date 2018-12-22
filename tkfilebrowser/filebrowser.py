@@ -982,13 +982,13 @@ class FileBrowser(tk.Toplevel):
             b.destroy()
         self.path_bar_buttons = []
         if path == "/":
-            folders = [""]
+            folders = []
         else:
             folders = path.split(SEP)
             while '' in folders:
                 folders.remove('')
         if OSNAME == 'nt':
-            p = folders[0] + '\\'
+            p = folders.pop(0) + '\\'
             b = PathButton(self.path_bar, self.path_var, p, text=p,
                            command=lambda path=p: self.display_folder(path, update_bar=False))
         else:
@@ -997,7 +997,7 @@ class FileBrowser(tk.Toplevel):
                            command=lambda path=p: self.display_folder(p, update_bar=False))
         self.path_bar_buttons.append(b)
         b.grid(row=0, column=1, sticky="ns")
-        for i, folder in enumerate(folders[1:]):
+        for i, folder in enumerate(folders):
             p = join(p, folder)
             b = PathButton(self.path_bar, self.path_var, p, text=folder,
                            command=lambda f=p: self.display_folder(f, update_bar=False),
