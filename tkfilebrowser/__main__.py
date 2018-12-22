@@ -34,7 +34,7 @@ root = tk.Tk()
 
 style = ttk.Style(root)
 style.theme_use("clam")
-
+root.configure(bg=style.lookup('TFrame', 'background'))
 
 def c_open_file_old():
     rep = filedialog.askopenfilenames(parent=root, initialdir='/', initialfile='tmp',
