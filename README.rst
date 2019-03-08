@@ -21,7 +21,7 @@ filebrowser and the following functions, similar to the one in filedialog:
     * ``askopendirnames`` that allow the selection of multiple folders
 
     * ``asksaveasfilename`` that returns a single filename and give a warning if the file already exists
-    
+
 
 The documentation is also available here: https://tkfilebrowser.readthedocs.io
 
@@ -32,7 +32,7 @@ Requirements
 ------------
 
 - Linux or Windows
-- Python 2.7 or 3.x 
+- Python 2.7 or 3.x
 
 And the python packages:
 
@@ -125,19 +125,22 @@ Documentation
     is asked to confirm its replacement.
 
     Additional option:
-    
+
         - defaultext: extension added to filename if none is given (default is none)
 
 
 Changelog
 ---------
 
+- tkfilebrowser 2.3.2
+    * Show networked drives on Windows
+
 - tkfilebrowser 2.3.1
     * Fix path bar navigation in Linux
-    
+
 - tkfilebrowser 2.3.0
     * Make package compatible with Windows
-    * Set initial focus on entry in save mode 
+    * Set initial focus on entry in save mode
 
 - tkfilebrowser 2.2.6
     * No longer reset path bar when clicking on a path button
@@ -146,9 +149,9 @@ Changelog
 - tkfilebrowser 2.2.5
     * Add compatibility with Tk < 8.6.0 (requires PIL.ImageTk)
     * Add desktop icon in shortcuts
-    * Fix handling of spaces in bookmarks 
+    * Fix handling of spaces in bookmarks
     * Fix bug due to spaces in recent file names
-    
+
 - tkfilebrowser 2.2.4
     * Fix bug in desktop folder identification
 
