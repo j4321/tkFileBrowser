@@ -327,7 +327,7 @@ class FileBrowser(tk.Toplevel):
         wrapper.add_tooltip("recent", _("Recently used"))
 
         # -------- devices
-        devices = psutil.disk_partitions()
+        devices = psutil.disk_partitions(all=True if OSNAME == "nt" else False)
 
         for d in devices:
             m = d.mountpoint
