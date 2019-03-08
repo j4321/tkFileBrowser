@@ -368,10 +368,10 @@ class FileBrowser(tk.Toplevel):
             bm = []
             for folder in [shellcon.CSIDL_PERSONAL, shellcon.CSIDL_MYPICTURES,
                            shellcon.CSIDL_MYMUSIC, shellcon.CSIDL_MYVIDEO]:
-               try:
-                   bm.append([shell.SHGetFolderPath(0, folder, None, 0)])
-               except Exception:
-                   pass
+                try:
+                    bm.append([shell.SHGetFolderPath(0, folder, None, 0)])
+                except Exception:
+                    pass
         else:
             path_bm = join(home, ".config", "gtk-3.0", "bookmarks")
             path_bm2 = join(home, ".gtk-bookmarks")  # old location
@@ -890,7 +890,7 @@ class FileBrowser(tk.Toplevel):
         elif isabs(txt) or self.path_bar.winfo_ismapped():
             txt = txt[:int(pos)] + modif + txt[int(pos):]
             d, f = split(txt)
-            if f and not (f[0] is "." and self.hide):
+            if f and not (f[0] == "." and self.hide):
                 if not isabs(txt):
                     d2 = join(self.history[self._hist_index], d)
                 else:
@@ -900,7 +900,7 @@ class FileBrowser(tk.Toplevel):
                     root, dirs, files = walk(d2).send(None)
                     dirs.sort(key=lambda n: n.lower())
                     l2 = []
-                    if self.mode is not "opendir":
+                    if self.mode != "opendir":
                         files.sort(key=lambda n: n.lower())
                         extension = self.filetypes[self.filetype.get()]
                         if extension == r".*$":
@@ -1448,7 +1448,7 @@ class FileBrowser(tk.Toplevel):
                 name = join(self.history[self._hist_index], name)
             if not exists(name):
                 self.entry.delete(0, "end")
-            elif self.mode is "openfile":
+            elif self.mode == "openfile":
                 if isfile(name):
                     if self.multiple_selection:
                         self.result = (realpath(name),)
@@ -1472,7 +1472,7 @@ class FileBrowser(tk.Toplevel):
     def _validate_multiple_sel(self):
         """Validate selection in open mode with multiple selection."""
         sel = self.right_tree.selection()
-        if self.mode is "opendir":
+        if self.mode == "opendir":
             if sel:
                 self.result = tuple(realpath(s) for s in sel)
             else:
@@ -1499,7 +1499,7 @@ class FileBrowser(tk.Toplevel):
     def _validate_single_sel(self):
         """Validate selection in open mode without multiple selection."""
         sel = self.right_tree.selection()
-        if self.mode is "openfile":
+        if self.mode == "openfile":
             if len(sel) == 1:
                 sel = sel[0]
                 tags = self.right_tree.item(sel, "tags")
@@ -1517,7 +1517,7 @@ class FileBrowser(tk.Toplevel):
 
     def validate(self, event=None):
         """Validate selection and store it in self.results if valid."""
-        if self.mode is "save":
+        if self.mode == "save":
             self._validate_save()
         else:
             validation = self._validate_from_entry()
