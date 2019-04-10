@@ -134,6 +134,7 @@ Changelog
 
 - tkfilebrowser 2.3.2
     * Show networked drives on Windows
+    * Fix click on root button in path bar
 
 - tkfilebrowser 2.3.1
     * Fix path bar navigation in Linux
