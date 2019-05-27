@@ -37,10 +37,10 @@ Requirements
 And the python packages:
 
 - tkinter (included in the python distribution for Windows)
-- psutil
-- babel
-- pywin32 (Windows only)
-- pillow (only if tkinter.TkVersion < 8.6)
+- `psutil <https://pypi.org/project/psutil/>`_
+- `babel <https://pypi.org/project/babel/>`_
+- `pywin32 <https://pypi.org/project/pywin32/>`_ (Windows only)
+- `pillow <https://pypi.org/project/pillow/>`_ (only if tkinter.TkVersion < 8.6)
 
 
 Installation
