@@ -196,7 +196,7 @@ Changelog
     * Improve extension management in save mode
 
 - tkfilebrowser 2.1.1
-    * Fix error if LOCAL_PATH does not exists or is not writtable
+    * Fix error if LOCAL_PATH does not exists or is not writable
 
 - tkfilebrowser 2.1.0
     * Add compatibility with tkinter.filedialog keywords 'master' and 'defaultextension'
@@ -207,7 +207,7 @@ Changelog
     * Hide suggestion drop-down when nothing matches anymore
 
 - tkfilebrowser 2.0.0
-    * Change package name to tkfilebrowser to respect PEP 8
+    * Change package name to ``tkfilebrowser`` to respect PEP 8
     * Display error message when an issue occurs during folder creation
     * Cycle only through folders with key browsing in "opendir" mode
     * Complete only with folder names in "opendir" mode
@@ -245,26 +245,27 @@ Example
 
 .. code:: python
 
+    from tkfilebrowser import askopendirname, askopenfilenames, asksaveasfilename, askopenpathnames
     try:
         import tkinter as tk
-        import tkinter.ttk as ttk
+        from tkinter import ttk
         from tkinter import filedialog
     except ImportError:
         import Tkinter as tk
         import ttk
         import tkFileDialog as filedialog
-    from tkfilebrowser import askopendirname, askopenfilenames, asksaveasfilename
-
 
     root = tk.Tk()
 
     style = ttk.Style(root)
     style.theme_use("clam")
-
+    root.configure(bg=style.lookup('TFrame', 'background'))
 
     def c_open_file_old():
         rep = filedialog.askopenfilenames(parent=root, initialdir='/', initialfile='tmp',
-                                          filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg"), ("All files", "*")])
+                                          filetypes=[("PNG", "*.png"),
+                                                     ("JPEG", "*.jpg"),
+                                                     ("All files", "*")])
         print(rep)
 
 
@@ -274,14 +275,19 @@ Example
 
 
     def c_save_old():
-        rep = filedialog.asksaveasfilename(parent=root, defaultextension=".png", initialdir='/tmp', initialfile='image.png',
-                                           filetypes=[("PNG", "*.png"), ("JPEG", "*.jpg"), ("All files", "*")])
+        rep = filedialog.asksaveasfilename(parent=root, defaultextension=".png",
+                                           initialdir='/tmp', initialfile='image.png',
+                                           filetypes=[("PNG", "*.png"),
+                                                      ("JPEG", "*.jpg"),
+                                                      ("Text files", "*.txt"),
+                                                      ("All files", "*")])
         print(rep)
 
 
     def c_open_file():
         rep = askopenfilenames(parent=root, initialdir='/', initialfile='tmp',
-                               filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+                               filetypes=[("Pictures", "*.png|*.jpg|*.JPG"),
+                                          ("All files", "*")])
         print(rep)
 
 
@@ -292,7 +298,14 @@ Example
 
     def c_save():
         rep = asksaveasfilename(parent=root, defaultext=".png", initialdir='/tmp', initialfile='image.png',
-                                filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), ("All files", "*")])
+                                filetypes=[("Pictures", "*.png|*.jpg|*.JPG"),
+                                           ("Text files", "*.txt"),
+                                           ("All files", "*")])
+        print(rep)
+
+
+    def c_path():
+        rep = askopenpathnames(parent=root, initialdir='/', initialfile='tmp')
         print(rep)
 
 
@@ -304,8 +317,10 @@ Example
     ttk.Button(root, text="Open files", command=c_open_file).grid(row=1, column=1, padx=4, pady=4, sticky='ew')
     ttk.Button(root, text="Open folder", command=c_open_dir).grid(row=2, column=1, padx=4, pady=4, sticky='ew')
     ttk.Button(root, text="Save file", command=c_save).grid(row=3, column=1, padx=4, pady=4, sticky='ew')
+    ttk.Button(root, text="Open paths", command=c_path).grid(row=4, column=1, padx=4, pady=4, sticky='ew')
 
     root.mainloop()
+
 
 .. |Release| image:: https://badge.fury.io/py/tkfilebrowser.svg
     :alt: Latest Release
