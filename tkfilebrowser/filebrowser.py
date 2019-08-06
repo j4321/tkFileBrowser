@@ -85,7 +85,7 @@ class FileBrowser(tk.Toplevel):
             initially selected item (just the name, not the full path)
 
         mode : str
-            kind of dialog: "openfile", "opendir" or "save"
+            kind of dialog: "openpath", "openfile", "opendir" or "save"
 
         multiple_selection : bool
             whether to allow multiple items selection (open modes only)
@@ -495,15 +495,16 @@ class FileBrowser(tk.Toplevel):
         if multiple_selection:
             self.right_tree.bind("<Control-a>", self._right_tree_select_all)
 
-        if mode == "opendir":
-            self.right_tree.bind("<<TreeviewSelect>>",
-                                 self._file_selection_opendir)
-        elif mode == "openfile":
-            self.right_tree.bind("<<TreeviewSelect>>",
-                                 self._file_selection_openfile)
-        else:
+        if mode == "save":
             self.right_tree.bind("<<TreeviewSelect>>",
                                  self._file_selection_save)
+        elif mode == "opendir":
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self._file_selection_opendir)
+        else:
+            self.right_tree.bind("<<TreeviewSelect>>",
+                                 self._file_selection_openfile)
+
         self.right_tree.bind("<KeyPress>", self._key_browse_show)
         # listbox
         self.listbox.bind("<FocusOut>",
@@ -543,11 +544,13 @@ class FileBrowser(tk.Toplevel):
             self.entry.focus_set()
 
     def _right_tree_select_all(self, event):
-        if self.mode == 'opendir':
-            tags = ['folder', 'folder_link']
+        if self.mode == "openpath":
+            items = self.right_tree.tag_has('folder') + self.right_tree.tag_has('folder_link') \
+                + self.right_tree.tag_has('file') + self.right_tree.tag_has('file_link')
+        elif self.mode == 'opendir':
+            items = self.right_tree.tag_has('folder') + self.right_tree.tag_has('folder_link')
         else:
-            tags = ['file', 'file_link']
-        items = self.right_tree.tag_has(tags[0]) + self.right_tree.tag_has(tags[1])
+            items = self.right_tree.tag_has('file') + self.right_tree.tag_has('file_link')
         self.right_tree.selection_clear()
         self.right_tree.selection_set(items)
 
@@ -1472,13 +1475,7 @@ class FileBrowser(tk.Toplevel):
     def _validate_multiple_sel(self):
         """Validate selection in open mode with multiple selection."""
         sel = self.right_tree.selection()
-        if self.mode == "opendir":
-            if sel:
-                self.result = tuple(realpath(s) for s in sel)
-            else:
-                self.result = (realpath(self.history[self._hist_index]),)
-            self.quit()
-        else:  # mode == openfile
+        if self.mode == "openfile":
             if len(sel) == 1:
                 sel = sel[0]
                 tags = self.right_tree.item(sel, "tags")
@@ -1495,6 +1492,12 @@ class FileBrowser(tk.Toplevel):
                     self.quit()
                 else:
                     self.right_tree.selection_remove(*sel)
+        else:
+            if sel:
+                self.result = tuple(realpath(s) for s in sel)
+            else:
+                self.result = (realpath(self.history[self._hist_index]),)
+            self.quit()
 
     def _validate_single_sel(self):
         """Validate selection in open mode without multiple selection."""
@@ -1508,12 +1511,16 @@ class FileBrowser(tk.Toplevel):
                 else:
                     self.result = realpath(sel)
                     self.quit()
-        else:  # mode is "opendir"
+        elif self.mode == "opendir":
             if len(sel) == 1:
                 self.result = realpath(sel[0])
             else:
                 self.result = realpath(self.history[self._hist_index])
             self.quit()
+        else:  # mode is "openpath"
+            if len(sel) == 1:
+                self.result = realpath(sel[0])
+                self.quit()
 
     def validate(self, event=None):
         """Validate selection and store it in self.results if valid."""
