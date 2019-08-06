@@ -24,6 +24,10 @@ filebrowser and the following functions, similar to the one in filedialog:
     * :func:`~tkfilebrowser.askopendirname` that allow the selection a single folder
 
     * :func:`~tkfilebrowser.askopendirnames` that allow the selection of multiple folders
+    
+    * :func:`~tkfilebrowser.askopendirname` that allow the selection a single file or folder
+
+    * :func:`~tkfilebrowser.askopendirnames` that allow the selection of multiple files and folders
 
     * :func:`~tkfilebrowser.asksaveasfilename` that returns a single filename and give a warning if the file already exists
     

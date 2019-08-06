@@ -1,10 +1,19 @@
 Changelog
 =========
 
+.. currentmodule:: tkfilebrowser
+
+tkfilebrowser 2.4.0
+-------------------
+
+* Add "openpath" mode to the :class:`FileBrowser` to select both files and folders
+* Add :meth:`askopenpathname` and :meth:`askopenpathnames` to select path(s) 
+
 tkfilebrowser 2.3.1
 -------------------
 
 * Fix path bar navigation in Linux
+* Show networked drives on Windows
 
 tkfilebrowser 2.3.0
 -------------------

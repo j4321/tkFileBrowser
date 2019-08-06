@@ -11,7 +11,7 @@ Example
         import Tkinter as tk
         import ttk
         import tkFileDialog as filedialog
-    from tkfilebrowser import askopendirname, askopenfilenames, asksaveasfilename
+    from tkfilebrowser import askopendirname, askopenfilenames, asksaveasfilename, askopenpathnames
 
 
     root = tk.Tk()
@@ -70,6 +70,11 @@ Example
                                 filetypes=[("Pictures", "*.png|*.jpg|*.JPG"), 
                                            ("All files", "*")])
         print(rep)
+        
+    
+    def c_path():
+        rep = askopenpathnames(parent=root, initialdir='/', initialfile='tmp')
+        print(rep)
 
 
     ttk.Label(root, text='Default dialogs').grid(row=0, column=0, 
@@ -90,11 +95,15 @@ Example
     ttk.Button(root, text="Open files", command=c_open_file).grid(row=1, column=1, 
                                                                   padx=4, pady=4, 
                                                                   sticky='ew')
-    ttk.Button(root, text="Open folder", command=c_open_dir).grid(row=2, column=1, padx=4, 
+    ttk.Button(root, text="Open folder", command=c_open_dir).grid(row=2, column=1,
                                                                   padx=4, pady=4, 
                                                                   sticky='ew')
-    ttk.Button(root, text="Save file", command=c_save).grid(row=3, column=1,, 
+    ttk.Button(root, text="Save file", command=c_save).grid(row=3, column=1,
                                                             padx=4, pady=4, 
                                                             sticky='ew')
+    ttk.Button(root, text="Open paths", command=c_path).grid(row=4, column=1, 
+                                                             padx=4, pady=4, 
+                                                             sticky='ew')
+
 
     root.mainloop()

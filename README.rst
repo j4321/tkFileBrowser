@@ -19,6 +19,10 @@ filebrowser and the following functions, similar to the one in filedialog:
     * ``askopendirname`` that allow the selection a single folder
 
     * ``askopendirnames`` that allow the selection of multiple folders
+    
+    * ``askopenpathname`` that allow the selection a single file or folder
+
+    * ``askopenpathnames`` that allow the selection of multiple files and folders
 
     * ``asksaveasfilename`` that returns a single filename and give a warning if the file already exists
 
@@ -117,6 +121,18 @@ Documentation
     Allow the user to choose multiple files. A tuple containing the absolute
     path of the chosen files is returned. If the user cancels,
     an empty tuple is returned.
+    
+* askopenpathname
+
+    Allow the user to choose a single file or folder. The absolute path of the
+    chosen item is returned. If the user cancels, an empty string is
+    returned.
+
+* askopenpathnames
+
+    Allow the user to choose multiple files and folders. A tuple containing the absolute
+    path of the items is returned. If the user cancels,
+    an empty tuple is returned.
 
 * asksaveasfilename
 
@@ -131,6 +147,10 @@ Documentation
 
 Changelog
 ---------
+
+- tkfilebrowser 2.4.0
+    * Add "openpath" mode to the ``FileBrowser`` to select both files and folders
+    * Add ``askopenpathname()`` and ``askopenpathnames()`` to select path(s) 
 
 - tkfilebrowser 2.3.2
     * Show networked drives on Windows

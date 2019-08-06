@@ -1,31 +1,41 @@
 Documentation
 =============
 
+.. currentmodule:: tkfilebrowser
+
 askopendirname
 --------------
-.. autofunction:: tkfilebrowser.askopendirname
+.. autofunction:: askopendirname
 
 askopendirnames
 ---------------
-.. autofunction:: tkfilebrowser.askopendirnames
+.. autofunction:: askopendirnames
 
 askopenfilename
 ---------------
-.. autofunction:: tkfilebrowser.askopenfilename
+.. autofunction:: askopenfilename
 
 askopenfilenames
 ----------------
-.. autofunction:: tkfilebrowser.askopenfilenames
+.. autofunction:: askopenfilenames
+
+askopenpathname
+---------------
+.. autofunction:: askopenpathname
+
+askopenpathnames
+----------------
+.. autofunction:: askopenpathnames
 
 asksaveasfilename
 -----------------
-.. autofunction:: tkfilebrowser.asksaveasfilename
+.. autofunction:: asksaveasfilename
 
 
 FileBrowser
 -----------
 
-.. autoclass:: tkfilebrowser.FileBrowser
+.. autoclass:: FileBrowser
     :members:
     
     .. automethod:: __init__
