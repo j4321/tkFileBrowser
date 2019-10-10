@@ -19,4 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 
 from tkfilebrowser.filebrowser import FileBrowser
-from tkfilebrowser.functions import *
+from tkfilebrowser.functions import askopendirname, askopendirnames, \
+    askopenfilename, askopenfilenames, askopenpathname, askopenpathnames, \
+    asksaveasfilename

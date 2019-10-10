@@ -1,10 +1,19 @@
 Changelog
 =========
 
+.. currentmodule:: tkfilebrowser
+
+tkfilebrowser 2.4.0
+-------------------
+
+* Add "openpath" mode to the :class:`FileBrowser` to select both files and folders
+* Add :meth:`askopenpathname` and :meth:`askopenpathnames` to select path(s) 
+
 tkfilebrowser 2.3.1
 -------------------
 
 * Fix path bar navigation in Linux
+* Show networked drives on Windows
 
 tkfilebrowser 2.3.0
 -------------------
@@ -21,7 +30,7 @@ tkfilebrowser 2.2.6
 tkfilebrowser 2.2.5
 -------------------
 
-* Add compatibility with Tk < 8.6.0 (requires PIL.ImageTk)
+* Add compatibility with Tk < 8.6.0 (requires :mod:`PIL.ImageTk`)
 * Add desktop icon in shortcuts
 * Fix handling of spaces in bookmarks 
 * Fix bug due to spaces in recent file names
@@ -40,7 +49,7 @@ tkfilebrowser 2.2.3
 tkfilebrowser 2.2.2
 -------------------
 
-* Fix ValueError in after_cancel with Python 3.6.5
+* Fix :obj:`ValueError` in after_cancel with Python 3.6.5
 
 tkfilebrowser 2.2.1
 -------------------
@@ -50,22 +59,22 @@ tkfilebrowser 2.2.1
 tkfilebrowser 2.2.0
 -------------------
 
-* Use babel instead of locale in order not to change the locale globally
+* Use :mod:`babel` instead of locale in order not to change the locale globally
 * Speed up (a little) folder content display
 * Improve example: add comparison with default dialogs
 * Add select all on Ctrl+A if multiple selection is enabled
 * Disable folder creation button if the user does not have write access
-* Improve extension management in save mode
+* Improve extension management in "save" mode
 
 tkfilebrowser 2.1.1
 -------------------
 
-* Fix error if LOCAL_PATH does not exists or is not writtable
+* Fix error if :obj:`LOCAL_PATH` does not exists or is not writable
 
 tkfilebrowser 2.1.0
 -------------------
 
-* Add compatibility with :mod:`tkinter.filedialog` keywords 'master' and 'defaultextension'
+* Add compatibility with :mod:`tkinter.filedialog` keywords *master* and *defaultextension*
 * Change look of filetype selector
 * Fix bugs when navigating without displaying hidden files
 * Fix color alternance bug when hiding hidden files
@@ -75,7 +84,7 @@ tkfilebrowser 2.1.0
 tkfilebrowser 2.0.0
 -------------------
 
-* Change package name to tkfilebrowser to respect PEP 8
+* Change package name to :mod:`tkfilebrowser` to respect `PEP 8 <https://www.python.org/dev/peps/pep-0008/>`_
 * Display error message when an issue occurs during folder creation
 * Cycle only through folders with key browsing in "opendir" mode
 * Complete only with folder names in "opendir" mode
@@ -103,13 +112,13 @@ tkFileBrowser 1.1.1
 tkFileBrowser 1.1.0
 -------------------
 
-* Fix bug concerning the initialfile argument
+* Fix bug concerning the *initialfile* argument
 * Add column sorting (by name, size, modification date)
 
 tkFileBrowser 1.0.1
 -------------------
 
-* Set default filebrowser parent to None as for the usual filedialogs and messageboxes.
+* Set default :class:`Filebrowser` parent to :obj:`None` as for the usual filedialogs and messageboxes.
 
 tkFileBrowser 1.0.0
 -------------------

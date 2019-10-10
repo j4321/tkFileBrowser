@@ -9,6 +9,68 @@ from pynput.keyboard import Key, Controller
 
 
 class TestFileBrowser(BaseWidgetTest):
+    def test_filebrowser_openpath(self):
+        # --- multiple selection
+        path = os.path.expanduser('~')
+        fb = FileBrowser(self.window, initialdir=path, initialfile="test", mode="openpath",
+                         multiple_selection=True,
+                         title="Test", filetypes=[],
+                         okbuttontext=None, cancelbuttontext="Cancel",
+                         foldercreation=False)
+        self.window.update()
+        fb.right_tree.focus_force()
+        self.window.update()
+        fb.event_generate('<Control-a>')
+        self.window.update()
+        self.window.update_idletasks()
+        fb.validate()
+        walk = os.walk(path)
+        root, dirs, files = walk.send(None)
+        res = list(fb.get_result())
+        res.sort()
+        dirs = [os.path.realpath(os.path.join(root, d)) for d in dirs]
+        files = [os.path.realpath(os.path.join(root, f)) for f in files]
+        paths = dirs + files
+        paths.sort()
+        self.assertEqual(res, paths)
+        # --- single selection
+        fb = FileBrowser(self.window, initialdir=".", initialfile="test", mode="openpath",
+                         multiple_selection=False,
+                         title="Test", filetypes=[],
+                         okbuttontext=None, cancelbuttontext="Cancel",
+                         foldercreation=False)
+        self.window.update()
+        fb.validate()
+        self.assertEqual(fb.get_result(), '')
+        fb = FileBrowser(self.window, initialdir=".", initialfile="test", mode="openpath",
+                         multiple_selection=False,
+                         title="Test", filetypes=[],
+                         okbuttontext=None, cancelbuttontext="Cancel",
+                         foldercreation=False)
+        self.window.update()
+        files = fb.right_tree.tag_has('file')
+        if files:
+            fb.right_tree.selection_set(files[0])
+            fb.validate()
+            self.assertTrue(os.path.isfile(fb.get_result()))
+        else:
+            fb.validate()
+            self.assertEqual(fb.get_result(), '')
+        fb = FileBrowser(self.window, initialdir=".", initialfile="test", mode="openpath",
+                         multiple_selection=False,
+                         title="Test", filetypes=[],
+                         okbuttontext=None, cancelbuttontext="Cancel",
+                         foldercreation=False)
+        self.window.update()
+        dirs = fb.right_tree.tag_has('folder')
+        if dirs:
+            fb.right_tree.selection_set(dirs[0])
+            fb.validate()
+            self.assertTrue(os.path.isdir(fb.get_result()))
+        else:
+            fb.validate()
+            self.assertEqual(fb.get_result(), '')
+
     def test_filebrowser_opendir(self):
         # --- multiple selection
         path = os.path.expanduser('~')
@@ -86,8 +148,8 @@ class TestFileBrowser(BaseWidgetTest):
                          okbuttontext=None, cancelbuttontext="Cancel",
                          foldercreation=False)
         self.window.update()
-        walk = os.walk(os.path.abspath("."))
-        root, _, files = walk.send(None)
+        # walk = os.walk(os.path.abspath("."))
+        # root, _, files = walk.send(None)
         files = fb.right_tree.tag_has('file')
         if files:
             fb.right_tree.selection_set(files[0])
